@@ -13,8 +13,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Components/SphereComponent.h"
-#include <EngineGlobals.h>
-#include <Runtime/Engine/Classes/Engine/Engine.h>
+#include "Engine/Engine.h"
 #include "Interfaces/ConquestSelectableInterface.h"
 
 AConquestCharacter::AConquestCharacter()
@@ -79,11 +78,5 @@ void AConquestCharacter::MoveCharacterRight(float changeValue)
 
 void AConquestCharacter::OnSelectActor(AActor* actor)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Hotdog: %s"), *actor->GetName()));
-	if (actor->GetClass()->ImplementsInterface(UConquestSelectableInterface::StaticClass()))
-	{
-		IConquestSelectableInterface::Execute_OnSelectionGained(actor);
-		SelectedUnit = actor;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Selection: %s"), *actor->GetName()));
-	}
+	UE_LOG(LogConquest, Log, TEXT("Selection: %s"), *GetNameSafe(actor));
 }

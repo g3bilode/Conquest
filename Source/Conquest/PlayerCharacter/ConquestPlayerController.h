@@ -35,6 +35,8 @@ private:
 	bool lookAroundEnabled = false;
 	int32 mouseLockPositionX;
 	int32 mouseLockPositionY;
+
+	TWeakObjectPtr<AActor> SelectedActor;
 };
 
 

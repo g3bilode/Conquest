@@ -20,6 +20,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadWrite, Category = "AI")
+	FVector TargetLocation;
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,7 +36,5 @@ public:
 private:
 	virtual bool OnSelectionGained_Implementation() override;
 
-
-	virtual bool OnSelectionLost_Implementation() override;
-
+	virtual bool OnSelectionChanged_Implementation(AActor* NewSelection) override;
 };

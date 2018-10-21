@@ -3,6 +3,8 @@
 #include "ConquestPlayerController.h"
 #include "ConquestCharacter.h"
 #include "Engine/LocalPlayer.h"
+#include "CapturePoints/CapturePoint.h"
+#include "Units/ConquestUnit.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -116,12 +118,32 @@ void AConquestPlayerController::OnSelect()
 	{
 		FHitResult HitResult;
 		GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
+
+		AActor* const NewSelection = HitResult.GetActor();
+
+
+		if (IsValid(NewSelection))
+		{
+			// Previous Selection action
+			if (IsValid(SelectedActor.Get()))
+			{
+				IConquestSelectableInterface::Execute_OnSelectionChanged(SelectedActor.Get(), NewSelection);
+			}
+
+			// Selection action
+			if (NewSelection->GetClass()->ImplementsInterface(UConquestSelectableInterface::StaticClass()))
+			{
+				IConquestSelectableInterface::Execute_OnSelectionGained(NewSelection);
+				SelectedActor = NewSelection;
+			}
+		}
 		
+		// Character action
 		APawn* const Pawn = GetPawn();
-		AConquestCharacter* character = Cast<AConquestCharacter>(Pawn);
+		AConquestCharacter* const character = Cast<AConquestCharacter>(Pawn);
 		if (character)
 		{
-			character->OnSelectActor(HitResult.GetActor());
+			character->OnSelectActor(SelectedActor.Get());
 		}
 	}
 }
