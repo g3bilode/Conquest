@@ -14,6 +14,14 @@ class AConquestPlayerController : public APlayerController
 public:
 	AConquestPlayerController();
 
+	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation)
+	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
+
+	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
+
+	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
+	
+
 protected:
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;

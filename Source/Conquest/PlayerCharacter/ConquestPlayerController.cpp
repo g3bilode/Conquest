@@ -11,6 +11,16 @@ AConquestPlayerController::AConquestPlayerController()
 	bShowMouseCursor = true;
 }
 
+bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location)
+{
+	return true;
+}
+
+void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location)
+{
+	AActor* spawnedUnit = GetWorld()->SpawnActor(actorToSpawn->GetDefaultObject()->GetClass(), &location);
+}
+
 void AConquestPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
