@@ -5,6 +5,8 @@
 #include "Engine/LocalPlayer.h"
 #include "CapturePoints/CapturePoint.h"
 #include "Units/ConquestUnit.h"
+#include "ConquestPlayerState.h"
+#include "Kismet/GameplayStatics.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -18,7 +20,20 @@ bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class ACon
 
 void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location)
 {
-	AActor* spawnedUnit = GetWorld()->SpawnActor(actorToSpawn->GetDefaultObject()->GetClass(), &location);
+	FTransform spawnTransform;
+	spawnTransform.SetLocation(location);
+
+	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, actorToSpawn->GetDefaultObject()->GetClass(), spawnTransform);
+	
+	AConquestPlayerState* conquestPlayerState = Cast<AConquestPlayerState>(PlayerState);
+	AConquestUnit* conquestSpawnedUnit = Cast<AConquestUnit>(spawnedUnit);
+
+	if (IsValid(conquestPlayerState) && IsValid(conquestSpawnedUnit))
+	{
+		conquestSpawnedUnit->TeamName = conquestPlayerState->TeamName;
+
+		UGameplayStatics::FinishSpawningActor(spawnedUnit, spawnTransform);
+	}
 }
 
 void AConquestPlayerController::PlayerTick(float DeltaTime)

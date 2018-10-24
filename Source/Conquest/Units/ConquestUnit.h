@@ -23,7 +23,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "AI")
 	FVector TargetLocation;
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -31,7 +30,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Team")
+	FName TeamName;
 	
 private:
 	virtual bool OnSelectionGained_Implementation() override;

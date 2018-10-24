@@ -3,6 +3,7 @@
 #include "ConquestUnit.h"
 #include "Conquest.h"
 #include "CapturePoints/CapturePoint.h"
+#include "UnrealNetwork.h"
 
 
 // Sets default values
@@ -11,6 +12,13 @@ AConquestUnit::AConquestUnit()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+}
+
+void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AConquestUnit, TeamName);
 }
 
 // Called when the game starts or when spawned
