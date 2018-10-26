@@ -27,6 +27,6 @@ public:
 private:
 	virtual bool OnSelectionGained_Implementation() override;
 
-	virtual bool OnSelectionChanged_Implementation(AActor* NewSelection) override;
+	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 	
 };

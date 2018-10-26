@@ -3,6 +3,8 @@
 #include "ConquestUnit.h"
 #include "Conquest.h"
 #include "CapturePoints/CapturePoint.h"
+#include "PlayerCharacter/ConquestPlayerController.h"
+#include "PlayerCharacter/ConquestPlayerState.h"
 #include "UnrealNetwork.h"
 
 
@@ -19,6 +21,7 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AConquestUnit, TeamName);
+	DOREPLIFETIME(AConquestUnit, TargetDestination);
 }
 
 // Called when the game starts or when spawned
@@ -42,19 +45,37 @@ void AConquestUnit::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 }
 
+FVector AConquestUnit::GetTargetDestination() const
+{
+	return TargetDestination;
+}
+
+void AConquestUnit::SetTargetDestination(FVector newLocation)
+{
+	TargetDestination = newLocation;
+}
+
 bool AConquestUnit::OnSelectionGained_Implementation()
 {
 	UE_LOG(LogConquest, Log, TEXT("I am Selected! (%s)"), *GetNameSafe(this));
 	return true;
 }
 
-bool AConquestUnit::OnSelectionChanged_Implementation(AActor* NewSelection)
+bool AConquestUnit::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
 {
+	AConquestPlayerState* playerState = Cast<AConquestPlayerState>(initiator->PlayerState);
+	if (playerState != nullptr)
+	{
+		if (playerState->TeamName != TeamName)
+		{
+			UE_LOG(LogConquest, Log, TEXT("Cant touch me!: %s"), *(playerState->TeamName.ToString()));
+			return false;
+		}
+	}
 	if (NewSelection->GetClass()->IsChildOf(ACapturePoint::StaticClass()))
 	{
 		UE_LOG(LogConquest, Log, TEXT("New Target Location!"));
-		TargetLocation = NewSelection->GetActorLocation();
+		initiator->MoveUnit(this, NewSelection->GetActorLocation());
 	}
 	return true;
 }
-

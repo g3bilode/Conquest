@@ -152,7 +152,7 @@ void AConquestPlayerController::OnSelect()
 			// Previous Selection action
 			if (IsValid(SelectedActor.Get()))
 			{
-				IConquestSelectableInterface::Execute_OnSelectionChanged(SelectedActor.Get(), NewSelection);
+				IConquestSelectableInterface::Execute_OnSelectionChanged(SelectedActor.Get(), this, NewSelection);
 			}
 
 			// Selection action
@@ -171,4 +171,14 @@ void AConquestPlayerController::OnSelect()
 			character->OnSelectActor(SelectedActor.Get());
 		}
 	}
+}
+
+void AConquestPlayerController::MoveUnit_Implementation(AConquestUnit* unit, FVector location)
+{
+	unit->SetTargetDestination(location);
+}
+
+bool AConquestPlayerController::MoveUnit_Validate(AConquestUnit* unit, FVector location)
+{
+	return true;
 }

@@ -17,13 +17,13 @@ class CONQUEST_API AConquestPlayerState : public APlayerState
 public:
 	AConquestPlayerState() : GoldGainMultiplayer(1) {}
 
-	UPROPERTY(BlueprintReadWrite, Category = "Resources", Replicated)
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Resources")
 	int32 Gold;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Resources")
 	int32 GoldGainMultiplayer;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Team")
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Team")
 	FName TeamName;
 
 };

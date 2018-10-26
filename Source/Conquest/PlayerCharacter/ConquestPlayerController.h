@@ -16,10 +16,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation)
 	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
-
 	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
-
 	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
+
+	UFUNCTION(Server, Unreliable, WithValidation)
+	void MoveUnit(AConquestUnit* unit, FVector location);
+	virtual bool MoveUnit_Validate(AConquestUnit* unit, FVector location);
+	virtual void MoveUnit_Implementation(AConquestUnit* unit, FVector location);
 	
 
 protected:

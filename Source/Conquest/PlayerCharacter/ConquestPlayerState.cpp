@@ -8,6 +8,7 @@ void AConquestPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AConquestPlayerState, Gold);
+	DOREPLIFETIME(AConquestPlayerState, TeamName);
 }
 
 

@@ -32,7 +32,7 @@ bool ACapturePoint::OnSelectionGained_Implementation()
 	return true;
 }
 
-bool ACapturePoint::OnSelectionChanged_Implementation(AActor* NewSelection)
+bool ACapturePoint::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
 {
 	return true;
 }

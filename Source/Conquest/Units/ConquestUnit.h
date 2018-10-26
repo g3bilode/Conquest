@@ -20,9 +20,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, Category = "AI")
-	FVector TargetLocation;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -30,11 +27,20 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	FVector GetTargetDestination() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetTargetDestination(FVector newLocation);
+
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Team")
 	FName TeamName;
 	
 private:
 	virtual bool OnSelectionGained_Implementation() override;
 
-	virtual bool OnSelectionChanged_Implementation(AActor* NewSelection) override;
+	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
+
+	UPROPERTY(Replicated)
+	FVector TargetDestination;
 };
