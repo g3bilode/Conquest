@@ -11,18 +11,6 @@ UCLASS()
 class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInterface
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ACapturePoint();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 private:
 	virtual bool OnSelectionGained_Implementation() override;

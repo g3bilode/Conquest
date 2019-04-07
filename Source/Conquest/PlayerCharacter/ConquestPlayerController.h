@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "ConquestPlayerState.h"
 #include "ConquestPlayerController.generated.h"
 
 UCLASS()
@@ -15,9 +16,9 @@ public:
 	AConquestPlayerController();
 
 	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation)
-	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
-	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
-	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location);
+	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> actorToSpawn);
+	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn);
+	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn);
 
 	UFUNCTION(Server, Unreliable, WithValidation)
 	void MoveUnit(AConquestUnit* unit, FVector location);
@@ -29,6 +30,7 @@ protected:
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
+	virtual void BeginPlay() override;
 	// End PlayerController interface
 
 	// Input handlers
@@ -48,6 +50,7 @@ private:
 	int32 mouseLockPositionY;
 
 	TWeakObjectPtr<AActor> SelectedActor;
+	AConquestPlayerState* ConquestPlayerState;
 };
 
 

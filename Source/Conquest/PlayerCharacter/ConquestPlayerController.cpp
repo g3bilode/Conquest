@@ -5,32 +5,58 @@
 #include "Engine/LocalPlayer.h"
 #include "CapturePoints/CapturePoint.h"
 #include "Units/ConquestUnit.h"
-#include "ConquestPlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "SpawnPoints/SpawnPoint.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
 	bShowMouseCursor = true;
 }
 
-bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location)
+// Called when the game starts or when spawned
+void AConquestPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ConquestPlayerState = Cast<AConquestPlayerState>(PlayerState);
+}
+
+bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn)
 {
 	return true;
 }
 
-void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn, FVector location)
+void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn)
 {
+	FVector location;
+
+	TArray<AActor*> unitSpawnActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnPoint::StaticClass(), unitSpawnActors);
+	for (AActor* unitSpawnActor : unitSpawnActors)
+	{
+		ASpawnPoint* spawnPoint = Cast<ASpawnPoint>(unitSpawnActor);
+		if (spawnPoint != nullptr && ConquestPlayerState != nullptr)
+		{
+			if (spawnPoint->TeamName == ConquestPlayerState->TeamName)
+			{
+				location = spawnPoint->GetActorLocation();
+				location += FVector(0, 0, 200);
+				break;
+			}
+
+		}
+	}
+
 	FTransform spawnTransform;
 	spawnTransform.SetLocation(location);
 
 	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, actorToSpawn->GetDefaultObject()->GetClass(), spawnTransform);
 	
-	AConquestPlayerState* conquestPlayerState = Cast<AConquestPlayerState>(PlayerState);
 	AConquestUnit* conquestSpawnedUnit = Cast<AConquestUnit>(spawnedUnit);
 
-	if (IsValid(conquestPlayerState) && IsValid(conquestSpawnedUnit))
+	if (ConquestPlayerState != nullptr && IsValid(conquestSpawnedUnit))
 	{
-		conquestSpawnedUnit->TeamName = conquestPlayerState->TeamName;
+		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
 
 		UGameplayStatics::FinishSpawningActor(spawnedUnit, spawnTransform);
 	}
