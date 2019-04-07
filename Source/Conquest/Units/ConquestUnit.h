@@ -35,6 +35,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Team")
 	FName TeamName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
+	int32 PurchaseCost;
 	
 private:
 	virtual bool OnSelectionGained_Implementation() override;

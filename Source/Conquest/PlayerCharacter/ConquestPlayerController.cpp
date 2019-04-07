@@ -1,6 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "ConquestPlayerController.h"
+#include "Conquest.h"
 #include "ConquestCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "CapturePoints/CapturePoint.h"
@@ -28,8 +29,14 @@ bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class ACon
 
 void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn)
 {
-	FVector location;
+	
+	if (!AttemptPurchaseUnit(actorToSpawn))
+	{
+		UE_LOG(LogConquest, Log, TEXT("Cannot purchase unit."));
+		return;
+	}
 
+	FVector location;
 	TArray<AActor*> unitSpawnActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnPoint::StaticClass(), unitSpawnActors);
 	for (AActor* unitSpawnActor : unitSpawnActors)
@@ -197,6 +204,17 @@ void AConquestPlayerController::OnSelect()
 			character->OnSelectActor(SelectedActor.Get());
 		}
 	}
+}
+
+bool AConquestPlayerController::AttemptPurchaseUnit(const TSubclassOf<class AConquestUnit> unit)
+{
+	int32 cost = unit->GetDefaultObject<AConquestUnit>()->PurchaseCost;
+	if (cost <= ConquestPlayerState->Gold)
+	{
+		ConquestPlayerState->Gold -= cost;
+		return true;
+	}
+	return false;
 }
 
 void AConquestPlayerController::MoveUnit_Implementation(AConquestUnit* unit, FVector location)

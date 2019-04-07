@@ -7,6 +7,7 @@
 #include "ConquestPlayerState.h"
 #include "ConquestPlayerController.generated.h"
 
+
 UCLASS()
 class AConquestPlayerController : public APlayerController
 {
@@ -51,6 +52,9 @@ private:
 
 	TWeakObjectPtr<AActor> SelectedActor;
 	AConquestPlayerState* ConquestPlayerState;
+
+	/* Attempt to purchase unit. Return True on success. */
+	bool AttemptPurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
 };
 
 
