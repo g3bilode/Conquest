@@ -1,6 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "ConquestPlayerController.h"
+#include "Blueprint/UserWidget.h"
 #include "Conquest.h"
 #include "ConquestCharacter.h"
 #include "Engine/LocalPlayer.h"
@@ -20,6 +21,10 @@ void AConquestPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	ConquestPlayerState = Cast<AConquestPlayerState>(PlayerState);
+	if (IsLocalPlayerController())
+	{
+		CreateUI();
+	}
 }
 
 bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn)
@@ -191,7 +196,7 @@ void AConquestPlayerController::OnSelect()
 			// Selection action
 			if (NewSelection->GetClass()->ImplementsInterface(UConquestSelectableInterface::StaticClass()))
 			{
-				IConquestSelectableInterface::Execute_OnSelectionGained(NewSelection);
+				IConquestSelectableInterface::Execute_OnSelectionGained(NewSelection, this);
 				SelectedActor = NewSelection;
 			}
 		}
@@ -217,9 +222,39 @@ bool AConquestPlayerController::AttemptPurchaseUnit(const TSubclassOf<class ACon
 	return false;
 }
 
+void AConquestPlayerController::CreateUI()
+{
+	if (!_menuOutpost)
+	{
+		_menuOutpost = CreateWidget<UUserWidget>(this, wOutpostMenu, "OutpostMenu");
+		_menuOutpost->AddToViewport();
+		_menuOutpost->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void AConquestPlayerController::MoveUnit_Implementation(AConquestUnit* unit, FVector location)
 {
 	unit->SetTargetDestination(location);
+}
+
+void AConquestPlayerController::SetOutpostMenuVisibility(const bool isVisible) const
+{
+	if (IsValid(_menuOutpost))
+	{
+		if (isVisible)
+		{
+			_menuOutpost->SetVisibility(ESlateVisibility::Visible);
+		}
+		else {
+			_menuOutpost->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+}
+
+
+void AConquestPlayerController::SetOutpostMenuLocation(const FVector2D screenLocation) const
+{
+	_menuOutpost->SetPositionInViewport(screenLocation);
 }
 
 bool AConquestPlayerController::MoveUnit_Validate(AConquestUnit* unit, FVector location)

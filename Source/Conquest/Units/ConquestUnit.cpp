@@ -55,7 +55,7 @@ void AConquestUnit::SetTargetDestination(FVector newLocation)
 	TargetDestination = newLocation;
 }
 
-bool AConquestUnit::OnSelectionGained_Implementation()
+bool AConquestUnit::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
 {
 	UE_LOG(LogConquest, Log, TEXT("I am Selected! (%s)"), *GetNameSafe(this));
 	return true;

@@ -25,6 +25,14 @@ public:
 	void MoveUnit(AConquestUnit* unit, FVector location);
 	virtual bool MoveUnit_Validate(AConquestUnit* unit, FVector location);
 	virtual void MoveUnit_Implementation(AConquestUnit* unit, FVector location);
+
+	// Reference UMG widget in Editor
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UUserWidget> wOutpostMenu;
+
+	/* Outpost menu */
+	void SetOutpostMenuVisibility(const bool isVisible) const;
+	void SetOutpostMenuLocation(const FVector2D screenLocation) const;
 	
 
 protected:
@@ -55,6 +63,12 @@ private:
 
 	/* Attempt to purchase unit. Return True on success. */
 	bool AttemptPurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
+
+	UPROPERTY()
+	UUserWidget* _menuOutpost;
+
+	/* Create UI */
+	void CreateUI();
 };
 
 
