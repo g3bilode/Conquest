@@ -16,11 +16,7 @@ AOutpost::AOutpost()
 bool AOutpost::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
 {
 	UE_LOG(LogConquest, Log, TEXT("Outpost Selected! (%s)"), *GetNameSafe(this));
-	FVector location = AActor::GetActorLocation();
-	FVector2D screenLocation;
-	initiator->ProjectWorldLocationToScreen(location, screenLocation);
-	initiator->SetOutpostMenuLocation(screenLocation);
-	initiator->SetOutpostMenuVisibility(true);
+	initiator->OnOutpostSelect(this);
 	return true;
 }
 

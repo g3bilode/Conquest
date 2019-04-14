@@ -237,6 +237,16 @@ void AConquestPlayerController::MoveUnit_Implementation(AConquestUnit* unit, FVe
 	unit->SetTargetDestination(location);
 }
 
+void AConquestPlayerController::OnOutpostSelect(AOutpost* outpost)
+{
+	_selectedOutpost = outpost;
+	FVector location = outpost->GetActorLocation();
+	FVector2D screenLocation;
+	ProjectWorldLocationToScreen(location, screenLocation);
+	_menuOutpost->SetPositionInViewport(screenLocation);
+	SetOutpostMenuVisibility(true);
+}
+
 void AConquestPlayerController::SetOutpostMenuVisibility(const bool isVisible) const
 {
 	if (IsValid(_menuOutpost))
@@ -249,12 +259,6 @@ void AConquestPlayerController::SetOutpostMenuVisibility(const bool isVisible) c
 			_menuOutpost->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
-}
-
-
-void AConquestPlayerController::SetOutpostMenuLocation(const FVector2D screenLocation) const
-{
-	_menuOutpost->SetPositionInViewport(screenLocation);
 }
 
 bool AConquestPlayerController::MoveUnit_Validate(AConquestUnit* unit, FVector location)

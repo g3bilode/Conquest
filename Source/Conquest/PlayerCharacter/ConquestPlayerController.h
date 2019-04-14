@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "ConquestPlayerState.h"
+#include "Outpost/Outpost.h"
 #include "ConquestPlayerController.generated.h"
 
 
@@ -30,9 +31,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UUserWidget> wOutpostMenu;
 
-	/* Outpost menu */
+	/* Outpost */
+	void OnOutpostSelect(AOutpost* outpost);
 	void SetOutpostMenuVisibility(const bool isVisible) const;
-	void SetOutpostMenuLocation(const FVector2D screenLocation) const;
 	
 
 protected:
@@ -66,6 +67,9 @@ private:
 
 	UPROPERTY()
 	UUserWidget* _menuOutpost;
+
+	UPROPERTY()
+	AOutpost* _selectedOutpost;
 
 	/* Create UI */
 	void CreateUI();
