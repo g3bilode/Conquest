@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "ConquestPlayerState.h"
+#include "Outpost/Outpost.h"
 #include "ConquestPlayerController.generated.h"
 
 
@@ -25,6 +26,14 @@ public:
 	void MoveUnit(AConquestUnit* unit, FVector location);
 	virtual bool MoveUnit_Validate(AConquestUnit* unit, FVector location);
 	virtual void MoveUnit_Implementation(AConquestUnit* unit, FVector location);
+
+	// Reference UMG widget in Editor
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UUserWidget> wOutpostMenu;
+
+	/* Outpost */
+	void OnOutpostSelect(AOutpost* outpost);
+	void SetOutpostMenuVisibility(const bool isVisible) const;
 	
 
 protected:
@@ -55,6 +64,15 @@ private:
 
 	/* Attempt to purchase unit. Return True on success. */
 	bool AttemptPurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
+
+	UPROPERTY()
+	UUserWidget* _menuOutpost;
+
+	UPROPERTY()
+	AOutpost* _selectedOutpost;
+
+	/* Create UI */
+	void CreateUI();
 };
 
 

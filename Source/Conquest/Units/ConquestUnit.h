@@ -40,7 +40,7 @@ public:
 	int32 PurchaseCost;
 	
 private:
-	virtual bool OnSelectionGained_Implementation() override;
+	virtual bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
 
 	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 

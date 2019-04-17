@@ -14,7 +14,7 @@ class CONQUEST_API IConquestSelectableInterface
 
 	/** tries to select actor */
 	UFUNCTION(BlueprintNativeEvent)
-	bool OnSelectionGained();
+	bool OnSelectionGained(AConquestPlayerController* initiator);
 
 	/** tries to deselect actor */
 	UFUNCTION(BlueprintNativeEvent)

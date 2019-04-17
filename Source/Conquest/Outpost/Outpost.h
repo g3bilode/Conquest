@@ -5,12 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/ConquestSelectableInterface.h"
-#include "CapturePoint.generated.h"
+#include "Outpost.generated.h"
 
 UCLASS()
-class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInterface
+class CONQUEST_API AOutpost : public AActor, public IConquestSelectableInterface
 {
 	GENERATED_BODY()
+	
+public:	
+	// Sets default values for this actor's properties
+	AOutpost();
 
 private:
 	virtual bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
