@@ -27,13 +27,17 @@ public:
 	virtual bool MoveUnit_Validate(AConquestUnit* unit, FVector location);
 	virtual void MoveUnit_Implementation(AConquestUnit* unit, FVector location);
 
+	AConquestPlayerState* GetConquestPlayerState();
+
 	// Reference UMG widget in Editor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UUserWidget> wOutpostMenu;
 
 	/* Outpost */
 	void OnOutpostSelect(AOutpost* outpost);
+	void DisplayOutpostMenu(const FVector& outpostLocation);
 	void SetOutpostMenuVisibility(const bool isVisible) const;
+	void AttackOutpost(AOutpost* outpost);
 	
 
 protected:

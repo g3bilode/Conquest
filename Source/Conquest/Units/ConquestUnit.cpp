@@ -2,7 +2,7 @@
 
 #include "ConquestUnit.h"
 #include "Conquest.h"
-#include "CapturePoints/CapturePoint.h"
+#include "Outpost/Outpost.h"
 #include "PlayerCharacter/ConquestPlayerController.h"
 #include "PlayerCharacter/ConquestPlayerState.h"
 #include "UnrealNetwork.h"
@@ -72,7 +72,7 @@ bool AConquestUnit::OnSelectionChanged_Implementation(AConquestPlayerController*
 			return false;
 		}
 	}
-	if (NewSelection->GetClass()->IsChildOf(ACapturePoint::StaticClass()))
+	if (NewSelection->GetClass()->IsChildOf(AOutpost::StaticClass()))
 	{
 		UE_LOG(LogConquest, Log, TEXT("New Target Location!"));
 		initiator->MoveUnit(this, NewSelection->GetActorLocation());

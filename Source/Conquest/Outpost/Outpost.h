@@ -16,6 +16,18 @@ public:
 	// Sets default values for this actor's properties
 	AOutpost();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Team")
+	FName TeamName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stat")
+	float MaxHealth;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Stat")
+	float CurrentHealth;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSlot")
+	FVector AttackerSlotLocation;
+
 private:
 	virtual bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
 

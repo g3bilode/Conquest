@@ -97,8 +97,8 @@ void AConquestPlayerController::SetupInputComponent()
 
 void AConquestPlayerController::OnMoveForwardAxis(float axisValue)
 {
-	APawn* const Pawn = GetPawn();
-	AConquestCharacter* character = Cast<AConquestCharacter>(Pawn);
+	APawn* const pawn = GetPawn();
+	AConquestCharacter* character = Cast<AConquestCharacter>(pawn);
 	if (character)
 	{
 		character->MoveCharacterForward(axisValue);
@@ -107,8 +107,8 @@ void AConquestPlayerController::OnMoveForwardAxis(float axisValue)
 
 void AConquestPlayerController::OnMoveRightAxis(float axisValue)
 {
-	APawn* const Pawn = GetPawn();
-	AConquestCharacter* character = Cast<AConquestCharacter>(Pawn);
+	APawn* const pawn = GetPawn();
+	AConquestCharacter* character = Cast<AConquestCharacter>(pawn);
 	if (character)
 	{
 		character->MoveCharacterRight(axisValue);
@@ -119,8 +119,8 @@ void AConquestPlayerController::OnMouseHorizontal(float axisValue)
 {
 	if (lookAroundEnabled)
 	{
-		APawn* const Pawn = GetPawn();
-		Pawn->AddControllerYawInput(axisValue);
+		APawn* const pawn = GetPawn();
+		pawn->AddControllerYawInput(axisValue);
 		Cast<ULocalPlayer>(Player)->ViewportClient->Viewport->SetMouse(mouseLockPositionX, mouseLockPositionY);
 	}
 }
@@ -129,8 +129,8 @@ void AConquestPlayerController::OnMouseVertical(float axisValue)
 {
 	if (lookAroundEnabled)
 	{
-		APawn* const Pawn = GetPawn();
-		AConquestCharacter* character = Cast<AConquestCharacter>(Pawn);
+		APawn* const pawn = GetPawn();
+		AConquestCharacter* character = Cast<AConquestCharacter>(pawn);
 		if (character)
 		{
 			character->RotateCameraArm(FRotator(axisValue, 0.0f, 0.0f));
@@ -141,8 +141,8 @@ void AConquestPlayerController::OnMouseVertical(float axisValue)
 
 void AConquestPlayerController::OnZoomInAction()
 {
-	APawn* const Pawn = GetPawn();
-	AConquestCharacter* character = Cast<AConquestCharacter>(Pawn);
+	APawn* const pawn = GetPawn();
+	AConquestCharacter* character = Cast<AConquestCharacter>(pawn);
 	if (character)
 	{
 		character->ChangeCameraArmLength(-1.0f);
@@ -151,8 +151,8 @@ void AConquestPlayerController::OnZoomInAction()
 
 void AConquestPlayerController::OnZoomOutAction()
 {
-	APawn* const Pawn = GetPawn();
-	AConquestCharacter* character = Cast<AConquestCharacter>(Pawn);
+	APawn* const pawn = GetPawn();
+	AConquestCharacter* character = Cast<AConquestCharacter>(pawn);
 	if (character)
 	{
 		character->ChangeCameraArmLength(1.0f);
@@ -202,8 +202,8 @@ void AConquestPlayerController::OnSelect()
 		}
 		
 		// Character action
-		APawn* const Pawn = GetPawn();
-		AConquestCharacter* const character = Cast<AConquestCharacter>(Pawn);
+		APawn* const pawn = GetPawn();
+		AConquestCharacter* const character = Cast<AConquestCharacter>(pawn);
 		if (character)
 		{
 			character->OnSelectActor(SelectedActor.Get());
@@ -237,12 +237,20 @@ void AConquestPlayerController::MoveUnit_Implementation(AConquestUnit* unit, FVe
 	unit->SetTargetDestination(location);
 }
 
+AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
+{
+	return ConquestPlayerState;
+}
+
 void AConquestPlayerController::OnOutpostSelect(AOutpost* outpost)
 {
-	_selectedOutpost = outpost;
-	FVector location = outpost->GetActorLocation();
+	_selectedOutpost = outpost;	
+}
+
+void AConquestPlayerController::DisplayOutpostMenu(const FVector& outpostLocation)
+{
 	FVector2D screenLocation;
-	ProjectWorldLocationToScreen(location, screenLocation);
+	ProjectWorldLocationToScreen(outpostLocation, screenLocation);
 	_menuOutpost->SetPositionInViewport(screenLocation);
 	SetOutpostMenuVisibility(true);
 }
@@ -259,6 +267,11 @@ void AConquestPlayerController::SetOutpostMenuVisibility(const bool isVisible) c
 			_menuOutpost->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+}
+
+void AConquestPlayerController::AttackOutpost(AOutpost* outpost)
+{
+	UE_LOG(LogConquest, Log, TEXT("CHAAARGE ! ! !"));
 }
 
 bool AConquestPlayerController::MoveUnit_Validate(AConquestUnit* unit, FVector location)
