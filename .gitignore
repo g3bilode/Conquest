@@ -78,3 +78,6 @@ DerivedDataCache/*
 
 # VS temp folder
 enc_temp_folder/*
+
+# Unreal Starter Content
+Content/StarterContent/*
