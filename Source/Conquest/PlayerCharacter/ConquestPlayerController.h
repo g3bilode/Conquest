@@ -64,6 +64,7 @@ private:
 	int32 mouseLockPositionY;
 
 	TWeakObjectPtr<AActor> SelectedActor;
+	UPROPERTY(Replicated)
 	AConquestPlayerState* ConquestPlayerState;
 
 	/* Attempt to purchase unit. Return True on success. */

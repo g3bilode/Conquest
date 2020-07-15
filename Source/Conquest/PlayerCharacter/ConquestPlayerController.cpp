@@ -9,6 +9,7 @@
 #include "Units/ConquestUnit.h"
 #include "Kismet/GameplayStatics.h"
 #include "SpawnPoints/SpawnPoint.h"
+#include "UnrealNetwork.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -25,6 +26,13 @@ void AConquestPlayerController::BeginPlay()
 	{
 		CreateUI();
 	}
+}
+
+void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AConquestPlayerController, ConquestPlayerState);
 }
 
 bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn)
