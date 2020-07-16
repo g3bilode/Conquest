@@ -20,7 +20,21 @@ ACapturePoint::ACapturePoint()
 {
 	unitSlotCount = 6;
 	unitSlotColumnCount = 3;
-	unitSlotBuffer = 50;
+	unitSlotBuffer = 100;
+}
+
+FVector* ACapturePoint::getDestinationForUnit()
+{
+	FUnitSlot* unitSlot = getAvailableUnitSlot();
+	if (unitSlot != nullptr)
+	{
+		// Found a free guy
+		unitSlot->isOccupied = true;
+		return &unitSlot->slotLocation;
+	}
+	// No free guy
+	UE_LOG(LogConquest, Log, TEXT("No unit slot available."));
+	return nullptr;
 }
 
 void ACapturePoint::BeginPlay()
@@ -41,18 +55,18 @@ void ACapturePoint::generateUnitSlots()
 		slotLocation = FVector(row*unitSlotBuffer, column*unitSlotBuffer, 0);
 		slotLocation += GetActorLocation();
 		FUnitSlot unitSlot = FUnitSlot(slotLocation);
-		unitSlots.Add(&unitSlot);
+		unitSlots.Add(unitSlot);
 		DrawDebugSphere(GetWorld(), slotLocation, 10.0f, 32, FColor(100, 0, 0), true);
 	}
 }
 
 FUnitSlot* ACapturePoint::getAvailableUnitSlot()
 {
-	for (FUnitSlot* unitSlot : unitSlots)
+	for (FUnitSlot& unitSlot : unitSlots)
 	{
-		if (!unitSlot->isOccupied)
+		if (!unitSlot.isOccupied)
 		{
-			return unitSlot;
+			return &unitSlot;
 		}
 	}
 	return nullptr;

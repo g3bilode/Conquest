@@ -6,6 +6,7 @@
 #include "PlayerCharacter/ConquestPlayerController.h"
 #include "PlayerCharacter/ConquestPlayerState.h"
 #include "UnrealNetwork.h"
+#include "CapturePoints/CapturePoint.h"
 
 
 // Sets default values
@@ -72,10 +73,22 @@ bool AConquestUnit::OnSelectionChanged_Implementation(AConquestPlayerController*
 			return false;
 		}
 	}
+	// OUTPOST
 	if (NewSelection->GetClass()->IsChildOf(AOutpost::StaticClass()))
 	{
 		UE_LOG(LogConquest, Log, TEXT("New Target Location!"));
 		initiator->MoveUnit(this, NewSelection->GetActorLocation());
+	}
+	// CAPTURE POINT
+	if (NewSelection->GetClass()->IsChildOf(ACapturePoint::StaticClass()))
+	{
+		UE_LOG(LogConquest, Log, TEXT("Move to CapturePoint!"));
+		ACapturePoint* capturePoint = Cast<ACapturePoint>(NewSelection);
+		FVector* destination = capturePoint->getDestinationForUnit();
+		if (destination != nullptr)
+		{
+			initiator->MoveUnit(this, *destination);
+		}
 	}
 	return true;
 }

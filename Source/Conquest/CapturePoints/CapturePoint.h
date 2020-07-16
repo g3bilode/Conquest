@@ -36,6 +36,8 @@ class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInte
 public:
 	ACapturePoint();
 
+	FVector* getDestinationForUnit();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,7 +53,8 @@ private:
 	int32 unitSlotBuffer;
 	int32 unitSlotCount;
 	int32 unitSlotColumnCount;
-
-	TArray<FUnitSlot*> unitSlots;
+	
+	UPROPERTY()
+	TArray<FUnitSlot> unitSlots;
 	
 };
