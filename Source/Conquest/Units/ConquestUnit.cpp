@@ -84,7 +84,7 @@ bool AConquestUnit::OnSelectionChanged_Implementation(AConquestPlayerController*
 	{
 		UE_LOG(LogConquest, Log, TEXT("Move to CapturePoint!"));
 		ACapturePoint* capturePoint = Cast<ACapturePoint>(NewSelection);
-		FVector* destination = capturePoint->getDestinationForUnit();
+		const FVector* destination = capturePoint->getDestinationForUnit(TeamName);
 		if (destination != nullptr)
 		{
 			initiator->MoveUnit(this, *destination);

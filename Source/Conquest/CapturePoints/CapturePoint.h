@@ -14,16 +14,19 @@ struct FUnitSlot
 	GENERATED_BODY()
 		
 	FUnitSlot()
-		: slotLocation(ForceInitToZero)
-		, isOccupied(false)
+		: SlotLocation(ForceInitToZero)
+		, IsOccupied(false)
+		, TeamName(NAME_None)
 	{}
-	FUnitSlot(FVector inSlotLocation)
-		: slotLocation(inSlotLocation)
-		, isOccupied(false)
+	FUnitSlot(FVector inSlotLocation, FName inTeamName)
+		: SlotLocation(inSlotLocation)
+		, IsOccupied(false)
+		, TeamName(inTeamName)
 	{}
 
-	FVector slotLocation;
-	bool isOccupied;
+	FVector SlotLocation;
+	bool IsOccupied;
+	FName TeamName;
 
 };
 
@@ -36,7 +39,7 @@ class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInte
 public:
 	ACapturePoint();
 
-	FVector* getDestinationForUnit();
+	FVector* getDestinationForUnit(const FName teamName);
 
 protected:
 	// Called when the game starts or when spawned
@@ -48,13 +51,14 @@ private:
 	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
 	void generateUnitSlots();
-	FUnitSlot* getAvailableUnitSlot();
+	void generateUnitSlotsForTeam(const FName teamName, const int32 teamIndex);
+	FUnitSlot* getAvailableUnitSlot(const FName teamName);
 
-	int32 unitSlotBuffer;
-	int32 unitSlotCount;
-	int32 unitSlotColumnCount;
+	int32 UnitSlotBuffer;
+	int32 UnitSlotCount;
+	int32 UnitSlotColumnCount;
 	
 	UPROPERTY()
-	TArray<FUnitSlot> unitSlots;
+	TArray<FUnitSlot> UnitSlots;
 	
 };

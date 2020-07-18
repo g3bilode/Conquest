@@ -3,7 +3,6 @@
 #include "ConquestCharacter.h"
 
 #include "Conquest.h"
-#include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
