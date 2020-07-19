@@ -22,8 +22,8 @@ bool ACapturePoint::OnSelectionChanged_Implementation(AConquestPlayerController*
 
 ACapturePoint::ACapturePoint()
 {
-	UnitSlotCount = 6;
-	UnitSlotColumnCount = 3;
+	UnitSlotCount = 4;
+	UnitSlotColumnCount = 2;
 	UnitSlotBuffer = 100;
 	AreSlotsDrawn = false;
 }

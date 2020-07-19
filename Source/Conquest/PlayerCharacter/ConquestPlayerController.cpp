@@ -79,6 +79,7 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 	if (ConquestPlayerState != nullptr && IsValid(conquestSpawnedUnit))
 	{
 		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
+		conquestSpawnedUnit->SetTargetDestination(location + FVector(0, 100, -200));
 
 		UGameplayStatics::FinishSpawningActor(spawnedUnit, spawnTransform);
 	}
