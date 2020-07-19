@@ -24,8 +24,11 @@ struct FUnitSlot
 		, TeamName(inTeamName)
 	{}
 
+	UPROPERTY()
 	FVector SlotLocation;
+	UPROPERTY()
 	bool IsOccupied;
+	UPROPERTY()
 	FName TeamName;
 
 };
@@ -54,11 +57,15 @@ private:
 	void generateUnitSlotsForTeam(const FName teamName, const int32 teamIndex);
 	FUnitSlot* getAvailableUnitSlot(const FName teamName);
 
+	UFUNCTION()
+	virtual void OnRep_UnitSlots();
+
 	int32 UnitSlotBuffer;
 	int32 UnitSlotCount;
 	int32 UnitSlotColumnCount;
 	
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing=OnRep_UnitSlots)
 	TArray<FUnitSlot> UnitSlots;
+	bool AreSlotsDrawn;
 	
 };

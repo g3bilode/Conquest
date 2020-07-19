@@ -51,6 +51,8 @@ public:
 
 	void PostLogin(APlayerController* NewPlayer) override;
 
+	const TArray<FName> getTeamNames();
+
 protected:
 	void BeginPlay() override;
 

@@ -54,6 +54,16 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 }
 
 
+const TArray<FName> AConquestGameMode::getTeamNames()
+{
+	TArray<FName> teamNames;
+	for (FTeamDefinition teamDefinition : TeamDefinitions)
+	{
+		teamNames.Add(teamDefinition.TeamName);
+	}
+	return teamNames;
+}
+
 void AConquestGameMode::UpdateResources()
 {
 	for (AConquestPlayerState* conquestPlayerState : CurrentPlayers)
