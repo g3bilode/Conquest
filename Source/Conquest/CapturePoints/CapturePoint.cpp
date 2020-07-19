@@ -49,6 +49,12 @@ FVector* ACapturePoint::getDestinationForUnit(const FName teamName)
 	return nullptr;
 }
 
+void ACapturePoint::Capture(FName TeamName)
+{
+	OccupierTeamName = TeamName;
+	UE_LOG(LogConquest, Log, TEXT("CAPTURED BY %s"), *TeamName.ToString());
+}
+
 void ACapturePoint::BeginPlay()
 {
 	Super::BeginPlay();
@@ -106,5 +112,10 @@ void ACapturePoint::OnRep_UnitSlots()
 		}
 		AreSlotsDrawn = true;
 	}
+}
+
+void ACapturePoint::OnTriggerOverlapWithUnit(FName TeamName)
+{
+	Capture(TeamName);
 }
 
