@@ -14,6 +14,8 @@
 AConquestPlayerController::AConquestPlayerController()
 {
 	bShowMouseCursor = true;
+	static ConstructorHelpers::FClassFinder<UUserWidget> outpostHud(TEXT("/Game/Conquest/UI/HUD/Outpost_HUD"));
+	wOutpostMenu = outpostHud.Class;
 }
 
 // Called when the game starts or when spawned
