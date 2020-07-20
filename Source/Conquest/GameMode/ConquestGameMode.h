@@ -32,7 +32,9 @@ class CONQUEST_API AConquestGameMode : public AGameModeBase
 private:
 	// Players
 	UPROPERTY()
-	TArray<class AConquestPlayerState*> CurrentPlayers;
+	int32 ConnectedPlayersCount;
+	UPROPERTY()
+	TArray<class AConquestCharacter*> CurrentCharacters;
 	UPROPERTY()
 	TArray<FTeamDefinition> TeamDefinitions;
 
@@ -45,13 +47,15 @@ private:
 	UFUNCTION()
 	void UpdateResources();
 
+	class APlayerStart* FindPlayerStartForTeam(FName TeamName) const;
+
 public:
 	
 	AConquestGameMode();
 
 	void PostLogin(APlayerController* NewPlayer) override;
 
-	const TArray<FName> getTeamNames();
+	TArray<FName> getTeamNames() const;
 
 protected:
 	void BeginPlay() override;

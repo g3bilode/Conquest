@@ -8,6 +8,8 @@
 #include "GameState/ConquestGameState.h"
 #include "UserWidget.h"
 #include "PlayerCharacter/ConquestCharacter.h"
+#include "GameFramework/PlayerStart.h"
+#include "EngineUtils.h"
 
 AConquestGameMode::AConquestGameMode()
 {
@@ -18,7 +20,7 @@ AConquestGameMode::AConquestGameMode()
 	GoldStartingAmount = 500;
 	UpdateResourceTimer = 2.0f;
 
-	DefaultPawnClass = AConquestCharacter::StaticClass();
+	DefaultPawnClass = nullptr;
 	PlayerControllerClass = AConquestPlayerController::StaticClass();
 	GameStateClass = AConquestGameState::StaticClass();
 	PlayerStateClass = AConquestPlayerState::StaticClass();
@@ -33,6 +35,18 @@ void AConquestGameMode::BeginPlay()
 	
 	// Update resource timer
 	GetWorld()->GetTimerManager().SetTimer(UpdateResourceTimerHandle, this, &AConquestGameMode::UpdateResources, UpdateResourceTimer, true);
+
+	// Spawn players
+	for (const FTeamDefinition teamDefinition : TeamDefinitions)
+	{
+		// Get player's spawn
+		APlayerStart* playerStart = FindPlayerStartForTeam(teamDefinition.TeamName);
+		FTransform spawnTransform = playerStart->GetActorTransform();
+		// Spawn player
+		AActor* spawnedCharacter = GetWorld()->SpawnActor(AConquestCharacter::StaticClass(), &spawnTransform);
+		AConquestCharacter* spawnedConquestCharacter = Cast<AConquestCharacter>(spawnedCharacter);
+		CurrentCharacters.Add(spawnedConquestCharacter);
+	}
 }
 
 
@@ -42,10 +56,10 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 	AConquestPlayerState* conquestPlayerState = Cast<AConquestPlayerState>(NewPlayer->PlayerState);
 	if (conquestPlayerState != nullptr)
 	{
-		CurrentPlayers.Add(conquestPlayerState);
-		const int32 idx = CurrentPlayers.Num() - 1;
-		conquestPlayerState->TeamName = TeamDefinitions[idx].TeamName;
+		conquestPlayerState->TeamName = TeamDefinitions[ConnectedPlayersCount].TeamName;
 		conquestPlayerState->Gold = GoldStartingAmount;
+		NewPlayer->Possess(CurrentCharacters[ConnectedPlayersCount]);
+		ConnectedPlayersCount++;
 	}
 	else
 	{
@@ -54,7 +68,7 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 }
 
 
-const TArray<FName> AConquestGameMode::getTeamNames()
+TArray<FName> AConquestGameMode::getTeamNames() const
 {
 	TArray<FName> teamNames;
 	for (FTeamDefinition teamDefinition : TeamDefinitions)
@@ -64,10 +78,26 @@ const TArray<FName> AConquestGameMode::getTeamNames()
 	return teamNames;
 }
 
+
 void AConquestGameMode::UpdateResources()
 {
-	for (AConquestPlayerState* conquestPlayerState : CurrentPlayers)
+	for (AConquestCharacter* conquestCharacter : CurrentCharacters)
 	{
+		AConquestPlayerState* conquestPlayerState = (AConquestPlayerState*)conquestCharacter->GetPlayerState();
 		conquestPlayerState->Gold += conquestPlayerState->GoldGainMultiplayer * GoldGainBase;
 	}
+}
+
+
+APlayerStart* AConquestGameMode::FindPlayerStartForTeam(FName TeamName) const
+{
+	for (TActorIterator<APlayerStart> PlayerStartItr(GetWorld()); PlayerStartItr; ++PlayerStartItr)
+	{
+		if (TeamName == PlayerStartItr->PlayerStartTag)
+		{
+			return *PlayerStartItr;
+		}
+	}
+	UE_LOG(LogConquest, Error, TEXT("FAILED TO FIND PLAYER START"));
+	return nullptr;
 }
