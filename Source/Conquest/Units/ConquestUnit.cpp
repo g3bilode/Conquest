@@ -13,7 +13,7 @@
 AConquestUnit::AConquestUnit()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 }
 
@@ -36,7 +36,10 @@ void AConquestUnit::BeginPlay()
 void AConquestUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (!IsAtDestination)
+	{
+		MoveToDestination();
+	}
 }
 
 // Called to bind functionality to input
@@ -54,6 +57,26 @@ FVector AConquestUnit::GetTargetDestination() const
 void AConquestUnit::SetTargetDestination(FVector newLocation)
 {
 	TargetDestination = newLocation;
+	IsAtDestination = false;
+}
+
+void AConquestUnit::MoveToDestination()
+{
+	FVector targetDirection = TargetDestination - GetActorLocation();
+	targetDirection.Normalize(SMALL_NUMBER);
+
+	SetActorRotation(FVector(targetDirection.X, targetDirection.Y, 0).Rotation());
+	AddMovementInput(targetDirection);
+	if (HasArrivedAtDestination())
+	{
+		UE_LOG(LogConquest, Log, TEXT("I have arrived!"));
+		IsAtDestination = true;
+	}
+}
+
+bool AConquestUnit::HasArrivedAtDestination()
+{
+	return FVector::DistXY(TargetDestination, GetActorLocation()) < 1.0f;
 }
 
 bool AConquestUnit::OnSelectionGained_Implementation(AConquestPlayerController* initiator)

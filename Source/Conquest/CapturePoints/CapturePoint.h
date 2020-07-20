@@ -44,6 +44,8 @@ public:
 
 	FVector* getDestinationForUnit(const FName teamName);
 
+	void Capture(FName TeamName);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -60,12 +62,18 @@ private:
 	UFUNCTION()
 	virtual void OnRep_UnitSlots();
 
+	UFUNCTION(BlueprintCallable)
+	void OnTriggerOverlapWithUnit(FName TeamName);
+
 	int32 UnitSlotBuffer;
 	int32 UnitSlotCount;
 	int32 UnitSlotColumnCount;
 	
 	UPROPERTY(ReplicatedUsing=OnRep_UnitSlots)
 	TArray<FUnitSlot> UnitSlots;
+	
 	bool AreSlotsDrawn;
+	
+	FName OccupierTeamName;
 	
 };

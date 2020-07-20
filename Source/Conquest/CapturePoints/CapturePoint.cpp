@@ -22,8 +22,8 @@ bool ACapturePoint::OnSelectionChanged_Implementation(AConquestPlayerController*
 
 ACapturePoint::ACapturePoint()
 {
-	UnitSlotCount = 6;
-	UnitSlotColumnCount = 3;
+	UnitSlotCount = 4;
+	UnitSlotColumnCount = 2;
 	UnitSlotBuffer = 100;
 	AreSlotsDrawn = false;
 }
@@ -47,6 +47,12 @@ FVector* ACapturePoint::getDestinationForUnit(const FName teamName)
 	// No free guy
 	UE_LOG(LogConquest, Log, TEXT("No unit slot available."));
 	return nullptr;
+}
+
+void ACapturePoint::Capture(FName TeamName)
+{
+	OccupierTeamName = TeamName;
+	UE_LOG(LogConquest, Log, TEXT("CAPTURED BY %s"), *TeamName.ToString());
 }
 
 void ACapturePoint::BeginPlay()
@@ -106,5 +112,10 @@ void ACapturePoint::OnRep_UnitSlots()
 		}
 		AreSlotsDrawn = true;
 	}
+}
+
+void ACapturePoint::OnTriggerOverlapWithUnit(FName TeamName)
+{
+	Capture(TeamName);
 }
 

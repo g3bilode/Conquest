@@ -44,6 +44,11 @@ private:
 
 	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
+	void MoveToDestination();
+	bool HasArrivedAtDestination();
+
 	UPROPERTY(Replicated)
 	FVector TargetDestination;
+	UPROPERTY()
+	bool IsAtDestination;
 };

@@ -72,13 +72,14 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 	FTransform spawnTransform;
 	spawnTransform.SetLocation(location);
 
-	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, actorToSpawn->GetDefaultObject()->GetClass(), spawnTransform);
+	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, actorToSpawn->GetDefaultObject()->GetClass(), spawnTransform, ESpawnActorCollisionHandlingMethod::Undefined, this);
 	
 	AConquestUnit* conquestSpawnedUnit = Cast<AConquestUnit>(spawnedUnit);
 
 	if (ConquestPlayerState != nullptr && IsValid(conquestSpawnedUnit))
 	{
 		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
+		conquestSpawnedUnit->SetTargetDestination(location + FVector(0, 100, -200));
 
 		UGameplayStatics::FinishSpawningActor(spawnedUnit, spawnTransform);
 	}
