@@ -20,7 +20,7 @@ AConquestGameMode::AConquestGameMode()
 	GoldStartingAmount = 500;
 	UpdateResourceTimer = 2.0f;
 
-	DefaultPawnClass = nullptr;
+	DefaultPawnClass = AConquestCharacter::StaticClass();
 	PlayerControllerClass = AConquestPlayerController::StaticClass();
 	GameStateClass = AConquestGameState::StaticClass();
 	PlayerStateClass = AConquestPlayerState::StaticClass();
@@ -35,18 +35,6 @@ void AConquestGameMode::BeginPlay()
 	
 	// Update resource timer
 	GetWorld()->GetTimerManager().SetTimer(UpdateResourceTimerHandle, this, &AConquestGameMode::UpdateResources, UpdateResourceTimer, true);
-
-	// Spawn players
-	for (const FTeamDefinition teamDefinition : TeamDefinitions)
-	{
-		// Get player's spawn
-		APlayerStart* playerStart = FindPlayerStartForTeam(teamDefinition.TeamName);
-		FTransform spawnTransform = playerStart->GetActorTransform();
-		// Spawn player
-		AActor* spawnedCharacter = GetWorld()->SpawnActor(AConquestCharacter::StaticClass(), &spawnTransform);
-		AConquestCharacter* spawnedConquestCharacter = Cast<AConquestCharacter>(spawnedCharacter);
-		CurrentCharacters.Add(spawnedConquestCharacter);
-	}
 }
 
 
@@ -56,9 +44,9 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 	AConquestPlayerState* conquestPlayerState = Cast<AConquestPlayerState>(NewPlayer->PlayerState);
 	if (conquestPlayerState != nullptr)
 	{
+		CurrentPlayers.Add(conquestPlayerState);
 		conquestPlayerState->TeamName = TeamDefinitions[ConnectedPlayersCount].TeamName;
 		conquestPlayerState->Gold = GoldStartingAmount;
-		NewPlayer->Possess(CurrentCharacters[ConnectedPlayersCount]);
 		ConnectedPlayersCount++;
 	}
 	else
@@ -68,7 +56,7 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 }
 
 
-TArray<FName> AConquestGameMode::getTeamNames() const
+TArray<FName> AConquestGameMode::GetTeamNames() const
 {
 	TArray<FName> teamNames;
 	for (FTeamDefinition teamDefinition : TeamDefinitions)
@@ -79,18 +67,11 @@ TArray<FName> AConquestGameMode::getTeamNames() const
 }
 
 
-void AConquestGameMode::UpdateResources()
+AActor* AConquestGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
-	for (AConquestCharacter* conquestCharacter : CurrentCharacters)
-	{
-		AConquestPlayerState* conquestPlayerState = (AConquestPlayerState*)conquestCharacter->GetPlayerState();
-		conquestPlayerState->Gold += conquestPlayerState->GoldGainMultiplayer * GoldGainBase;
-	}
-}
-
-
-APlayerStart* AConquestGameMode::FindPlayerStartForTeam(FName TeamName) const
-{
+	FName TeamName = GetTeamNames()[ConnectedPlayersCount];
+	// ^ Only works if PostLogin for this player runs before the next player chooses a start. Is this guaranteed?
+	// If not, just setup another var...
 	for (TActorIterator<APlayerStart> PlayerStartItr(GetWorld()); PlayerStartItr; ++PlayerStartItr)
 	{
 		if (TeamName == PlayerStartItr->PlayerStartTag)
@@ -98,6 +79,15 @@ APlayerStart* AConquestGameMode::FindPlayerStartForTeam(FName TeamName) const
 			return *PlayerStartItr;
 		}
 	}
-	UE_LOG(LogConquest, Error, TEXT("FAILED TO FIND PLAYER START"));
+	UE_LOG(LogConquest, Error, TEXT("Failed to find player start for %s"), *GetNameSafe(Player));
 	return nullptr;
+}
+
+
+void AConquestGameMode::UpdateResources()
+{
+	for (AConquestPlayerState* conquestPlayerState : CurrentPlayers)
+	{
+		conquestPlayerState->Gold += conquestPlayerState->GoldGainMultiplayer * GoldGainBase;
+	}
 }
