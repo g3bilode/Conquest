@@ -67,7 +67,7 @@ void ACapturePoint::generateUnitSlots()
 	{
 		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
 		int32 i = 0;
-		for (FName teamName : conquestGameMode->getTeamNames())
+		for (FName teamName : conquestGameMode->GetTeamNames())
 		{
 			generateUnitSlotsForTeam(teamName, i);
 			i++;

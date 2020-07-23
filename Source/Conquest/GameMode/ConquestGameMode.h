@@ -34,7 +34,7 @@ private:
 	UPROPERTY()
 	int32 ConnectedPlayersCount;
 	UPROPERTY()
-	TArray<class AConquestCharacter*> CurrentCharacters;
+	TArray<class AConquestPlayerState*> CurrentPlayers;
 	UPROPERTY()
 	TArray<FTeamDefinition> TeamDefinitions;
 
@@ -47,7 +47,6 @@ private:
 	UFUNCTION()
 	void UpdateResources();
 
-	class APlayerStart* FindPlayerStartForTeam(FName TeamName) const;
 
 public:
 	
@@ -55,7 +54,10 @@ public:
 
 	void PostLogin(APlayerController* NewPlayer) override;
 
-	TArray<FName> getTeamNames() const;
+	TArray<FName> GetTeamNames() const;
+
+
+	AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 protected:
 	void BeginPlay() override;
