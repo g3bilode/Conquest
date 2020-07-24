@@ -65,11 +65,15 @@ private:
 	TWeakObjectPtr<AActor> SelectedActor;
 	UPROPERTY(Replicated)
 	AConquestPlayerState* ConquestPlayerState;
+	TArray<TArray<FVector>> LaneArray;
+
 
 	/* Check if can purchase unit. */
 	bool CanPurchaseUnit(const TSubclassOf<class AConquestUnit> unit) const;
 	/* Pay the purchase cost of a unit. */
 	void PurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
+	/* Gather CapturePoints and build lane array. */
+	void BuildLaneArray();
 
 	UPROPERTY()
 	UUserWidget* _menuOutpost;

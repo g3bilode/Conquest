@@ -46,6 +46,9 @@ public:
 
 	void Capture(FName TeamName);
 
+	int8 GetLaneNumber() const;
+	int8 GetRowNumber() const;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -80,8 +83,11 @@ private:
 	// TeamName currently occupying point
 	FName OccupierTeamName;
 
-	// Two digit representation of position (ex: 21 = lane 2, row 1)
+	/* Lane position (ex: 0 = lane 0) */
 	UPROPERTY(EditAnywhere)
-	FName LanePosition;
+	int8 LaneNumber;
+	/* Row position (ex: 0 = row 0) */
+	UPROPERTY(EditAnywhere)
+	int8 RowNumber;
 	
 };

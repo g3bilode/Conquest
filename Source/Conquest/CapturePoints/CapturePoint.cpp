@@ -54,6 +54,16 @@ void ACapturePoint::Capture(FName TeamName)
 	UE_LOG(LogConquest, Log, TEXT("CAPTURED BY %s"), *TeamName.ToString());
 }
 
+int8 ACapturePoint::GetLaneNumber() const
+{
+	return LaneNumber;
+}
+
+int8 ACapturePoint::GetRowNumber() const
+{
+	return RowNumber;
+}
+
 void ACapturePoint::BeginPlay()
 {
 	Super::BeginPlay();

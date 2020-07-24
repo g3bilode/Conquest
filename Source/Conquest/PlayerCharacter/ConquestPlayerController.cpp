@@ -10,6 +10,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "SpawnPoints/SpawnPoint.h"
 #include "UnrealNetwork.h"
+#include "EngineUtils.h"
+#include "GameState/ConquestGameState.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -27,6 +29,7 @@ void AConquestPlayerController::BeginPlay()
 	if (IsLocalPlayerController())
 	{
 		CreateUI();
+		BuildLaneArray();
 	}
 }
 
@@ -235,6 +238,30 @@ void AConquestPlayerController::PurchaseUnit(const TSubclassOf<class AConquestUn
 	ConquestPlayerState->Gold -= cost;
 }
 
+
+void AConquestPlayerController::BuildLaneArray()
+{
+	// TODO: Improve this?
+	// Init the LaneArray
+	AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
+	int32 numLanes = conquestGameState->LaneSpec.Num();
+	LaneArray.Init(TArray<FVector>(), numLanes);
+	int8 idx = 0;
+	for (TArray<FVector>& lane : LaneArray)
+	{
+		lane.Init(FVector(), conquestGameState->LaneSpec[idx]);
+		idx++;
+	}
+
+	// Assign LaneArray values
+	for (TActorIterator<ACapturePoint> CapturePointItr(GetWorld()); CapturePointItr; ++CapturePointItr)
+	{
+		int8 LaneNumber = CapturePointItr->GetLaneNumber();
+		int8 RowNumber = CapturePointItr->GetRowNumber();
+		FVector location = CapturePointItr->GetActorLocation();
+		LaneArray[LaneNumber][RowNumber] = location;
+	}
+}
 
 void AConquestPlayerController::CreateUI()
 {

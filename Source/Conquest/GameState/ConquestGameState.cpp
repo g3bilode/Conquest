@@ -4,6 +4,12 @@
 #include "ConquestGameState.h"
 #include "PlayerCharacter/ConquestPlayerState.h"
 
+AConquestGameState::AConquestGameState()
+{
+	// Setup lane/row spec. Maybe this should go somewhere else...
+	LaneSpec = TArray<int8>({ 3, 1, 3 });
+}
+
 TArray<AConquestPlayerState*> AConquestGameState::getConquestPlayerArray()
 {
 	TArray<AConquestPlayerState*> conquestPlayerArray;
