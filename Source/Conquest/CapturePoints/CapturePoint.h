@@ -65,15 +65,23 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void OnTriggerOverlapWithUnit(FName TeamName);
 
+	// UnitSlot configs
 	int32 UnitSlotBuffer;
 	int32 UnitSlotCount;
 	int32 UnitSlotColumnCount;
 	
+	// Temp locations for units to occupy
 	UPROPERTY(ReplicatedUsing=OnRep_UnitSlots)
 	TArray<FUnitSlot> UnitSlots;
 	
+	// Flag to draw debug slots only once
 	bool AreSlotsDrawn;
 	
+	// TeamName currently occupying point
 	FName OccupierTeamName;
+
+	// Two digit representation of position (ex: 21 = lane 2, row 1)
+	UPROPERTY(EditAnywhere)
+	FName LanePosition;
 	
 };

@@ -2,7 +2,6 @@
 
 #include "CapturePoint.h"
 #include "Conquest.h"
-#include "DrawDebugHelpers.h"
 #include "GameState/ConquestGameState.h"
 #include "PlayerCharacter/ConquestPlayerState.h"
 #include "GameMode/ConquestGameMode.h"
@@ -108,7 +107,7 @@ void ACapturePoint::OnRep_UnitSlots()
 	{
 		for (FUnitSlot unitSlot : UnitSlots)
 		{
-			DrawDebugSphere(GetWorld(), unitSlot.SlotLocation, 10.0f, 32, FColor(100, 0, 0), true);
+			UE_LOG(LogConquest, Log, TEXT("Would draw"));
 		}
 		AreSlotsDrawn = true;
 	}
