@@ -42,7 +42,6 @@ public:
 
 protected:
 	// Begin PlayerController interface
-	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
 	// End PlayerController interface
@@ -67,8 +66,10 @@ private:
 	UPROPERTY(Replicated)
 	AConquestPlayerState* ConquestPlayerState;
 
-	/* Attempt to purchase unit. Return True on success. */
-	bool AttemptPurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
+	/* Check if can purchase unit. */
+	bool CanPurchaseUnit(const TSubclassOf<class AConquestUnit> unit) const;
+	/* Pay the purchase cost of a unit. */
+	void PurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
 
 	UPROPERTY()
 	UUserWidget* _menuOutpost;

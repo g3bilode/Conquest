@@ -45,7 +45,7 @@ bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class ACon
 void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn)
 {
 	
-	if (!AttemptPurchaseUnit(actorToSpawn))
+	if (!CanPurchaseUnit(actorToSpawn))
 	{
 		UE_LOG(LogConquest, Log, TEXT("Cannot purchase unit."));
 		return;
@@ -53,6 +53,7 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 
 	FVector location;
 	TArray<AActor*> unitSpawnActors;
+	// TODO: This is dumb, don't look for a spawnpoint each time
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnPoint::StaticClass(), unitSpawnActors);
 	for (AActor* unitSpawnActor : unitSpawnActors)
 	{
@@ -81,13 +82,12 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
 		conquestSpawnedUnit->SetTargetDestination(location + FVector(0, 100, -200));
 
-		UGameplayStatics::FinishSpawningActor(spawnedUnit, spawnTransform);
+		UGameplayStatics::FinishSpawningActor(conquestSpawnedUnit, spawnTransform);
+		if (IsValid(conquestSpawnedUnit))
+		{
+			PurchaseUnit(actorToSpawn);
+		}
 	}
-}
-
-void AConquestPlayerController::PlayerTick(float DeltaTime)
-{
-	Super::PlayerTick(DeltaTime);
 }
 
 void AConquestPlayerController::SetupInputComponent()
@@ -222,16 +222,19 @@ void AConquestPlayerController::OnSelect()
 	}
 }
 
-bool AConquestPlayerController::AttemptPurchaseUnit(const TSubclassOf<class AConquestUnit> unit)
+bool AConquestPlayerController::CanPurchaseUnit(const TSubclassOf<class AConquestUnit> unit) const
 {
 	int32 cost = unit->GetDefaultObject<AConquestUnit>()->PurchaseCost;
-	if (cost <= ConquestPlayerState->Gold)
-	{
-		ConquestPlayerState->Gold -= cost;
-		return true;
-	}
-	return false;
+	return cost <= ConquestPlayerState->Gold;
 }
+
+
+void AConquestPlayerController::PurchaseUnit(const TSubclassOf<class AConquestUnit> unit)
+{
+	int32 cost = unit->GetDefaultObject<AConquestUnit>()->PurchaseCost;
+	ConquestPlayerState->Gold -= cost;
+}
+
 
 void AConquestPlayerController::CreateUI()
 {
