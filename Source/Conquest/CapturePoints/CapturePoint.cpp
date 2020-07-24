@@ -34,9 +34,9 @@ void ACapturePoint::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 	DOREPLIFETIME(ACapturePoint, UnitSlots);
 }
 
-FVector* ACapturePoint::getDestinationForUnit(const FName teamName)
+FVector* ACapturePoint::GetDestinationForUnit(const FName teamName)
 {
-	FUnitSlot* unitSlot = getAvailableUnitSlot(teamName);
+	FUnitSlot* unitSlot = GetAvailableUnitSlot(teamName);
 	if (unitSlot != nullptr)
 	{
 		// Found a free guy
@@ -57,10 +57,10 @@ void ACapturePoint::Capture(FName TeamName)
 void ACapturePoint::BeginPlay()
 {
 	Super::BeginPlay();
-	generateUnitSlots();
+	GenerateUnitSlots();
 }
 
-void ACapturePoint::generateUnitSlots()
+void ACapturePoint::GenerateUnitSlots()
 {
 	if (HasAuthority())
 	{
@@ -68,13 +68,13 @@ void ACapturePoint::generateUnitSlots()
 		int32 i = 0;
 		for (FName teamName : conquestGameMode->GetTeamNames())
 		{
-			generateUnitSlotsForTeam(teamName, i);
+			GenerateUnitSlotsForTeam(teamName, i);
 			i++;
 		}
 	}
 }
 
-void ACapturePoint::generateUnitSlotsForTeam(const FName teamName, const int32 teamIndex)
+void ACapturePoint::GenerateUnitSlotsForTeam(const FName teamName, const int32 teamIndex)
 {
 	for (int32 i=0; i<UnitSlotCount; i++)
 	{
@@ -89,7 +89,7 @@ void ACapturePoint::generateUnitSlotsForTeam(const FName teamName, const int32 t
 	}
 }
 
-FUnitSlot* ACapturePoint::getAvailableUnitSlot(const FName teamName)
+FUnitSlot* ACapturePoint::GetAvailableUnitSlot(const FName teamName)
 {
 	for (FUnitSlot& unitSlot : UnitSlots)
 	{

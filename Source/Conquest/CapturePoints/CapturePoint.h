@@ -42,7 +42,7 @@ class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInte
 public:
 	ACapturePoint();
 
-	FVector* getDestinationForUnit(const FName teamName);
+	FVector* GetDestinationForUnit(const FName teamName);
 
 	void Capture(FName TeamName);
 
@@ -55,9 +55,9 @@ private:
 
 	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
-	void generateUnitSlots();
-	void generateUnitSlotsForTeam(const FName teamName, const int32 teamIndex);
-	FUnitSlot* getAvailableUnitSlot(const FName teamName);
+	void GenerateUnitSlots();
+	void GenerateUnitSlotsForTeam(const FName teamName, const int32 teamIndex);
+	FUnitSlot* GetAvailableUnitSlot(const FName teamName);
 
 	UFUNCTION()
 	virtual void OnRep_UnitSlots();
