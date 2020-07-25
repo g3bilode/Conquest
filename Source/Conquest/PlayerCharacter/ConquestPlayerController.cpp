@@ -297,11 +297,6 @@ void AConquestPlayerController::CreateUI()
 	}
 }
 
-void AConquestPlayerController::MoveUnit_Implementation(AConquestUnit* unit, FVector location)
-{
-	unit->SetTargetDestination(location);
-}
-
 AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 {
 	return ConquestPlayerState;
@@ -349,9 +344,4 @@ void AConquestPlayerController::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	BuildLaneArray();
-}
-
-bool AConquestPlayerController::MoveUnit_Validate(AConquestUnit* unit, FVector location)
-{
-	return true;
 }

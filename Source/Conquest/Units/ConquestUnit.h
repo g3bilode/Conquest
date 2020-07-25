@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Interfaces/ConquestSelectableInterface.h"
 #include "ConquestUnit.generated.h"
 
 UCLASS()
-class CONQUEST_API AConquestUnit : public ACharacter, public IConquestSelectableInterface
+class CONQUEST_API AConquestUnit : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -42,9 +41,6 @@ public:
 	int32 PurchaseCost;
 	
 private:
-	virtual bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
-
-	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
 	void MoveToDestination();
 	bool HasArrivedAtDestination();

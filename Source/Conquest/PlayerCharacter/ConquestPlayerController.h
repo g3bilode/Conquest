@@ -40,11 +40,6 @@ public:
 	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations);
 	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations);
 
-	UFUNCTION(Server, Unreliable, WithValidation)
-	void MoveUnit(AConquestUnit* unit, FVector location);
-	virtual bool MoveUnit_Validate(AConquestUnit* unit, FVector location);
-	virtual void MoveUnit_Implementation(AConquestUnit* unit, FVector location);
-
 	AConquestPlayerState* GetConquestPlayerState();
 
 	/* Outpost */

@@ -2,11 +2,7 @@
 
 #include "ConquestUnit.h"
 #include "Conquest.h"
-#include "Outpost/Outpost.h"
-#include "PlayerCharacter/ConquestPlayerController.h"
-#include "PlayerCharacter/ConquestPlayerState.h"
 #include "UnrealNetwork.h"
-#include "CapturePoints/CapturePoint.h"
 
 
 // Sets default values
@@ -98,41 +94,4 @@ void AConquestUnit::MoveToDestination()
 bool AConquestUnit::HasArrivedAtDestination()
 {
 	return FVector::DistXY(TargetDestination, GetActorLocation()) < 1.0f;
-}
-
-bool AConquestUnit::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
-{
-	UE_LOG(LogConquest, Log, TEXT("I am Selected! (%s)"), *GetNameSafe(this));
-	return true;
-}
-
-bool AConquestUnit::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
-{
-	AConquestPlayerState* playerState = Cast<AConquestPlayerState>(initiator->PlayerState);
-	if (playerState != nullptr)
-	{
-		if (playerState->TeamName != TeamName)
-		{
-			UE_LOG(LogConquest, Log, TEXT("Cant touch me!: %s"), *(playerState->TeamName.ToString()));
-			return false;
-		}
-	}
-	// OUTPOST
-	if (NewSelection->GetClass()->IsChildOf(AOutpost::StaticClass()))
-	{
-		UE_LOG(LogConquest, Log, TEXT("New Target Location!"));
-		initiator->MoveUnit(this, NewSelection->GetActorLocation());
-	}
-	// CAPTURE POINT
-	if (NewSelection->GetClass()->IsChildOf(ACapturePoint::StaticClass()))
-	{
-		UE_LOG(LogConquest, Log, TEXT("Move to CapturePoint!"));
-		ACapturePoint* capturePoint = Cast<ACapturePoint>(NewSelection);
-		const FVector* destination = capturePoint->GetDestinationForUnit(TeamName);
-		if (destination != nullptr)
-		{
-			initiator->MoveUnit(this, *destination);
-		}
-	}
-	return true;
 }
