@@ -14,12 +14,15 @@ struct FTeamDefinition
 
 	FTeamDefinition()
 		: TeamName(NAME_None)
+		, TeamIndex(-1)
 	{}
-	FTeamDefinition(FName inTeamName)
-		: TeamName(inTeamName)
+	FTeamDefinition(FName InTeamName, int32 InTeamIndex)
+		: TeamName(InTeamName)
+		, TeamIndex(InTeamIndex)
 	{}
 
 	FName TeamName;
+	int32 TeamIndex;
 
 };
 

@@ -26,4 +26,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Team")
 	FName TeamName;
 
+	UPROPERTY(Replicated)
+	int32 TeamIndex;
+
 };

@@ -13,6 +13,7 @@
 #include "EngineUtils.h"
 #include "GameState/ConquestGameState.h"
 #include "Outpost/Outpost.h"
+#include "Algo/Reverse.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -262,17 +263,27 @@ void AConquestPlayerController::BuildLaneArray()
 		LaneArray[LaneNumber].LaneDestinations[RowNumber] = CapturePointItr->GetActorLocation();
 	}
 
-	// Add the final destination: the enemy base
+	// Get the final destination: the enemy base
+	FVector enemyLocation;
 	for (TActorIterator<AOutpost> OutPostItr(GetWorld()); OutPostItr; ++OutPostItr)
 	{
 		if (OutPostItr->TeamName != ConquestPlayerState->TeamName)
 		{
-			// Found enemy outpost
-			for (FLaneDestinations& lane : LaneArray)
-			{
-				lane.LaneDestinations.Add(OutPostItr->GetActorLocation());
-			}
+			enemyLocation = OutPostItr->GetActorLocation();
+			break;
 		}
+	}
+
+	// Final touches
+	for (FLaneDestinations& lane : LaneArray)
+	{
+		if (ConquestPlayerState->TeamIndex > 0)
+		{
+			// Not first player, flip array
+			Algo::Reverse(lane.LaneDestinations);
+		}
+		// Add enemy base location
+		lane.LaneDestinations.Add(enemyLocation);
 	}
 }
 

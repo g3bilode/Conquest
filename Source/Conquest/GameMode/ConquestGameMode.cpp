@@ -13,13 +13,16 @@
 
 AConquestGameMode::AConquestGameMode()
 {
-	TeamDefinitions.Add(FTeamDefinition("Aztec"));
-	TeamDefinitions.Add(FTeamDefinition("Inca"));
+	// Team Definitions
+	TeamDefinitions.Add(FTeamDefinition("Aztec", 0));
+	TeamDefinitions.Add(FTeamDefinition("Inca", 1));
 
+	// Game constants
 	GoldGainBase = 5;
 	GoldStartingAmount = 500;
 	UpdateResourceTimer = 2.0f;
 
+	// Default Classes
 	DefaultPawnClass = AConquestCharacter::StaticClass();
 	PlayerControllerClass = AConquestPlayerController::StaticClass();
 	GameStateClass = AConquestGameState::StaticClass();
@@ -46,6 +49,7 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 	{
 		CurrentPlayers.Add(conquestPlayerState);
 		conquestPlayerState->TeamName = TeamDefinitions[ConnectedPlayersCount].TeamName;
+		conquestPlayerState->TeamIndex = TeamDefinitions[ConnectedPlayersCount].TeamIndex;
 		conquestPlayerState->Gold = GoldStartingAmount;
 		ConnectedPlayersCount++;
 	}
