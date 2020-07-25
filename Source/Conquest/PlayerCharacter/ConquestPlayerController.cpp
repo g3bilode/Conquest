@@ -38,17 +38,18 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AConquestPlayerController, ConquestPlayerState);
+
 }
 
-bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn)
+bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations)
 {
 	return true;
 }
 
-void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn)
+void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations)
 {
 	
-	if (!CanPurchaseUnit(actorToSpawn))
+	if (!CanPurchaseUnit(ActorToSpawn))
 	{
 		UE_LOG(LogConquest, Log, TEXT("Cannot purchase unit."));
 		return;
@@ -76,7 +77,7 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 	FTransform spawnTransform;
 	spawnTransform.SetLocation(location);
 
-	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, actorToSpawn->GetDefaultObject()->GetClass(), spawnTransform, ESpawnActorCollisionHandlingMethod::Undefined, this);
+	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ActorToSpawn->GetDefaultObject()->GetClass(), spawnTransform, ESpawnActorCollisionHandlingMethod::Undefined, this);
 	
 	AConquestUnit* conquestSpawnedUnit = Cast<AConquestUnit>(spawnedUnit);
 
@@ -84,11 +85,12 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 	{
 		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
 		conquestSpawnedUnit->SetTargetDestination(location + FVector(0, 100, -200));
+		conquestSpawnedUnit->SetLaneDestinations(LaneDestinations);
 
 		UGameplayStatics::FinishSpawningActor(conquestSpawnedUnit, spawnTransform);
 		if (IsValid(conquestSpawnedUnit))
 		{
-			PurchaseUnit(actorToSpawn);
+			PurchaseUnit(ActorToSpawn);
 		}
 	}
 }
@@ -245,11 +247,11 @@ void AConquestPlayerController::BuildLaneArray()
 	// Init the LaneArray
 	AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
 	int32 numLanes = conquestGameState->LaneSpec.Num();
-	LaneArray.Init(TArray<FVector>(), numLanes);
+	LaneArray.Init(FLaneDestinations(), numLanes);
 	int8 idx = 0;
-	for (TArray<FVector>& lane : LaneArray)
+	for (FLaneDestinations& lane : LaneArray)
 	{
-		lane.Init(FVector(), conquestGameState->LaneSpec[idx]);
+		lane.LaneDestinations.Init(FVector(), conquestGameState->LaneSpec[idx]);
 		idx++;
 	}
 
@@ -259,7 +261,7 @@ void AConquestPlayerController::BuildLaneArray()
 		int8 LaneNumber = CapturePointItr->GetLaneNumber();
 		int8 RowNumber = CapturePointItr->GetRowNumber();
 		FVector location = CapturePointItr->GetActorLocation();
-		LaneArray[LaneNumber][RowNumber] = location;
+		LaneArray[LaneNumber].LaneDestinations[RowNumber] = location;
 	}
 }
 
@@ -313,6 +315,11 @@ void AConquestPlayerController::SetOutpostMenuVisibility(const bool isVisible) c
 void AConquestPlayerController::AttackOutpost(AOutpost* outpost)
 {
 	UE_LOG(LogConquest, Log, TEXT("CHAAARGE ! ! !"));
+}
+
+TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index) const
+{
+	return LaneArray[Index].LaneDestinations;
 }
 
 bool AConquestPlayerController::MoveUnit_Validate(AConquestUnit* unit, FVector location)

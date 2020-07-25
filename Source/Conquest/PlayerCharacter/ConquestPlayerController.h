@@ -9,6 +9,24 @@
 #include "ConquestPlayerController.generated.h"
 
 
+USTRUCT()
+struct FLaneDestinations
+{
+	GENERATED_BODY()
+
+	FLaneDestinations()
+		: LaneDestinations()
+	{}
+
+	FLaneDestinations(TArray<FVector> InLaneDestinations)
+		: LaneDestinations(InLaneDestinations)
+	{}
+
+	UPROPERTY()
+	TArray<FVector> LaneDestinations;
+};
+
+
 UCLASS()
 class AConquestPlayerController : public APlayerController
 {
@@ -18,9 +36,9 @@ public:
 	AConquestPlayerController();
 
 	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation)
-	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> actorToSpawn);
-	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> actorToSpawn);
-	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> actorToSpawn);
+	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations);
+	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations);
+	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations);
 
 	UFUNCTION(Server, Unreliable, WithValidation)
 	void MoveUnit(AConquestUnit* unit, FVector location);
@@ -29,16 +47,20 @@ public:
 
 	AConquestPlayerState* GetConquestPlayerState();
 
-	// Reference UMG widget in Editor
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<class UUserWidget> wOutpostMenu;
-
 	/* Outpost */
 	void OnOutpostSelect(AOutpost* outpost);
 	void DisplayOutpostMenu(const FVector& outpostLocation);
 	void SetOutpostMenuVisibility(const bool isVisible) const;
 	void AttackOutpost(AOutpost* outpost);
+
+	/* Getters */
+	UFUNCTION(BlueprintCallable)
+	TArray<FVector> GetLaneDestinations(int32 Index) const;
+
 	
+	// Reference UMG widget in Editor
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UUserWidget> wOutpostMenu;
 
 protected:
 	// Begin PlayerController interface
@@ -65,7 +87,9 @@ private:
 	TWeakObjectPtr<AActor> SelectedActor;
 	UPROPERTY(Replicated)
 	AConquestPlayerState* ConquestPlayerState;
-	TArray<TArray<FVector>> LaneArray;
+	
+	UPROPERTY()
+	TArray<FLaneDestinations> LaneArray;
 
 
 	/* Check if can purchase unit. */

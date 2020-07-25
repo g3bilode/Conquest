@@ -27,13 +27,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable)
 	FVector GetTargetDestination() const;
 
-	UFUNCTION(BlueprintCallable)
+	void ProgressNextDestination();
+
 	void SetTargetDestination(FVector newLocation);
 
-	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Team")
+	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
+
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
 	FName TeamName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
@@ -51,4 +53,8 @@ private:
 	FVector TargetDestination;
 	UPROPERTY()
 	bool IsAtDestination;
+	/* List of destinations for unit's lane */
+	TArray<FVector> LaneDestinations;
+	/* Current location in lane */
+	int8 CurrentDestinationIndex;
 };

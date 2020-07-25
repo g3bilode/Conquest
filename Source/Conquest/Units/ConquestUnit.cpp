@@ -15,6 +15,7 @@ AConquestUnit::AConquestUnit()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CurrentDestinationIndex = -1;
 }
 
 void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -29,7 +30,8 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 void AConquestUnit::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	ProgressNextDestination();
 }
 
 // Called every frame
@@ -54,10 +56,28 @@ FVector AConquestUnit::GetTargetDestination() const
 	return TargetDestination;
 }
 
+void AConquestUnit::ProgressNextDestination()
+{
+	CurrentDestinationIndex++;
+	if (CurrentDestinationIndex < LaneDestinations.Num())
+	{
+		SetTargetDestination(LaneDestinations[CurrentDestinationIndex]);
+	}
+	else
+	{
+		UE_LOG(LogConquest, Log, TEXT("I have arrived at final destination!"));
+	}
+}
+
 void AConquestUnit::SetTargetDestination(FVector newLocation)
 {
 	TargetDestination = newLocation;
 	IsAtDestination = false;
+}
+
+void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestinations)
+{
+	LaneDestinations = InLaneDestinations;
 }
 
 void AConquestUnit::MoveToDestination()
@@ -71,6 +91,7 @@ void AConquestUnit::MoveToDestination()
 	{
 		UE_LOG(LogConquest, Log, TEXT("I have arrived!"));
 		IsAtDestination = true;
+		ProgressNextDestination();
 	}
 }
 
