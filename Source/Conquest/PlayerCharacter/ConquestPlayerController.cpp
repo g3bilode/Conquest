@@ -12,6 +12,7 @@
 #include "UnrealNetwork.h"
 #include "EngineUtils.h"
 #include "GameState/ConquestGameState.h"
+#include "Outpost/Outpost.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -29,7 +30,6 @@ void AConquestPlayerController::BeginPlay()
 	if (IsLocalPlayerController())
 	{
 		CreateUI();
-		BuildLaneArray();
 	}
 }
 
@@ -38,7 +38,6 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AConquestPlayerController, ConquestPlayerState);
-
 }
 
 bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations)
@@ -260,8 +259,20 @@ void AConquestPlayerController::BuildLaneArray()
 	{
 		int8 LaneNumber = CapturePointItr->GetLaneNumber();
 		int8 RowNumber = CapturePointItr->GetRowNumber();
-		FVector location = CapturePointItr->GetActorLocation();
-		LaneArray[LaneNumber].LaneDestinations[RowNumber] = location;
+		LaneArray[LaneNumber].LaneDestinations[RowNumber] = CapturePointItr->GetActorLocation();
+	}
+
+	// Add the final destination: the enemy base
+	for (TActorIterator<AOutpost> OutPostItr(GetWorld()); OutPostItr; ++OutPostItr)
+	{
+		if (OutPostItr->TeamName != ConquestPlayerState->TeamName)
+		{
+			// Found enemy outpost
+			for (FLaneDestinations& lane : LaneArray)
+			{
+				lane.LaneDestinations.Add(OutPostItr->GetActorLocation());
+			}
+		}
 	}
 }
 
@@ -320,6 +331,13 @@ void AConquestPlayerController::AttackOutpost(AOutpost* outpost)
 TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index) const
 {
 	return LaneArray[Index].LaneDestinations;
+}
+
+void AConquestPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	BuildLaneArray();
 }
 
 bool AConquestPlayerController::MoveUnit_Validate(AConquestUnit* unit, FVector location)

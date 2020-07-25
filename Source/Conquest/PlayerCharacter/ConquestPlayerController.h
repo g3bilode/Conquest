@@ -62,6 +62,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UUserWidget> wOutpostMenu;
 
+
+	void OnRep_PlayerState() override;
+
 protected:
 	// Begin PlayerController interface
 	virtual void SetupInputComponent() override;
