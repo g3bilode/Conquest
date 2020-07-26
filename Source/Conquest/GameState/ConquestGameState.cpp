@@ -6,11 +6,9 @@
 
 AConquestGameState::AConquestGameState()
 {
-	// Setup lane/row spec. Maybe this should go somewhere else...
-	LaneSpec = TArray<int8>({ 3, 1, 3 });
 }
 
-TArray<AConquestPlayerState*> AConquestGameState::getConquestPlayerArray()
+TArray<class AConquestPlayerState*> AConquestGameState::GetConquestPlayerArray()
 {
 	TArray<AConquestPlayerState*> conquestPlayerArray;
 	for (APlayerState* playerState : PlayerArray)

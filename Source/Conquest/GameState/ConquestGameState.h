@@ -17,8 +17,5 @@ class CONQUEST_API AConquestGameState : public AGameStateBase
 public:
 	AConquestGameState();
 
-	TArray<class AConquestPlayerState*> getConquestPlayerArray();
-	
-	// Array representation of rows per lane in map
-	TArray<int8> LaneSpec;
+	TArray<class AConquestPlayerState*> GetConquestPlayerArray();
 };

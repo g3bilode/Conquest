@@ -14,6 +14,7 @@
 #include "GameState/ConquestGameState.h"
 #include "Outpost/Outpost.h"
 #include "Algo/Reverse.h"
+#include "Utils/ConquestUtils.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -246,12 +247,12 @@ void AConquestPlayerController::BuildLaneArray()
 	// TODO: Improve this?
 	// Init the LaneArray
 	AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
-	int32 numLanes = conquestGameState->LaneSpec.Num();
+	int32 numLanes = ConquestUtils::LaneSpec.Num();
 	LaneArray.Init(FLaneDestinations(), numLanes);
 	int8 idx = 0;
 	for (FLaneDestinations& lane : LaneArray)
 	{
-		lane.LaneDestinations.Init(FVector(), conquestGameState->LaneSpec[idx]);
+		lane.LaneDestinations.Init(FVector(), ConquestUtils::LaneSpec[idx]);
 		idx++;
 	}
 
