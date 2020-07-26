@@ -280,11 +280,16 @@ void AConquestPlayerController::BuildLaneArray()
 	{
 		if (ConquestPlayerState->TeamIndex > 0)
 		{
-			// Not first player, flip array
+			// Not first player, flip rows
 			Algo::Reverse(lane.LaneDestinations);
 		}
 		// Add enemy base location
 		lane.LaneDestinations.Add(enemyLocation);
+	}
+	if (ConquestPlayerState->TeamIndex > 0)
+	{
+		// Not first player, flip lanes
+		Algo::Reverse(LaneArray);
 	}
 }
 
