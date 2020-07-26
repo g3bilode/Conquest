@@ -5,6 +5,8 @@
 #include "UnrealNetwork.h"
 
 
+const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);
+
 // Sets default values
 AConquestUnit::AConquestUnit()
 {
@@ -19,6 +21,7 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AConquestUnit, TeamName);
+	DOREPLIFETIME(AConquestUnit, TeamIndex);
 	DOREPLIFETIME(AConquestUnit, TargetDestination);
 }
 
@@ -26,6 +29,15 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 void AConquestUnit::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (TeamIndex > 0)
+	{
+		// Use alternate colour
+		UMaterialInterface* material = GetMesh()->GetMaterial(0);
+		UMaterialInstanceDynamic* dynamicMaterial = GetMesh()->CreateDynamicMaterialInstance(0, material);
+		dynamicMaterial->SetVectorParameterValue("BodyColor", AlternateColour);
+		GetMesh()->SetMaterial(0, dynamicMaterial);
+	}
 
 	ProgressNextDestination();
 }

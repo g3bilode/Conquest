@@ -84,6 +84,7 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 	if (ConquestPlayerState != nullptr && IsValid(conquestSpawnedUnit))
 	{
 		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
+		conquestSpawnedUnit->TeamIndex = ConquestPlayerState->TeamIndex;
 		conquestSpawnedUnit->SetTargetDestination(location + FVector(0, 100, -200));
 		conquestSpawnedUnit->SetLaneDestinations(LaneDestinations);
 

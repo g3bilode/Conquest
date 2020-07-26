@@ -37,6 +37,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
 	FName TeamName;
 
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
+	int32 TeamIndex;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
 	int32 PurchaseCost;
 	
@@ -53,4 +56,7 @@ private:
 	TArray<FVector> LaneDestinations;
 	/* Current location in lane */
 	int8 CurrentDestinationIndex;
+	
+	/* Alternate unit colour */
+	static const FLinearColor AlternateColour;
 };
