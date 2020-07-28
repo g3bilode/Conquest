@@ -42,12 +42,12 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(AConquestPlayerController, ConquestPlayerState);
 }
 
-bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations)
+bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations, int32 LaneIndex)
 {
 	return true;
 }
 
-void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations)
+void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations, int32 LaneIndex)
 {
 	
 	if (!CanPurchaseUnit(ActorToSpawn))
@@ -79,13 +79,13 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 	spawnTransform.SetLocation(location);
 
 	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ActorToSpawn->GetDefaultObject()->GetClass(), spawnTransform, ESpawnActorCollisionHandlingMethod::Undefined, this);
-	
 	AConquestUnit* conquestSpawnedUnit = Cast<AConquestUnit>(spawnedUnit);
 
 	if (ConquestPlayerState != nullptr && IsValid(conquestSpawnedUnit))
 	{
 		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
 		conquestSpawnedUnit->TeamIndex = ConquestPlayerState->TeamIndex;
+		conquestSpawnedUnit->LaneIndex = LaneIndex;
 		conquestSpawnedUnit->SetLaneDestinations(LaneDestinations);
 
 		UGameplayStatics::FinishSpawningActor(conquestSpawnedUnit, spawnTransform);

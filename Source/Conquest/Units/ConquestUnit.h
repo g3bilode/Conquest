@@ -40,14 +40,28 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
 	int32 TeamIndex;
 
+	UPROPERTY(Replicated)
+	int32 LaneIndex;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
 	int32 PurchaseCost;
 	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Attack")
+	float AgroSphereRadius;
+
+
 private:
 
 	void MoveToDestination();
 	bool HasArrivedAtDestination();
+	UFUNCTION()
+	void OnAgroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+	bool IsTargetEnemy(AConquestUnit* ConquestUnit);
+	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
+	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
 
+	UPROPERTY()
+	AConquestUnit* TargetEnemy;
 	UPROPERTY(Replicated)
 	FVector TargetDestination;
 	UPROPERTY()
@@ -59,4 +73,8 @@ private:
 	
 	/* Alternate unit colour */
 	static const FLinearColor AlternateColour;
+
+	/* Agro Trigger Sphere */
+	UPROPERTY()
+	class USphereComponent* AgroSphere;
 };

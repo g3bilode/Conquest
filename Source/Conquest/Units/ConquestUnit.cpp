@@ -3,6 +3,7 @@
 #include "ConquestUnit.h"
 #include "Conquest.h"
 #include "UnrealNetwork.h"
+#include "Components/SphereComponent.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);
@@ -12,6 +13,12 @@ AConquestUnit::AConquestUnit()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Setup Collision Spheres
+	AgroSphere = CreateDefaultSubobject<USphereComponent>("AgroSphere");
+	AgroSphere->SetupAttachment(RootComponent);
+	AgroSphere->InitSphereRadius(AgroSphereRadius);
+	AgroSphere->OnComponentBeginOverlap.AddDynamic(this, &AConquestUnit::OnAgroCollision);
 
 	CurrentDestinationIndex = -1;
 }
@@ -23,6 +30,7 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 	DOREPLIFETIME(AConquestUnit, TeamName);
 	DOREPLIFETIME(AConquestUnit, TeamIndex);
 	DOREPLIFETIME(AConquestUnit, TargetDestination);
+	DOREPLIFETIME(AConquestUnit, LaneIndex);
 }
 
 // Called when the game starts or when spawned
@@ -106,4 +114,40 @@ void AConquestUnit::MoveToDestination()
 bool AConquestUnit::HasArrivedAtDestination()
 {
 	return FVector::DistXY(TargetDestination, GetActorLocation()) < 1.0f;
+}
+
+void AConquestUnit::OnAgroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+{
+	// TODO: This may only need to be done on local client?
+	AConquestUnit* OtherConquestUnit = Cast<AConquestUnit>(OtherActor);
+	if (IsValid(OtherConquestUnit))
+	{
+		// Found Unit
+		if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
+		{
+			if (IsTargetEnemy(OtherConquestUnit))
+			{
+				SetTargetEnemy(OtherConquestUnit);
+			}
+		}
+	}
+}
+
+void AConquestUnit::SetTargetEnemy(AConquestUnit* EnemyConquestUnit)
+{
+	TargetEnemy = EnemyConquestUnit;
+	UE_LOG(LogConquest, Log, TEXT("TARGET ACQUIRED: %s"), *GetNameSafe(EnemyConquestUnit));
+}
+
+bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)
+{
+	// TODO: Improve this?
+	// Difference in lane index between teams (ie: 0 = 2)
+	const int32 laneDiff = 2;
+	return (LaneIndex + ConquestUnit->LaneIndex) == laneDiff;
+}
+
+bool AConquestUnit::IsTargetEnemy(AConquestUnit* ConquestUnit)
+{
+	return (ConquestUnit->TeamIndex != TeamIndex) && IsEnemyInMyLane(ConquestUnit);
 }
