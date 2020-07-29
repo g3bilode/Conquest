@@ -20,12 +20,29 @@ AConquestUnit::AConquestUnit()
 	AggroSphere->OnComponentBeginOverlap.AddDynamic(this, &AConquestUnit::OnAggroCollision);
 
 	CurrentDestinationIndex = -1;
+	AggroSphereRadius = 300.0f;
+	AttackRange = 100.0f;
+	BaseDamage = 20.0f;
+	AttackCooldown = 1.0f;
+	Health = 100.0f;
 }
 
 void AConquestUnit::PostInitProperties()
 {
 	Super::PostInitProperties();
 	AggroSphere->InitSphereRadius(AggroSphereRadius);
+}
+
+float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	// TODO: Only server should need to do this
+	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Health -= ActualDamage;
+	if (Health <= 0.0f)
+	{
+		Destroy();
+	}
+	return ActualDamage;
 }
 
 void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -36,6 +53,7 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 	DOREPLIFETIME(AConquestUnit, TeamIndex);
 	DOREPLIFETIME(AConquestUnit, TargetDestination);
 	DOREPLIFETIME(AConquestUnit, LaneIndex);
+	DOREPLIFETIME(AConquestUnit, Health);
 }
 
 // Called when the game starts or when spawned
@@ -64,7 +82,7 @@ void AConquestUnit::Tick(float DeltaTime)
 	{
 		// Move towards enemy
 		const FVector& enemyLocation = TargetEnemy->GetActorLocation();
-		if (FVector::Dist(enemyLocation, GetActorLocation()) < 90.0f)
+		if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
 		{
 			// Attack
 			AttackTargetEnemy();
@@ -151,6 +169,11 @@ void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, A
 	}
 }
 
+void AConquestUnit::OnAttackCooldownExpired()
+{
+	bIsOnCooldown = false;
+}
+
 void AConquestUnit::SetTargetEnemy(AConquestUnit* EnemyConquestUnit)
 {
 	TargetEnemy = EnemyConquestUnit;
@@ -159,7 +182,13 @@ void AConquestUnit::SetTargetEnemy(AConquestUnit* EnemyConquestUnit)
 
 void AConquestUnit::AttackTargetEnemy()
 {
-	UE_LOG(LogConquest, Log, TEXT("HYYYAAAA!"));
+	if (!bIsOnCooldown)
+	{
+		UE_LOG(LogConquest, Log, TEXT("%s: HYYYAAAA!"), *GetNameSafe(this));
+		TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
+		bIsOnCooldown = true;
+		GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &AConquestUnit::OnAttackCooldownExpired, AttackCooldown, false);
+	}
 }
 
 bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)
