@@ -15,12 +15,17 @@ AConquestUnit::AConquestUnit()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Setup Collision Spheres
-	AgroSphere = CreateDefaultSubobject<USphereComponent>("AgroSphere");
-	AgroSphere->SetupAttachment(RootComponent);
-	AgroSphere->InitSphereRadius(AgroSphereRadius);
-	AgroSphere->OnComponentBeginOverlap.AddDynamic(this, &AConquestUnit::OnAgroCollision);
+	AggroSphere = CreateDefaultSubobject<USphereComponent>("AggroSphere");
+	AggroSphere->SetupAttachment(RootComponent);
+	AggroSphere->OnComponentBeginOverlap.AddDynamic(this, &AConquestUnit::OnAggroCollision);
 
 	CurrentDestinationIndex = -1;
+}
+
+void AConquestUnit::PostInitProperties()
+{
+	Super::PostInitProperties();
+	AggroSphere->InitSphereRadius(AggroSphereRadius);
 }
 
 void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -116,7 +121,7 @@ bool AConquestUnit::HasArrivedAtDestination()
 	return FVector::DistXY(TargetDestination, GetActorLocation()) < 1.0f;
 }
 
-void AConquestUnit::OnAgroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 	// TODO: This may only need to be done on local client?
 	AConquestUnit* OtherConquestUnit = Cast<AConquestUnit>(OtherActor);
