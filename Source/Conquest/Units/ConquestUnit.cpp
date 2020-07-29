@@ -59,17 +59,26 @@ void AConquestUnit::BeginPlay()
 void AConquestUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!IsAtDestination)
+
+	if (IsValid(TargetEnemy))
 	{
-		MoveToDestination();
+		// Move towards enemy
+		const FVector& enemyLocation = TargetEnemy->GetActorLocation();
+		if (FVector::Dist(enemyLocation, GetActorLocation()) < 90.0f)
+		{
+			// Attack
+			AttackTargetEnemy();
+		}
+		else
+		{
+			MoveToDestination(enemyLocation);
+		}
 	}
-}
-
-// Called to bind functionality to input
-void AConquestUnit::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	else if (!IsAtDestination)
+	{
+		// Move towards next point
+		MoveToDestination(TargetDestination);
+	}
 }
 
 FVector AConquestUnit::GetTargetDestination() const
@@ -101,9 +110,9 @@ void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestination
 	LaneDestinations = InLaneDestinations;
 }
 
-void AConquestUnit::MoveToDestination()
+void AConquestUnit::MoveToDestination(const FVector& Destination)
 {
-	FVector targetDirection = TargetDestination - GetActorLocation();
+	FVector targetDirection = Destination - GetActorLocation();
 	targetDirection.Normalize(SMALL_NUMBER);
 
 	SetActorRotation(FVector(targetDirection.X, targetDirection.Y, 0).Rotation());
@@ -124,15 +133,19 @@ bool AConquestUnit::HasArrivedAtDestination()
 void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 	// TODO: This may only need to be done on local client?
-	AConquestUnit* OtherConquestUnit = Cast<AConquestUnit>(OtherActor);
-	if (IsValid(OtherConquestUnit))
+	if (!IsValid(TargetEnemy))
 	{
-		// Found Unit
-		if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
+		// Find a new target
+		AConquestUnit* OtherConquestUnit = Cast<AConquestUnit>(OtherActor);
+		if (IsValid(OtherConquestUnit))
 		{
-			if (IsTargetEnemy(OtherConquestUnit))
+			// Found Unit
+			if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
 			{
-				SetTargetEnemy(OtherConquestUnit);
+				if (IsTargetEnemy(OtherConquestUnit))
+				{
+					SetTargetEnemy(OtherConquestUnit);
+				}
 			}
 		}
 	}
@@ -142,6 +155,11 @@ void AConquestUnit::SetTargetEnemy(AConquestUnit* EnemyConquestUnit)
 {
 	TargetEnemy = EnemyConquestUnit;
 	UE_LOG(LogConquest, Log, TEXT("TARGET ACQUIRED: %s"), *GetNameSafe(EnemyConquestUnit));
+}
+
+void AConquestUnit::AttackTargetEnemy()
+{
+	UE_LOG(LogConquest, Log, TEXT("HYYYAAAA!"));
 }
 
 bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)

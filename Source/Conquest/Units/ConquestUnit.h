@@ -26,9 +26,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	FVector GetTargetDestination() const;
 
 	void ProgressNextDestination();
@@ -55,13 +52,14 @@ public:
 
 private:
 
-	void MoveToDestination();
+	void MoveToDestination(const FVector& Destination);
 	bool HasArrivedAtDestination();
 	UFUNCTION()
 	void OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 	bool IsTargetEnemy(AConquestUnit* ConquestUnit);
 	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
 	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
+	void AttackTargetEnemy();
 
 	UPROPERTY()
 	AConquestUnit* TargetEnemy;
