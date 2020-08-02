@@ -128,6 +128,12 @@ void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestination
 	LaneDestinations = InLaneDestinations;
 }
 
+void AConquestUnit::DealDamage()
+{
+	TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
+	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &AConquestUnit::OnAttackCooldownExpired, AttackCooldown, false);
+}
+
 void AConquestUnit::MoveToDestination(const FVector& Destination)
 {
 	FVector targetDirection = Destination - GetActorLocation();
@@ -184,10 +190,8 @@ void AConquestUnit::AttackTargetEnemy()
 {
 	if (!bIsOnCooldown)
 	{
-		UE_LOG(LogConquest, Log, TEXT("%s: HYYYAAAA!"), *GetNameSafe(this));
-		TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
 		bIsOnCooldown = true;
-		GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &AConquestUnit::OnAttackCooldownExpired, AttackCooldown, false);
+		PlayAnimMontage(AttackMontage);
 	}
 }
 

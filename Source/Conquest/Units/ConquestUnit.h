@@ -36,6 +36,9 @@ public:
 
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
 
+	UFUNCTION(BlueprintCallable)
+	void DealDamage();
+
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
 	FName TeamName;
 
@@ -60,6 +63,10 @@ public:
 	float AttackCooldown;
 	UPROPERTY(Replicated, BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
 	float Health;
+
+	// ANIMS
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
+	UAnimMontage* AttackMontage;
 
 
 private:
