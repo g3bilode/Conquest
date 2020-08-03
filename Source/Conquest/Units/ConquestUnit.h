@@ -80,6 +80,7 @@ private:
 	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
 	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
 	void AttackTargetEnemy();
+	void Die();
 
 	UPROPERTY(Replicated)
 	FVector TargetDestination;
@@ -105,4 +106,8 @@ private:
 	FTimerHandle AttackCooldownTimerHandle;
 	/* Is our attack on cooldown? */
 	bool bIsOnCooldown;
+	/* Have we started an attack? */
+	bool bHasStartedAttack;
+	/* Are we dead? */
+	bool bIsDead;
 };

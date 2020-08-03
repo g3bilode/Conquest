@@ -25,6 +25,8 @@ AConquestUnit::AConquestUnit()
 	BaseDamage = 20.0f;
 	AttackCooldown = 1.0f;
 	Health = 100.0f;
+
+	bIsDead = false;
 }
 
 void AConquestUnit::PostInitProperties()
@@ -40,7 +42,7 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 	Health -= ActualDamage;
 	if (Health <= 0.0f)
 	{
-		Destroy();
+		Die();
 	}
 	return ActualDamage;
 }
@@ -132,6 +134,11 @@ void AConquestUnit::DealDamage()
 {
 	TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &AConquestUnit::OnAttackCooldownExpired, AttackCooldown, false);
+	bHasStartedAttack = false;
+	if (bIsDead)
+	{
+		Die();
+	}
 }
 
 void AConquestUnit::MoveToDestination(const FVector& Destination)
@@ -191,7 +198,18 @@ void AConquestUnit::AttackTargetEnemy()
 	if (!bIsOnCooldown)
 	{
 		bIsOnCooldown = true;
+		bHasStartedAttack = true;
 		PlayAnimMontage(AttackMontage);
+	}
+}
+
+void AConquestUnit::Die()
+{
+	bIsDead = true;
+	if (!bHasStartedAttack)
+	{
+		// Ready to die
+		Destroy();
 	}
 }
 
