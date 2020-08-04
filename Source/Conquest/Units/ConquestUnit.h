@@ -91,6 +91,10 @@ private:
 	UFUNCTION()
 	virtual void OnRep_bIsDead();
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void PlayAttackAnim();
+	virtual void PlayAttackAnim_Implementation();
+
 	UPROPERTY(Replicated)
 	FVector TargetDestination;
 	UPROPERTY()

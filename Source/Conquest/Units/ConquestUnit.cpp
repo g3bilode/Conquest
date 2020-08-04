@@ -81,36 +81,39 @@ void AConquestUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsDead)
+	if (HasAuthority())
 	{
-		return;
-	}
-
-	if (IsValid(TargetEnemy))
-	{
-		if (TargetEnemy->IsDead())
+		if (bIsDead)
 		{
-			SetTargetEnemy(nullptr);
+			return;
 		}
-		else
+
+		if (IsValid(TargetEnemy))
 		{
-			// Move towards enemy
-			const FVector& enemyLocation = TargetEnemy->GetActorLocation();
-			if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
+			if (TargetEnemy->IsDead())
 			{
-				// Attack
-				AttackTargetEnemy();
+				SetTargetEnemy(nullptr);
 			}
 			else
 			{
-				MoveToDestination(enemyLocation);
+				// Move towards enemy
+				const FVector& enemyLocation = TargetEnemy->GetActorLocation();
+				if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
+				{
+					// Attack
+					AttackTargetEnemy();
+				}
+				else
+				{
+					MoveToDestination(enemyLocation);
+				}
 			}
 		}
-	}
-	else if (!IsAtDestination)
-	{
-		// Move towards next point
-		MoveToDestination(TargetDestination);
+		else if (!IsAtDestination)
+		{
+			// Move towards next point
+			MoveToDestination(TargetDestination);
+		}
 	}
 }
 
@@ -226,7 +229,7 @@ void AConquestUnit::AttackTargetEnemy()
 	if (!bIsOnCooldown)
 	{
 		bIsOnCooldown = true;
-		PlayAnimMontage(AttackMontage);
+		PlayAttackAnim();
 	}
 }
 
@@ -243,6 +246,11 @@ void AConquestUnit::OnRep_bIsDead()
 {
 	// Ready to die
 	PlayAnimMontage(DeathMontage);
+}
+
+void AConquestUnit::PlayAttackAnim_Implementation()
+{
+	PlayAnimMontage(AttackMontage);
 }
 
 bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)
