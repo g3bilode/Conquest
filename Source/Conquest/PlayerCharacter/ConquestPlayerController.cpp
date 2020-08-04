@@ -340,14 +340,11 @@ void AConquestPlayerController::AttackOutpost(AOutpost* outpost)
 	UE_LOG(LogConquest, Log, TEXT("CHAAARGE ! ! !"));
 }
 
-TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index) const
+TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index)
 {
+	if (LaneArray.Num() == 0)
+	{
+		BuildLaneArray();
+	}
 	return LaneArray[Index].LaneDestinations;
-}
-
-void AConquestPlayerController::OnRep_PlayerState()
-{
-	Super::OnRep_PlayerState();
-	
-	BuildLaneArray();
 }
