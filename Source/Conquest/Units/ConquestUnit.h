@@ -38,6 +38,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DealDamage();
+	UFUNCTION(BlueprintCallable)
+	void DeathEnd();
+	UFUNCTION(BlueprintCallable)
+	bool IsDead();
 
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
 	FName TeamName;
@@ -67,6 +71,8 @@ public:
 	// ANIMS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
 	UAnimMontage* AttackMontage;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
+	UAnimMontage* DeathMontage;
 
 
 private:
@@ -80,7 +86,10 @@ private:
 	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
 	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
 	void AttackTargetEnemy();
-	void Die();
+	void DeathBegin();
+
+	UFUNCTION()
+	virtual void OnRep_bIsDead();
 
 	UPROPERTY(Replicated)
 	FVector TargetDestination;
@@ -106,8 +115,7 @@ private:
 	FTimerHandle AttackCooldownTimerHandle;
 	/* Is our attack on cooldown? */
 	bool bIsOnCooldown;
-	/* Have we started an attack? */
-	bool bHasStartedAttack;
 	/* Are we dead? */
+	UPROPERTY(ReplicatedUsing=OnRep_bIsDead)
 	bool bIsDead;
 };

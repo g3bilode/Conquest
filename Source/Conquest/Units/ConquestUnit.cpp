@@ -42,7 +42,7 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 	Health -= ActualDamage;
 	if (Health <= 0.0f)
 	{
-		Die();
+		DeathBegin();
 	}
 	return ActualDamage;
 }
@@ -56,6 +56,7 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 	DOREPLIFETIME(AConquestUnit, TargetDestination);
 	DOREPLIFETIME(AConquestUnit, LaneIndex);
 	DOREPLIFETIME(AConquestUnit, Health);
+	DOREPLIFETIME(AConquestUnit, bIsDead);
 }
 
 // Called when the game starts or when spawned
@@ -80,18 +81,30 @@ void AConquestUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bIsDead)
+	{
+		return;
+	}
+
 	if (IsValid(TargetEnemy))
 	{
-		// Move towards enemy
-		const FVector& enemyLocation = TargetEnemy->GetActorLocation();
-		if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
+		if (TargetEnemy->IsDead())
 		{
-			// Attack
-			AttackTargetEnemy();
+			SetTargetEnemy(nullptr);
 		}
 		else
 		{
-			MoveToDestination(enemyLocation);
+			// Move towards enemy
+			const FVector& enemyLocation = TargetEnemy->GetActorLocation();
+			if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
+			{
+				// Attack
+				AttackTargetEnemy();
+			}
+			else
+			{
+				MoveToDestination(enemyLocation);
+			}
 		}
 	}
 	else if (!IsAtDestination)
@@ -132,13 +145,28 @@ void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestination
 
 void AConquestUnit::DealDamage()
 {
-	TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
+	if (IsValid(TargetEnemy))
+	{
+		TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
+	}
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &AConquestUnit::OnAttackCooldownExpired, AttackCooldown, false);
-	bHasStartedAttack = false;
 	if (bIsDead)
 	{
-		Die();
+		DeathBegin();
 	}
+}
+
+void AConquestUnit::DeathEnd()
+{
+	if (HasAuthority())
+	{
+		bool bWasDestroyed = Destroy();
+	}
+}
+
+bool AConquestUnit::IsDead()
+{
+	return bIsDead;
 }
 
 void AConquestUnit::MoveToDestination(const FVector& Destination)
@@ -198,19 +226,23 @@ void AConquestUnit::AttackTargetEnemy()
 	if (!bIsOnCooldown)
 	{
 		bIsOnCooldown = true;
-		bHasStartedAttack = true;
 		PlayAnimMontage(AttackMontage);
 	}
 }
 
-void AConquestUnit::Die()
+void AConquestUnit::DeathBegin()
 {
-	bIsDead = true;
-	if (!bHasStartedAttack)
+	if (HasAuthority())
 	{
-		// Ready to die
-		Destroy();
+		bIsDead = true;
+		OnRep_bIsDead();
 	}
+}
+
+void AConquestUnit::OnRep_bIsDead()
+{
+	// Ready to die
+	PlayAnimMontage(DeathMontage);
 }
 
 bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)
