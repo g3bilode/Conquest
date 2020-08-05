@@ -95,7 +95,6 @@ private:
 	void PlayAttackAnim();
 	virtual void PlayAttackAnim_Implementation();
 
-	UPROPERTY(Replicated)
 	FVector TargetDestination;
 	UPROPERTY()
 	bool IsAtDestination;

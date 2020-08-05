@@ -53,7 +53,6 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 
 	DOREPLIFETIME(AConquestUnit, TeamName);
 	DOREPLIFETIME(AConquestUnit, TeamIndex);
-	DOREPLIFETIME(AConquestUnit, TargetDestination);
 	DOREPLIFETIME(AConquestUnit, LaneIndex);
 	DOREPLIFETIME(AConquestUnit, Health);
 	DOREPLIFETIME(AConquestUnit, bIsDead);
