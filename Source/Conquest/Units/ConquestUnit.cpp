@@ -21,7 +21,7 @@ AConquestUnit::AConquestUnit()
 
 	CurrentDestinationIndex = -1;
 	AggroSphereRadius = 300.0f;
-	AttackRange = 100.0f;
+	AttackRange = 180.0f;
 	BaseDamage = 20.0f;
 	AttackCooldown = 1.0f;
 	Health = 100.0f;
@@ -87,25 +87,18 @@ void AConquestUnit::Tick(float DeltaTime)
 			return;
 		}
 
-		if (IsValid(TargetEnemy))
+		if (AcquireTargetEnemy())
 		{
-			if (TargetEnemy->IsDead())
+			// Move towards enemy
+			const FVector& enemyLocation = TargetEnemy->GetActorLocation();
+			if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
 			{
-				SetTargetEnemy(nullptr);
+				// Attack
+				AttackTargetEnemy();
 			}
 			else
 			{
-				// Move towards enemy
-				const FVector& enemyLocation = TargetEnemy->GetActorLocation();
-				if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
-				{
-					// Attack
-					AttackTargetEnemy();
-				}
-				else
-				{
-					MoveToDestination(enemyLocation);
-				}
+				MoveToDestination(enemyLocation);
 			}
 		}
 		else if (!IsAtDestination)
@@ -152,10 +145,6 @@ void AConquestUnit::DealDamage()
 		TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
 	}
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &AConquestUnit::OnAttackCooldownExpired, AttackCooldown, false);
-	if (bIsDead)
-	{
-		DeathBegin();
-	}
 }
 
 void AConquestUnit::DeathEnd()
@@ -173,6 +162,7 @@ bool AConquestUnit::IsDead()
 
 void AConquestUnit::MoveToDestination(const FVector& Destination)
 {
+	// TODO: If hasn't moved in a while, disable collision for a bit
 	FVector targetDirection = Destination - GetActorLocation();
 	targetDirection.Normalize(SMALL_NUMBER);
 
@@ -194,19 +184,16 @@ bool AConquestUnit::HasArrivedAtDestination()
 void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 	// TODO: This may only need to be done on local client?
-	if (!IsValid(TargetEnemy))
+	// Find a new target
+	AConquestUnit* OtherConquestUnit = Cast<AConquestUnit>(OtherActor);
+	if (IsValid(OtherConquestUnit))
 	{
-		// Find a new target
-		AConquestUnit* OtherConquestUnit = Cast<AConquestUnit>(OtherActor);
-		if (IsValid(OtherConquestUnit))
+		// Found Unit
+		if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
 		{
-			// Found Unit
-			if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
+			if (IsTargetEnemy(OtherConquestUnit))
 			{
-				if (IsTargetEnemy(OtherConquestUnit))
-				{
-					SetTargetEnemy(OtherConquestUnit);
-				}
+				KnownEnemies.Add(OtherConquestUnit);
 			}
 		}
 	}
@@ -221,6 +208,35 @@ void AConquestUnit::SetTargetEnemy(AConquestUnit* EnemyConquestUnit)
 {
 	TargetEnemy = EnemyConquestUnit;
 	UE_LOG(LogConquest, Log, TEXT("TARGET ACQUIRED: %s"), *GetNameSafe(EnemyConquestUnit));
+}
+
+bool AConquestUnit::AcquireTargetEnemy()
+{
+	if (!IsValid(TargetEnemy) || TargetEnemy->IsDead())
+	{
+		// Find new enemy
+		if (KnownEnemies.Num() > 0)
+		{
+			for (int32 i=KnownEnemies.Num()-1; i >= 0; i--)
+			{
+				AConquestUnit* knownEnemy = KnownEnemies[i];
+				if (IsValid(knownEnemy) && !knownEnemy->IsDead())
+				{
+					// New target found
+					SetTargetEnemy(knownEnemy);
+					return true;
+				}
+				else
+				{
+					KnownEnemies.RemoveAt(i);
+				}
+			}
+		}
+		// Found none
+		return false;
+	}
+	// Already have target
+	return true;
 }
 
 void AConquestUnit::AttackTargetEnemy()

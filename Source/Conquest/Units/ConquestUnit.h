@@ -85,6 +85,7 @@ private:
 	bool IsTargetEnemy(AConquestUnit* ConquestUnit);
 	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
 	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
+	bool AcquireTargetEnemy();
 	void AttackTargetEnemy();
 	void DeathBegin();
 
@@ -111,6 +112,9 @@ private:
 	/* Currently targeted enemy*/
 	UPROPERTY()
 	AConquestUnit* TargetEnemy;
+	/* Known enemies */
+	UPROPERTY()
+	TArray<AConquestUnit*> KnownEnemies;
 	/* Aggro Trigger Sphere */
 	UPROPERTY()
 	class USphereComponent* AggroSphere;
