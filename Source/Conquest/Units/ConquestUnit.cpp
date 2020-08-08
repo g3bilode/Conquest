@@ -4,6 +4,7 @@
 #include "Conquest.h"
 #include "UnrealNetwork.h"
 #include "Components/SphereComponent.h"
+#include "Components/UnitMovementComponent.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);
@@ -19,7 +20,9 @@ AConquestUnit::AConquestUnit()
 	AggroSphere->SetupAttachment(RootComponent);
 	AggroSphere->OnComponentBeginOverlap.AddDynamic(this, &AConquestUnit::OnAggroCollision);
 
-	CurrentDestinationIndex = -1;
+	// Setup UnitMovementCompontent
+	MovementComponent = CreateDefaultSubobject<UUnitMovementComponent>("MovementComponent");
+
 	AggroSphereRadius = 300.0f;
 	AttackRange = 180.0f;
 	BaseDamage = 20.0f;
@@ -71,8 +74,6 @@ void AConquestUnit::BeginPlay()
 		dynamicMaterial->SetVectorParameterValue("BodyColor", AlternateColour);
 		GetMesh()->SetMaterial(0, dynamicMaterial);
 	}
-
-	ProgressNextDestination();
 }
 
 // Called every frame
@@ -98,44 +99,20 @@ void AConquestUnit::Tick(float DeltaTime)
 			}
 			else
 			{
-				MoveToDestination(enemyLocation);
+				MovementComponent->MoveToEnemy(enemyLocation);
 			}
 		}
-		else if (!IsAtDestination)
+		else
 		{
 			// Move towards next point
-			MoveToDestination(TargetDestination);
+			MovementComponent->MoveThroughLane();
 		}
 	}
-}
-
-FVector AConquestUnit::GetTargetDestination() const
-{
-	return TargetDestination;
-}
-
-void AConquestUnit::ProgressNextDestination()
-{
-	CurrentDestinationIndex++;
-	if (CurrentDestinationIndex < LaneDestinations.Num())
-	{
-		SetTargetDestination(LaneDestinations[CurrentDestinationIndex]);
-	}
-	else
-	{
-		UE_LOG(LogConquest, Log, TEXT("I have arrived at final destination!"));
-	}
-}
-
-void AConquestUnit::SetTargetDestination(FVector newLocation)
-{
-	TargetDestination = newLocation;
-	IsAtDestination = false;
 }
 
 void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestinations)
 {
-	LaneDestinations = InLaneDestinations;
+	MovementComponent->SetLaneDestinations(InLaneDestinations);
 }
 
 void AConquestUnit::DealDamage()
@@ -158,28 +135,6 @@ void AConquestUnit::DeathEnd()
 bool AConquestUnit::IsDead()
 {
 	return bIsDead;
-}
-
-void AConquestUnit::MoveToDestination(const FVector& Destination)
-{
-	// TODO: If hasn't moved in a while, disable collision for a bit
-	FVector targetDirection = Destination - GetActorLocation();
-	targetDirection.Normalize(SMALL_NUMBER);
-
-	SetActorRotation(FVector(targetDirection.X, targetDirection.Y, 0).Rotation());
-	AddMovementInput(targetDirection);
-	// TODO: Split this function for TargetDestination and enemy destination
-	if (!IsAtDestination && HasArrivedAtDestination())
-	{
-		UE_LOG(LogConquest, Log, TEXT("I have arrived!"));
-		IsAtDestination = true;
-		ProgressNextDestination();
-	}
-}
-
-bool AConquestUnit::HasArrivedAtDestination()
-{
-	return FVector::DistXY(TargetDestination, GetActorLocation()) < 10.0f;
 }
 
 void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)

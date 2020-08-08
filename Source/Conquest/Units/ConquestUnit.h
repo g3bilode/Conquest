@@ -28,12 +28,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	FVector GetTargetDestination() const;
-
-	void ProgressNextDestination();
-
-	void SetTargetDestination(FVector newLocation);
-
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
 
 	UFUNCTION(BlueprintCallable)
@@ -77,8 +71,6 @@ public:
 
 private:
 
-	void MoveToDestination(const FVector& Destination);
-	bool HasArrivedAtDestination();
 	UFUNCTION()
 	void OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 	void OnAttackCooldownExpired();
@@ -96,16 +88,13 @@ private:
 	void PlayAttackAnim();
 	virtual void PlayAttackAnim_Implementation();
 
-	FVector TargetDestination;
-	UPROPERTY()
-	bool IsAtDestination;
-	/* List of destinations for unit's lane */
-	TArray<FVector> LaneDestinations;
-	/* Current location in lane */
-	int8 CurrentDestinationIndex;
 	/* Alternate unit colour */
 	static const FLinearColor AlternateColour;
 
+
+	/* Unit Movement Component*/
+	UPROPERTY()
+	class UUnitMovementComponent* MovementComponent;
 
 	// Attack
 	
