@@ -168,7 +168,8 @@ void AConquestUnit::MoveToDestination(const FVector& Destination)
 
 	SetActorRotation(FVector(targetDirection.X, targetDirection.Y, 0).Rotation());
 	AddMovementInput(targetDirection);
-	if (HasArrivedAtDestination())
+	// TODO: Split this function for TargetDestination and enemy destination
+	if (!IsAtDestination && HasArrivedAtDestination())
 	{
 		UE_LOG(LogConquest, Log, TEXT("I have arrived!"));
 		IsAtDestination = true;
@@ -178,7 +179,7 @@ void AConquestUnit::MoveToDestination(const FVector& Destination)
 
 bool AConquestUnit::HasArrivedAtDestination()
 {
-	return FVector::DistXY(TargetDestination, GetActorLocation()) < 1.0f;
+	return FVector::DistXY(TargetDestination, GetActorLocation()) < 10.0f;
 }
 
 void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
