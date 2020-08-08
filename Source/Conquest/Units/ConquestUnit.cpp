@@ -95,6 +95,7 @@ void AConquestUnit::Tick(float DeltaTime)
 			if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
 			{
 				// Attack
+				FaceTargetEnemy(DeltaTime);
 				AttackTargetEnemy();
 			}
 			else
@@ -202,6 +203,15 @@ void AConquestUnit::AttackTargetEnemy()
 		bIsOnCooldown = true;
 		PlayAttackAnim();
 	}
+}
+
+void AConquestUnit::FaceTargetEnemy(float DeltaTime)
+{
+	// Face enemy
+	FVector targetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
+	targetDirection.Normalize(SMALL_NUMBER);
+	FRotator newRotation = FMath::RInterpTo(GetActorRotation(), targetDirection.Rotation(), DeltaTime, 1.0);
+	SetActorRotation(newRotation);
 }
 
 void AConquestUnit::DeathBegin()

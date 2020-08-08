@@ -72,13 +72,23 @@ public:
 private:
 
 	UFUNCTION()
+	/* Callback when unit overlaps our aggro sphere. */
 	void OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+	/* Callback when cooldown timer runs out. */
 	void OnAttackCooldownExpired();
+	/* Return true if given unit is enemy we can target. */
 	bool IsTargetEnemy(AConquestUnit* ConquestUnit);
+	/* Return true if given enemy is in our lane. */
 	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
+	/* Set new target enemy. */
 	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
+	/* Find a new TargetEnemy. Returns true if found. */
 	bool AcquireTargetEnemy();
+	/* Attack target enemy. */
 	void AttackTargetEnemy();
+	/* Smoothly face target enemy. */
+	void FaceTargetEnemy(float DeltaTime);
+	/* Begin death process. */
 	void DeathBegin();
 
 	UFUNCTION()
