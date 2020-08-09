@@ -11,6 +11,8 @@
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
 
+const float AConquestGameMode::ResourcePhaseTime = 10.0f;
+
 AConquestGameMode::AConquestGameMode()
 {
 	// Team Definitions
@@ -38,6 +40,9 @@ void AConquestGameMode::BeginPlay()
 	
 	// Update resource timer
 	GetWorld()->GetTimerManager().SetTimer(UpdateResourceTimerHandle, this, &AConquestGameMode::UpdateResources, UpdateResourceTimer, true);
+
+	// Start in resource phase
+	OnResourcePhaseStart();
 }
 
 
@@ -94,4 +99,34 @@ void AConquestGameMode::UpdateResources()
 	{
 		conquestPlayerState->Gold += conquestPlayerState->GoldGainMultiplayer * GoldGainBase;
 	}
+}
+
+void AConquestGameMode::OnResourcePhaseStart()
+{
+	UE_LOG(LogConquest, Log, TEXT("Resource phase start"));
+
+	CurrentPhase = EPhase::ResourcePhase;
+	// Update resource phase timer
+	GetWorld()->GetTimerManager().SetTimer(ResourcePhaseTimerHandle, this, &AConquestGameMode::OnResourcePhaseEnd, ResourcePhaseTime, false);
+}
+
+void AConquestGameMode::OnResourcePhaseEnd()
+{
+	UE_LOG(LogConquest, Log, TEXT("Resource phase end"));
+
+	OnCombatPhaseStart();
+}
+
+void AConquestGameMode::OnCombatPhaseStart()
+{
+	UE_LOG(LogConquest, Log, TEXT("Combat phase start"));
+
+	CurrentPhase = EPhase::CombatPhase;
+	CombatPhase_OnStart.Broadcast();
+}
+
+void AConquestGameMode::OnCombatPhaseEnd()
+{
+	UE_LOG(LogConquest, Log, TEXT("Combat phase end"));
+	OnResourcePhaseStart();
 }

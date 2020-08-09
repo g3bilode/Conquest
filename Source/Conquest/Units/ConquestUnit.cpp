@@ -5,6 +5,7 @@
 #include "UnrealNetwork.h"
 #include "Components/SphereComponent.h"
 #include "Components/UnitMovementComponent.h"
+#include "GameMode/ConquestGameMode.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);
@@ -74,6 +75,14 @@ void AConquestUnit::BeginPlay()
 		dynamicMaterial->SetVectorParameterValue("BodyColor", AlternateColour);
 		GetMesh()->SetMaterial(0, dynamicMaterial);
 	}
+
+
+	// Bind combat phase start delegate
+	if (HasAuthority())
+	{
+		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
+		conquestGameMode->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
+	}
 }
 
 // Called every frame
@@ -136,6 +145,11 @@ void AConquestUnit::DeathEnd()
 bool AConquestUnit::IsDead()
 {
 	return bIsDead;
+}
+
+void AConquestUnit::RespondToCombatPhaseBegin()
+{
+	UE_LOG(LogConquest, Log, TEXT("COMBAT BEGIN: %s"), *GetNameSafe(this));
 }
 
 void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
