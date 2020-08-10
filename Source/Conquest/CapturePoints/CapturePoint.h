@@ -8,32 +8,6 @@
 #include "CapturePoint.generated.h"
 
 
-USTRUCT()
-struct FUnitSlot
-{
-	GENERATED_BODY()
-		
-	FUnitSlot()
-		: SlotLocation(ForceInitToZero)
-		, IsOccupied(false)
-		, TeamName(NAME_None)
-	{}
-	FUnitSlot(FVector inSlotLocation, FName inTeamName)
-		: SlotLocation(inSlotLocation)
-		, IsOccupied(false)
-		, TeamName(inTeamName)
-	{}
-
-	UPROPERTY()
-	FVector SlotLocation;
-	UPROPERTY()
-	bool IsOccupied;
-	UPROPERTY()
-	FName TeamName;
-
-};
-
-
 UCLASS()
 class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInterface
 {
@@ -58,27 +32,9 @@ private:
 
 	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
-	void GenerateUnitSlots();
-	void GenerateUnitSlotsForTeam(const FName teamName, const int32 teamIndex);
-	FUnitSlot* GetAvailableUnitSlot(const FName teamName);
-
-	UFUNCTION()
-	virtual void OnRep_UnitSlots();
-
 	UFUNCTION(BlueprintCallable)
 	void OnTriggerOverlapWithUnit(FName TeamName);
 
-	// UnitSlot configs
-	int32 UnitSlotBuffer;
-	int32 UnitSlotCount;
-	int32 UnitSlotColumnCount;
-	
-	// Temp locations for units to occupy
-	UPROPERTY(ReplicatedUsing=OnRep_UnitSlots)
-	TArray<FUnitSlot> UnitSlots;
-	
-	// Flag to draw debug slots only once
-	bool AreSlotsDrawn;
 	
 	// TeamName currently occupying point
 	FName OccupierTeamName;
