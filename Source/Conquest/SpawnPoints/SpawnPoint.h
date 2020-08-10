@@ -13,7 +13,10 @@ class CONQUEST_API ASpawnPoint : public AActor
 	
 public:	
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Team")
-	FName TeamName;
-	
+	void SetIsOccupied(bool NewValue);
+	bool IsOccupied() const;
+
+private:
+
+	bool bIsOccupied;
 };

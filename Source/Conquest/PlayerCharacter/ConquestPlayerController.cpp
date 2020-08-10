@@ -15,6 +15,7 @@
 #include "Outpost/Outpost.h"
 #include "Algo/Reverse.h"
 #include "Utils/ConquestUtils.h"
+#include "SpawnPoints/Barracks.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -57,22 +58,19 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 	}
 
 	FVector location;
-	TArray<AActor*> unitSpawnActors;
-	// TODO: This is dumb, don't look for a spawnpoint each time
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnPoint::StaticClass(), unitSpawnActors);
-	for (AActor* unitSpawnActor : unitSpawnActors)
+	ABarracks* laneBarracks = GetBarracksForLane(LaneIndex);
+	ASpawnPoint* freeSlot = laneBarracks->GetFreeUnitSlot();
+	if (IsValid(freeSlot))
 	{
-		ASpawnPoint* spawnPoint = Cast<ASpawnPoint>(unitSpawnActor);
-		if (spawnPoint != nullptr && ConquestPlayerState != nullptr)
-		{
-			if (spawnPoint->TeamName == ConquestPlayerState->TeamName)
-			{
-				location = spawnPoint->GetActorLocation();
-				location += FVector(0, 0, 200);
-				break;
-			}
+		location = freeSlot->GetActorLocation();
+		// Avoid spawn collision...
+		location += FVector(0, 0, 200);
 
-		}
+	}
+	else
+	{
+		UE_LOG(LogConquest, Error, TEXT("No free barracks slot."));
+		return;
 	}
 
 	FTransform spawnTransform;
@@ -92,6 +90,7 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 		if (IsValid(conquestSpawnedUnit))
 		{
 			PurchaseUnit(ActorToSpawn);
+			freeSlot->SetIsOccupied(true);
 		}
 	}
 }
@@ -246,7 +245,6 @@ void AConquestPlayerController::BuildLaneArray()
 {
 	// TODO: Improve this?
 	// Init the LaneArray
-	AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
 	int32 numLanes = ConquestUtils::LaneSpec.Num();
 	LaneArray.Init(FLaneDestinations(), numLanes);
 	int8 idx = 0;
@@ -291,6 +289,23 @@ void AConquestPlayerController::BuildLaneArray()
 		// Not first player, flip lanes
 		Algo::Reverse(LaneArray);
 	}
+}
+
+void AConquestPlayerController::BuildBarracksArray()
+{
+	int32 numBarracks = ConquestUtils::LaneSpec.Num();
+	BarracksArray.Init(nullptr, numBarracks);
+
+	// Assign BarrackArray values
+	for (TActorIterator<ABarracks> BarracksItr(GetWorld()); BarracksItr; ++BarracksItr)
+	{
+		if (BarracksItr->TeamIndex == ConquestPlayerState->TeamIndex)
+		{
+			int32 LaneIndex = BarracksItr->LaneIndex;
+			BarracksArray[LaneIndex] = *BarracksItr;
+		}
+	}
+
 }
 
 void AConquestPlayerController::CreateUI()
@@ -347,4 +362,13 @@ TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index)
 		BuildLaneArray();
 	}
 	return LaneArray[Index].LaneDestinations;
+}
+
+class ABarracks* AConquestPlayerController::GetBarracksForLane(int32 LaneIndex)
+{
+	if (BarracksArray.Num() == 0)
+	{
+		BuildBarracksArray();
+	}
+	return BarracksArray[LaneIndex];
 }

@@ -51,6 +51,7 @@ public:
 	/* Getters */
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetLaneDestinations(int32 Index);
+	class ABarracks* GetBarracksForLane(int32 LaneIndex);
 
 	
 	// Reference UMG widget in Editor
@@ -86,6 +87,8 @@ private:
 	
 	UPROPERTY()
 	TArray<FLaneDestinations> LaneArray;
+	UPROPERTY()
+	TArray<class ABarracks*> BarracksArray;
 
 
 	/* Check if can purchase unit. */
@@ -94,6 +97,8 @@ private:
 	void PurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
 	/* Gather CapturePoints and build lane array. */
 	void BuildLaneArray();
+	/* Gather Barracks for this team and build array. */
+	void BuildBarracksArray();
 
 	UPROPERTY()
 	UUserWidget* _menuOutpost;
