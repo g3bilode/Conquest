@@ -3,7 +3,7 @@
 
 #include "Barracks.h"
 #include "Conquest.h"
-#include "SpawnPoint.h"
+#include "UnitSlot.h"
 
 // Sets default values
 ABarracks::ABarracks()

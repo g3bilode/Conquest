@@ -8,14 +8,14 @@
 #include "CapturePoints/CapturePoint.h"
 #include "Units/ConquestUnit.h"
 #include "Kismet/GameplayStatics.h"
-#include "SpawnPoints/SpawnPoint.h"
+#include "Barracks/UnitSlot.h"
 #include "UnrealNetwork.h"
 #include "EngineUtils.h"
 #include "GameState/ConquestGameState.h"
 #include "Outpost/Outpost.h"
 #include "Algo/Reverse.h"
 #include "Utils/ConquestUtils.h"
-#include "SpawnPoints/Barracks.h"
+#include "Barracks/Barracks.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
