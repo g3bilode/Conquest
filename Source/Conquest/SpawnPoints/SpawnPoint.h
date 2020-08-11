@@ -7,7 +7,7 @@
 #include "SpawnPoint.generated.h"
 
 UCLASS()
-class CONQUEST_API ASpawnPoint : public AActor
+class CONQUEST_API AUnitSlot : public AActor
 {
 	GENERATED_BODY()
 	

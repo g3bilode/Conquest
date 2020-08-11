@@ -2,12 +2,12 @@
 
 #include "SpawnPoint.h"
 
-void ASpawnPoint::SetIsOccupied(bool NewValue)
+void AUnitSlot::SetIsOccupied(bool NewValue)
 {
 	bIsOccupied = NewValue;
 }
 
-bool ASpawnPoint::IsOccupied() const
+bool AUnitSlot::IsOccupied() const
 {
 	return bIsOccupied;
 }

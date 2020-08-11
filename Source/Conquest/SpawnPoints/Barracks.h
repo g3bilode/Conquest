@@ -24,7 +24,7 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSlots")
-	TArray<class ASpawnPoint*> UnitSlots;
+	TArray<class AUnitSlot*> UnitSlots;
 
 	UPROPERTY(EditAnywhere, Category = "Team")
 	int32 TeamIndex;
@@ -32,7 +32,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Team")
 	int32 LaneIndex;
 
-	class ASpawnPoint* GetFreeUnitSlot();
+	class AUnitSlot* GetFreeUnitSlot();
 
 
 private:

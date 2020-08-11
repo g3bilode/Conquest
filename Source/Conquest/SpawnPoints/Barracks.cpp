@@ -22,9 +22,9 @@ void ABarracks::BeginPlay()
 }
 
 
-ASpawnPoint* ABarracks::GetFreeUnitSlot()
+AUnitSlot* ABarracks::GetFreeUnitSlot()
 {
-	for (ASpawnPoint* unitSlot : UnitSlots)
+	for (AUnitSlot* unitSlot : UnitSlots)
 	{
 		if (!unitSlot->IsOccupied())
 		{

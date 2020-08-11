@@ -59,7 +59,7 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 
 	FVector location;
 	ABarracks* laneBarracks = GetBarracksForLane(LaneIndex);
-	ASpawnPoint* freeSlot = laneBarracks->GetFreeUnitSlot();
+	AUnitSlot* freeSlot = laneBarracks->GetFreeUnitSlot();
 	if (IsValid(freeSlot))
 	{
 		location = freeSlot->GetActorLocation();
