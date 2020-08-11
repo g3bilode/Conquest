@@ -76,13 +76,15 @@ void AConquestUnit::BeginPlay()
 		GetMesh()->SetMaterial(0, dynamicMaterial);
 	}
 
-
 	// Bind combat phase start delegate
 	if (HasAuthority())
 	{
 		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
 		conquestGameMode->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
 	}
+
+	// Disable until combat phase
+	SetActorTickEnabled(false);
 }
 
 // Called every frame
@@ -139,6 +141,8 @@ void AConquestUnit::DeathEnd()
 	if (HasAuthority())
 	{
 		bool bWasDestroyed = Destroy();
+		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
+		conquestGameMode->OnUnitDeath();
 	}
 }
 
@@ -150,6 +154,7 @@ bool AConquestUnit::IsDead()
 void AConquestUnit::RespondToCombatPhaseBegin()
 {
 	UE_LOG(LogConquest, Log, TEXT("COMBAT BEGIN: %s"), *GetNameSafe(this));
+	SetActorTickEnabled(true);
 }
 
 void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)

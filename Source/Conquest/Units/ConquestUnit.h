@@ -110,6 +110,7 @@ private:
 	UPROPERTY()
 	class UUnitMovementComponent* MovementComponent;
 
+
 	// Attack
 	
 	/* Currently targeted enemy*/

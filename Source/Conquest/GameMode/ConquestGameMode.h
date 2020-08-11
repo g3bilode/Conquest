@@ -60,6 +60,7 @@ private:
 	static const float ResourcePhaseTime;
 	FTimerHandle ResourcePhaseTimerHandle;
 	EPhase CurrentPhase;
+	int32 AliveUnitCount;
 
 
 	UFUNCTION()
@@ -88,6 +89,9 @@ public:
 
 	/* Combat phase start delegate. */
 	FCombatPhaseBegin CombatPhase_OnStart;
+
+	/* Event on unit death. */
+	void OnUnitDeath();
 
 protected:
 	void BeginPlay() override;

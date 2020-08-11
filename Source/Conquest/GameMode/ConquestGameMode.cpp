@@ -10,6 +10,8 @@
 #include "PlayerCharacter/ConquestCharacter.h"
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
+#include "Units/ConquestUnit.h"
 
 const float AConquestGameMode::ResourcePhaseTime = 10.0f;
 
@@ -76,6 +78,16 @@ TArray<FName> AConquestGameMode::GetTeamNames() const
 }
 
 
+void AConquestGameMode::OnUnitDeath()
+{
+	AliveUnitCount--;
+	if (AliveUnitCount <= 0)
+	{
+		// All done
+		OnCombatPhaseEnd();
+	}
+}
+
 AActor* AConquestGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
 	FName TeamName = GetTeamNames()[ConnectedPlayersCount];
@@ -122,6 +134,11 @@ void AConquestGameMode::OnCombatPhaseStart()
 	UE_LOG(LogConquest, Log, TEXT("Combat phase start"));
 
 	CurrentPhase = EPhase::CombatPhase;
+	// Count alive units
+	TArray<AActor*> conquestUnitActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AConquestUnit::StaticClass(), conquestUnitActors);
+	AliveUnitCount = conquestUnitActors.Num();
+	// Wake all units
 	CombatPhase_OnStart.Broadcast();
 }
 
