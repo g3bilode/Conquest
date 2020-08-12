@@ -5,7 +5,7 @@
 #include "UnrealNetwork.h"
 #include "Components/SphereComponent.h"
 #include "Components/UnitMovementComponent.h"
-#include "GameMode/ConquestGameMode.h"
+#include "GameState/ConquestGameState.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);
@@ -79,8 +79,8 @@ void AConquestUnit::BeginPlay()
 	// Bind combat phase start delegate
 	if (HasAuthority())
 	{
-		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
-		conquestGameMode->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
+		AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
+		conquestGameState->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
 	}
 
 	// Disable until combat phase
@@ -141,8 +141,8 @@ void AConquestUnit::DeathEnd()
 	if (HasAuthority())
 	{
 		bool bWasDestroyed = Destroy();
-		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
-		conquestGameMode->OnUnitDeath();
+		AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
+		conquestGameState->OnUnitDeath();
 	}
 }
 

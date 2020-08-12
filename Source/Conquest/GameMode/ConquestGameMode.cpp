@@ -10,10 +10,7 @@
 #include "PlayerCharacter/ConquestCharacter.h"
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
-#include "Kismet/GameplayStatics.h"
-#include "Units/ConquestUnit.h"
 
-const float AConquestGameMode::ResourcePhaseTime = 10.0f;
 
 AConquestGameMode::AConquestGameMode()
 {
@@ -43,8 +40,6 @@ void AConquestGameMode::BeginPlay()
 	// Update resource timer
 	GetWorld()->GetTimerManager().SetTimer(UpdateResourceTimerHandle, this, &AConquestGameMode::UpdateResources, UpdateResourceTimer, true);
 
-	// Start in resource phase
-	OnResourcePhaseStart();
 }
 
 
@@ -78,16 +73,6 @@ TArray<FName> AConquestGameMode::GetTeamNames() const
 }
 
 
-void AConquestGameMode::OnUnitDeath()
-{
-	AliveUnitCount--;
-	if (AliveUnitCount <= 0)
-	{
-		// All done
-		OnCombatPhaseEnd();
-	}
-}
-
 AActor* AConquestGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
 	FName TeamName = GetTeamNames()[ConnectedPlayersCount];
@@ -111,39 +96,4 @@ void AConquestGameMode::UpdateResources()
 	{
 		conquestPlayerState->Gold += conquestPlayerState->GoldGainMultiplayer * GoldGainBase;
 	}
-}
-
-void AConquestGameMode::OnResourcePhaseStart()
-{
-	UE_LOG(LogConquest, Log, TEXT("Resource phase start"));
-
-	CurrentPhase = EPhase::ResourcePhase;
-	// Update resource phase timer
-	GetWorld()->GetTimerManager().SetTimer(ResourcePhaseTimerHandle, this, &AConquestGameMode::OnResourcePhaseEnd, ResourcePhaseTime, false);
-}
-
-void AConquestGameMode::OnResourcePhaseEnd()
-{
-	UE_LOG(LogConquest, Log, TEXT("Resource phase end"));
-
-	OnCombatPhaseStart();
-}
-
-void AConquestGameMode::OnCombatPhaseStart()
-{
-	UE_LOG(LogConquest, Log, TEXT("Combat phase start"));
-
-	CurrentPhase = EPhase::CombatPhase;
-	// Count alive units
-	TArray<AActor*> conquestUnitActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AConquestUnit::StaticClass(), conquestUnitActors);
-	AliveUnitCount = conquestUnitActors.Num();
-	// Wake all units
-	CombatPhase_OnStart.Broadcast();
-}
-
-void AConquestGameMode::OnCombatPhaseEnd()
-{
-	UE_LOG(LogConquest, Log, TEXT("Combat phase end"));
-	OnResourcePhaseStart();
 }

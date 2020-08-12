@@ -7,9 +7,6 @@
 #include "ConquestGameMode.generated.h"
 
 
-/* Combat phase begin delegate */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatPhaseBegin);
-
 USTRUCT()
 struct FTeamDefinition
 {
@@ -27,13 +24,6 @@ struct FTeamDefinition
 	FName TeamName;
 	int32 TeamIndex;
 
-};
-
-UENUM()
-enum EPhase
-{
-	ResourcePhase,
-	CombatPhase
 };
 
 UCLASS()
@@ -56,25 +46,9 @@ private:
 	float UpdateResourceTimer;
 	FTimerHandle UpdateResourceTimerHandle;
 
-	// Phases
-	static const float ResourcePhaseTime;
-	FTimerHandle ResourcePhaseTimerHandle;
-	EPhase CurrentPhase;
-	int32 AliveUnitCount;
-
 
 	UFUNCTION()
 	void UpdateResources();
-
-	/* On resource phase start. */
-	void OnResourcePhaseStart();
-	/* Callback on end of resource phase time. */
-	void OnResourcePhaseEnd();
-
-	/* On start combat phase */
-	void OnCombatPhaseStart();
-	/* On end combat phase */
-	void OnCombatPhaseEnd();
 
 public:
 	
@@ -87,11 +61,6 @@ public:
 
 	AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
-	/* Combat phase start delegate. */
-	FCombatPhaseBegin CombatPhase_OnStart;
-
-	/* Event on unit death. */
-	void OnUnitDeath();
 
 protected:
 	void BeginPlay() override;

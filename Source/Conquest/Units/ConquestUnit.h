@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ConquestUnit.generated.h"
 
+
 UCLASS()
 class CONQUEST_API AConquestUnit : public ACharacter
 {
