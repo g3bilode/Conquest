@@ -6,6 +6,8 @@
 #include "PlayerCharacter/ConquestPlayerState.h"
 #include "Units/ConquestUnit.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameMode/ConquestGameMode.h"
+
 
 const float AConquestGameState::ResourcePhaseTime = 10.0f;
 
@@ -17,10 +19,27 @@ AConquestGameState::AConquestGameState()
 
 void AConquestGameState::BeginPlay()
 {
-	// Start in resource phase
-	OnResourcePhaseStart();
+	if (HasAuthority())
+	{
+		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
+		conquestGameMode->GameStart_OnStart.AddDynamic(this, &AConquestGameState::RespondToGameStart);
+	}
 }
 
+
+void AConquestGameState::RespondToGameStart()
+{
+		// Start in resource phase
+		OnResourcePhaseStart();
+}
+
+
+int32 AConquestGameState::CountAliveUnits() const
+{
+	TArray<AActor*> conquestUnitActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AConquestUnit::StaticClass(), conquestUnitActors);
+	return conquestUnitActors.Num();
+}
 
 TArray<class AConquestPlayerState*> AConquestGameState::GetConquestPlayerArray()
 {
@@ -34,13 +53,20 @@ TArray<class AConquestPlayerState*> AConquestGameState::GetConquestPlayerArray()
 }
 
 
-void AConquestGameState::OnResourcePhaseStart()
+void AConquestGameState::OnResourcePhaseStart_Implementation()
 {
-	UE_LOG(LogConquest, Log, TEXT("Resource phase start"));
-
+	UE_LOG(LogConquest, Log, TEXT("Resource phase"));
 	CurrentPhase = EPhase::ResourcePhase;
-	// Update resource phase timer
-	GetWorld()->GetTimerManager().SetTimer(ResourcePhaseTimerHandle, this, &AConquestGameState::OnResourcePhaseEnd, ResourcePhaseTime, false);
+	
+	if (HasAuthority())
+	{
+		// Update resource phase timer with callback
+		GetWorld()->GetTimerManager().SetTimer(ResourcePhaseTimerHandle, this, &AConquestGameState::OnResourcePhaseEnd, ResourcePhaseTime, false);
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().SetTimer(ResourcePhaseTimerHandle, ResourcePhaseTime, false);
+	}
 }
 
 
@@ -52,24 +78,28 @@ void AConquestGameState::OnResourcePhaseEnd()
 }
 
 
-void AConquestGameState::OnCombatPhaseStart()
+void AConquestGameState::OnCombatPhaseStart_Implementation()
 {
-	UE_LOG(LogConquest, Log, TEXT("Combat phase start"));
-
+	UE_LOG(LogConquest, Log, TEXT("Combat phase"));
 	CurrentPhase = EPhase::CombatPhase;
-	// Count alive units
-	TArray<AActor*> conquestUnitActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AConquestUnit::StaticClass(), conquestUnitActors);
-	AliveUnitCount = conquestUnitActors.Num();
-	if (AliveUnitCount == 0)
+	
+	if (HasAuthority())
 	{
-		// No units, no combat
-		OnCombatPhaseEnd();
+		AliveUnitCount = CountAliveUnits();
+		if (AliveUnitCount == 0)
+		{
+			// No units, no combat
+			OnCombatPhaseEnd();
+		}
+		else
+		{
+			// Wake all units
+			CombatPhase_OnStart.Broadcast();
+		}
 	}
 	else
 	{
-		// Wake all units
-		CombatPhase_OnStart.Broadcast();
+		// Nothing yet
 	}
 }
 
@@ -89,4 +119,21 @@ void AConquestGameState::OnUnitDeath()
 		// All done
 		OnCombatPhaseEnd();
 	}
+}
+
+
+float AConquestGameState::GetRemainingPhaseTime() const
+{
+	return GetWorld()->GetTimerManager().GetTimerRemaining(ResourcePhaseTimerHandle);
+}
+
+FText AConquestGameState::GetCurrentPhaseName() const
+{
+	// Dumbest shit I ever seen...
+	const UEnum* enumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPhase"), true);
+	if (IsValid(enumPtr))
+	{
+		return enumPtr->GetDisplayNameTextByIndex(CurrentPhase.GetValue());
+	}
+	return FText();
 }

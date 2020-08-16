@@ -7,6 +7,10 @@
 #include "ConquestGameMode.generated.h"
 
 
+/* Game start delegate */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGameStart);
+
+
 USTRUCT()
 struct FTeamDefinition
 {
@@ -46,9 +50,20 @@ private:
 	float UpdateResourceTimer;
 	FTimerHandle UpdateResourceTimerHandle;
 
+	/* Notify start game after delay. */
+	FTimerHandle GameStartTimerHandle;
+	/* On game start delay */
+	static const float GameStartDelayTime;
+
 
 	UFUNCTION()
 	void UpdateResources();
+
+	/* Return the target number of players for a full match. */
+	int32 GetTargetPlayerCount();
+
+	/* On game start */
+	void GameStart();
 
 public:
 	
@@ -58,8 +73,10 @@ public:
 
 	TArray<FName> GetTeamNames() const;
 
-
 	AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	/* Game start phase start delegate. */
+	FGameStart GameStart_OnStart;
 
 
 protected:

@@ -12,6 +12,9 @@
 #include "EngineUtils.h"
 
 
+const float AConquestGameMode::GameStartDelayTime = 0.5f;
+
+
 AConquestGameMode::AConquestGameMode()
 {
 	// Team Definitions
@@ -36,10 +39,6 @@ AConquestGameMode::AConquestGameMode()
 void AConquestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	// Update resource timer
-	GetWorld()->GetTimerManager().SetTimer(UpdateResourceTimerHandle, this, &AConquestGameMode::UpdateResources, UpdateResourceTimer, true);
-
 }
 
 
@@ -58,6 +57,12 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 	else
 	{
 		UE_LOG(LogConquest, Error, TEXT("Joined player failed cast to AConquestPlayerState"));
+	}
+	if (ConnectedPlayersCount == GetTargetPlayerCount())
+	{
+		// Notify game start after delay
+		// TODO: Improve this with RPC from client?
+		GetWorld()->GetTimerManager().SetTimer(GameStartTimerHandle, this, &AConquestGameMode::GameStart, GameStartDelayTime, false);
 	}
 }
 
@@ -96,4 +101,18 @@ void AConquestGameMode::UpdateResources()
 	{
 		conquestPlayerState->Gold += conquestPlayerState->GoldGainMultiplayer * GoldGainBase;
 	}
+}
+
+int32 AConquestGameMode::GetTargetPlayerCount()
+{
+	return TeamDefinitions.Num();
+}
+
+void AConquestGameMode::GameStart()
+{
+	// Update resource timer
+	GetWorld()->GetTimerManager().SetTimer(UpdateResourceTimerHandle, this, &AConquestGameMode::UpdateResources, UpdateResourceTimer, true);
+
+	// Notify everyone of game start
+	GameStart_OnStart.Broadcast();
 }
