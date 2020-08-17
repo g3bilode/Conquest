@@ -50,6 +50,7 @@ private:
 	/* Current location in lane */
 	int8 CurrentDestinationIndex;
 
+	static const float DestinationDistanceLimit;
 
 	/* Set Target Destination. */
 	void SetTargetDestination(FVector newLocation);

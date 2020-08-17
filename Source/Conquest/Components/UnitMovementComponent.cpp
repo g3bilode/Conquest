@@ -4,6 +4,10 @@
 #include "UnitMovementComponent.h"
 #include "GameFramework/Character.h"
 
+
+const float UUnitMovementComponent::DestinationDistanceLimit = 50.0f;
+
+
 // Sets default values for this component's properties
 UUnitMovementComponent::UUnitMovementComponent()
 {
@@ -86,5 +90,5 @@ void UUnitMovementComponent::SetTargetDestination(FVector newLocation)
 
 bool UUnitMovementComponent::HasArrivedAtDestination()
 {
-	return FVector::DistXY(TargetDestination, GetOwner()->GetActorLocation()) < 10.0f;
+	return FVector::DistXY(TargetDestination, GetOwner()->GetActorLocation()) < DestinationDistanceLimit;
 }
