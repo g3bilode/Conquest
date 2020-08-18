@@ -56,16 +56,10 @@ public:
 	float AggroSphereRadius;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
 	float AttackRange;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
-	float BaseDamage;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
-	float AttackCooldown;
 	UPROPERTY(Replicated, BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
 	float Health;
 
 	// ANIMS
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
-	UAnimMontage* AttackMontage;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
 	UAnimMontage* DeathMontage;
 
@@ -79,8 +73,6 @@ private:
 	UFUNCTION()
 	/* Callback when unit overlaps our aggro sphere. */
 	void OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
-	/* Callback when cooldown timer runs out. */
-	void OnAttackCooldownExpired();
 	/* Return true if given unit is enemy we can target. */
 	bool IsTargetEnemy(AConquestUnit* ConquestUnit);
 	/* Return true if given enemy is in our lane. */
@@ -89,8 +81,6 @@ private:
 	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
 	/* Find a new TargetEnemy. Returns true if found. */
 	bool AcquireTargetEnemy();
-	/* Attack target enemy. */
-	void AttackTargetEnemy();
 	/* Smoothly face target enemy. */
 	void FaceTargetEnemy(float DeltaTime);
 	/* Begin death process. */
@@ -99,10 +89,6 @@ private:
 	UFUNCTION()
 	virtual void OnRep_bIsDead();
 
-	UFUNCTION(NetMulticast, Unreliable)
-	void PlayAttackAnim();
-	virtual void PlayAttackAnim_Implementation();
-
 	/* Alternate unit colour */
 	static const FLinearColor AlternateColour;
 
@@ -110,6 +96,9 @@ private:
 	/* Unit Movement Component*/
 	UPROPERTY()
 	class UUnitMovementComponent* MovementComponent;
+	/* Attack Component*/
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	class UAttackComponent* AttackComponent;
 
 
 	// Attack
@@ -123,10 +112,6 @@ private:
 	/* Aggro Trigger Sphere */
 	UPROPERTY()
 	class USphereComponent* AggroSphere;
-	/* Timer handle to manage attack cooldown */
-	FTimerHandle AttackCooldownTimerHandle;
-	/* Is our attack on cooldown? */
-	bool bIsOnCooldown;
 	/* Are we dead? */
 	UPROPERTY(ReplicatedUsing=OnRep_bIsDead)
 	bool bIsDead;

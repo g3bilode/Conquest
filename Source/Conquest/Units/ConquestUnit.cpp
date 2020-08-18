@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ConquestUnit.h"
-#include "Conquest.h"
-#include "UnrealNetwork.h"
+#include "../Conquest.h"
+#include "Net/UnrealNetwork.h"
 #include "Components/SphereComponent.h"
-#include "Components/UnitMovementComponent.h"
-#include "GameState/ConquestGameState.h"
+#include "../Components/UnitMovementComponent.h"
+#include "../GameState/ConquestGameState.h"
+#include "../Components/AttackComponent.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);
@@ -23,11 +24,11 @@ AConquestUnit::AConquestUnit()
 
 	// Setup UnitMovementCompontent
 	MovementComponent = CreateDefaultSubobject<UUnitMovementComponent>("MovementComponent");
+	// Setup AttackCompontent
+	AttackComponent = CreateDefaultSubobject<UAttackComponent>("AttackComponent");
 
 	AggroSphereRadius = 300.0f;
 	AttackRange = 180.0f;
-	BaseDamage = 20.0f;
-	AttackCooldown = 1.0f;
 	Health = 100.0f;
 
 	bIsDead = false;
@@ -107,7 +108,7 @@ void AConquestUnit::Tick(float DeltaTime)
 			{
 				// Attack
 				FaceTargetEnemy(DeltaTime);
-				AttackTargetEnemy();
+				AttackComponent->AttemptAttack();
 			}
 			else
 			{
@@ -129,11 +130,10 @@ void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestination
 
 void AConquestUnit::DealDamage()
 {
-	if (IsValid(TargetEnemy))
+	if (HasAuthority())
 	{
-		TargetEnemy->TakeDamage(BaseDamage, FDamageEvent(), GetController(), this);
+		AttackComponent->DealDamage(TargetEnemy);
 	}
-	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &AConquestUnit::OnAttackCooldownExpired, AttackCooldown, false);
 }
 
 void AConquestUnit::DeathEnd()
@@ -175,11 +175,6 @@ void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, A
 	}
 }
 
-void AConquestUnit::OnAttackCooldownExpired()
-{
-	bIsOnCooldown = false;
-}
-
 void AConquestUnit::SetTargetEnemy(AConquestUnit* EnemyConquestUnit)
 {
 	TargetEnemy = EnemyConquestUnit;
@@ -215,15 +210,6 @@ bool AConquestUnit::AcquireTargetEnemy()
 	return true;
 }
 
-void AConquestUnit::AttackTargetEnemy()
-{
-	if (!bIsOnCooldown)
-	{
-		bIsOnCooldown = true;
-		PlayAttackAnim();
-	}
-}
-
 void AConquestUnit::FaceTargetEnemy(float DeltaTime)
 {
 	// Face enemy
@@ -246,11 +232,6 @@ void AConquestUnit::OnRep_bIsDead()
 {
 	// Ready to die
 	PlayAnimMontage(DeathMontage);
-}
-
-void AConquestUnit::PlayAttackAnim_Implementation()
-{
-	PlayAnimMontage(AttackMontage);
 }
 
 bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)
