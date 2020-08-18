@@ -16,12 +16,14 @@
 #include "Algo/Reverse.h"
 #include "Utils/ConquestUtils.h"
 #include "Barracks/Barracks.h"
+#include "CheatManager/ConquestCheatManager.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
 	bShowMouseCursor = true;
 	static ConstructorHelpers::FClassFinder<UUserWidget> outpostHud(TEXT("/Game/Conquest/UI/HUD/Outpost_HUD"));
 	wOutpostMenu = outpostHud.Class;
+	CheatClass = UConquestCheatManager::StaticClass();
 }
 
 // Called when the game starts or when spawned
