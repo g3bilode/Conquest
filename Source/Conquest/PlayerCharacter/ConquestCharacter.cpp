@@ -2,7 +2,7 @@
 
 #include "ConquestCharacter.h"
 
-#include "Conquest.h"
+#include "../Conquest.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -13,7 +13,7 @@
 #include "Engine/World.h"
 #include "Components/SphereComponent.h"
 #include "Engine/Engine.h"
-#include "Interfaces/ConquestSelectableInterface.h"
+#include "../Interfaces/ConquestSelectableInterface.h"
 
 AConquestCharacter::AConquestCharacter()
 	:Super()

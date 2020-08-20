@@ -2,9 +2,9 @@
 
 
 #include "ConquestCheatManager.h"
-#include "PlayerCharacter/ConquestPlayerState.h"
-#include "GameState/ConquestGameState.h"
-#include "Units/ConquestUnit.h"
+#include "../PlayerCharacter/ConquestPlayerState.h"
+#include "../GameState/ConquestGameState.h"
+#include "../Units/ConquestUnit.h"
 #include "Kismet/GameplayStatics.h"
 
 

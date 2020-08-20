@@ -4,9 +4,9 @@
 #include "../Conquest.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/SphereComponent.h"
+#include "../Components/AttackComponent.h"
 #include "../Components/UnitMovementComponent.h"
 #include "../GameState/ConquestGameState.h"
-#include "../Components/AttackComponent.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);

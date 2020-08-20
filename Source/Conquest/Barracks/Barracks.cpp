@@ -2,7 +2,7 @@
 
 
 #include "Barracks.h"
-#include "Conquest.h"
+#include "../Conquest.h"
 #include "UnitSlot.h"
 
 // Sets default values

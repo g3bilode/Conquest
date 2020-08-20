@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Outpost.h"
-#include "Conquest.h"
+#include "../Conquest.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerCharacter/ConquestPlayerController.h"
-#include "PlayerCharacter/ConquestPlayerState.h"
+#include "../PlayerCharacter/ConquestPlayerController.h"
+#include "../PlayerCharacter/ConquestPlayerState.h"
 
 // Sets default values
 AOutpost::AOutpost()

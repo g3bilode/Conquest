@@ -2,14 +2,14 @@
 
 
 #include "ConquestGameMode.h"
-#include "Conquest.h"
-#include "PlayerCharacter/ConquestPlayerState.h"
-#include "PlayerCharacter/ConquestPlayerController.h"
-#include "GameState/ConquestGameState.h"
-#include "UserWidget.h"
-#include "PlayerCharacter/ConquestCharacter.h"
+#include "../Conquest.h"
+#include "../PlayerCharacter/ConquestPlayerState.h"
+#include "../PlayerCharacter/ConquestPlayerController.h"
+#include "../GameState/ConquestGameState.h"
+#include "../PlayerCharacter/ConquestCharacter.h"
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
+#include "UMG/Public/Blueprint/UserWidget.h"
 
 
 const float AConquestGameMode::GameStartDelayTime = 0.5f;
