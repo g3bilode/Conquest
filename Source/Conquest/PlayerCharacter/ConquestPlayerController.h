@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "ConquestPlayerState.h"
-#include "../Outpost/Outpost.h"
+#include "../Outpost/Capital.h"
 #include "ConquestPlayerController.generated.h"
 
 

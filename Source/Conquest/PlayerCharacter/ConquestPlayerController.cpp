@@ -12,7 +12,7 @@
 #include "Net/UnrealNetwork.h"
 #include "EngineUtils.h"
 #include "../GameState/ConquestGameState.h"
-#include "../Outpost/Outpost.h"
+#include "../Outpost/Capital.h"
 #include "Algo/Reverse.h"
 #include "../Utils/ConquestUtils.h"
 #include "../Barracks/Barracks.h"

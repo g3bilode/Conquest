@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "../Interfaces/ConquestSelectableInterface.h"
-#include "Outpost.generated.h"
+#include "Capital.generated.h"
 
 UCLASS()
 class CONQUEST_API ACapital : public AActor, public IConquestSelectableInterface
