@@ -14,6 +14,7 @@ UAttackComponent::UAttackComponent()
 
 	BaseDamage = 20.0f;
 	AttackCooldown = 1.0f;
+	SetIsReplicatedByDefault(true);
 }
 
 

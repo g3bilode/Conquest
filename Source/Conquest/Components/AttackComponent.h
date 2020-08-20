@@ -37,8 +37,7 @@ public:
 private:
 
 	/* Play the attack animation. */
-	//UFUNCTION(NetMulticast, Unreliable)
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Unreliable)
 	void PlayAttackAnim();
 	virtual void PlayAttackAnim_Implementation();
 
