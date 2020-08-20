@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "../Interfaces/TargeterInterface.h"
 #include "GameFramework/Character.h"
 #include "ConquestUnit.generated.h"
 
 
 UCLASS()
-class CONQUEST_API AConquestUnit : public ACharacter
+class CONQUEST_API AConquestUnit : public ACharacter, public ITargeterInterface
 {
 	GENERATED_BODY()
 
@@ -20,6 +21,8 @@ public:
 	void PostInitProperties() override;
 
 	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	bool IsTargetEnemy_Implementation(AActor* OtherActor) override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -73,8 +76,6 @@ private:
 	UFUNCTION()
 	/* Callback when unit overlaps our aggro sphere. */
 	void OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
-	/* Return true if given unit is enemy we can target. */
-	bool IsTargetEnemy(AConquestUnit* ConquestUnit);
 	/* Return true if given enemy is in our lane. */
 	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
 	/* Set new target enemy. */

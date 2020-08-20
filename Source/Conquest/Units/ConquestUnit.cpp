@@ -52,6 +52,16 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 	return ActualDamage;
 }
 
+bool AConquestUnit::IsTargetEnemy_Implementation(AActor* OtherActor)
+{
+	AConquestUnit* otherConquestUnit = Cast<AConquestUnit>(OtherActor);
+	if (IsValid(otherConquestUnit))
+	{
+		return (otherConquestUnit->TeamIndex != TeamIndex) && IsEnemyInMyLane(otherConquestUnit);
+	}
+	return false;
+}
+
 void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -167,7 +177,7 @@ void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, A
 		// Found Unit
 		if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
 		{
-			if (IsTargetEnemy(OtherConquestUnit))
+			if (IsTargetEnemy_Implementation(OtherActor))
 			{
 				KnownEnemies.Add(OtherConquestUnit);
 			}
@@ -240,9 +250,4 @@ bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)
 	// Difference in lane index between teams (ie: 0 = 2)
 	const int32 laneDiff = 2;
 	return (LaneIndex + ConquestUnit->LaneIndex) == laneDiff;
-}
-
-bool AConquestUnit::IsTargetEnemy(AConquestUnit* ConquestUnit)
-{
-	return (ConquestUnit->TeamIndex != TeamIndex) && IsEnemyInMyLane(ConquestUnit);
 }
