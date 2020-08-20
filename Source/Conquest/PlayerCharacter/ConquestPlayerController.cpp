@@ -21,8 +21,8 @@
 AConquestPlayerController::AConquestPlayerController()
 {
 	bShowMouseCursor = true;
-	static ConstructorHelpers::FClassFinder<UUserWidget> outpostHud(TEXT("/Game/Conquest/UI/HUD/Outpost_HUD"));
-	wOutpostMenu = outpostHud.Class;
+	static ConstructorHelpers::FClassFinder<UUserWidget> capitalHud(TEXT("/Game/Conquest/UI/HUD/Capital_HUD"));
+	wCapitalMenu = capitalHud.Class;
 	CheatClass = UConquestCheatManager::StaticClass();
 }
 
@@ -266,11 +266,11 @@ void AConquestPlayerController::BuildLaneArray()
 
 	// Get the final destination: the enemy base
 	FVector enemyLocation;
-	for (TActorIterator<ACapital> OutPostItr(GetWorld()); OutPostItr; ++OutPostItr)
+	for (TActorIterator<ACapital> CapitalItr(GetWorld()); CapitalItr; ++CapitalItr)
 	{
-		if (OutPostItr->TeamName != ConquestPlayerState->TeamName)
+		if (CapitalItr->TeamName != ConquestPlayerState->TeamName)
 		{
-			enemyLocation = OutPostItr->GetActorLocation();
+			enemyLocation = CapitalItr->GetActorLocation();
 			break;
 		}
 	}
@@ -312,11 +312,11 @@ void AConquestPlayerController::BuildBarracksArray()
 
 void AConquestPlayerController::CreateUI()
 {
-	if (!_menuOutpost)
+	if (!_menuCapital)
 	{
-		_menuOutpost = CreateWidget<UUserWidget>(this, wOutpostMenu, "OutpostMenu");
-		_menuOutpost->AddToViewport();
-		_menuOutpost->SetVisibility(ESlateVisibility::Hidden);
+		_menuCapital = CreateWidget<UUserWidget>(this, wCapitalMenu, "CapitalMenu");
+		_menuCapital->AddToViewport();
+		_menuCapital->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -325,36 +325,26 @@ AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 	return ConquestPlayerState;
 }
 
-void AConquestPlayerController::OnOutpostSelect(ACapital* outpost)
-{
-	_selectedOutpost = outpost;	
-}
-
-void AConquestPlayerController::DisplayOutpostMenu(const FVector& outpostLocation)
+void AConquestPlayerController::DisplayCapitalMenu(const FVector& Location)
 {
 	FVector2D screenLocation;
-	ProjectWorldLocationToScreen(outpostLocation, screenLocation);
-	_menuOutpost->SetPositionInViewport(screenLocation);
-	SetOutpostMenuVisibility(true);
+	ProjectWorldLocationToScreen(Location, screenLocation);
+	_menuCapital->SetPositionInViewport(screenLocation);
+	SetCapitalMenuVisibility(true);
 }
 
-void AConquestPlayerController::SetOutpostMenuVisibility(const bool isVisible) const
+void AConquestPlayerController::SetCapitalMenuVisibility(const bool isVisible) const
 {
-	if (IsValid(_menuOutpost))
+	if (IsValid(_menuCapital))
 	{
 		if (isVisible)
 		{
-			_menuOutpost->SetVisibility(ESlateVisibility::Visible);
+			_menuCapital->SetVisibility(ESlateVisibility::Visible);
 		}
 		else {
-			_menuOutpost->SetVisibility(ESlateVisibility::Hidden);
+			_menuCapital->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
-}
-
-void AConquestPlayerController::AttackOutpost(ACapital* outpost)
-{
-	UE_LOG(LogConquest, Log, TEXT("CHAAARGE ! ! !"));
 }
 
 TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index)

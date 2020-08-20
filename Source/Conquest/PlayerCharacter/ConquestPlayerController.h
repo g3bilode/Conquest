@@ -42,11 +42,9 @@ public:
 
 	AConquestPlayerState* GetConquestPlayerState();
 
-	/* Outpost */
-	void OnOutpostSelect(ACapital* outpost);
-	void DisplayOutpostMenu(const FVector& outpostLocation);
-	void SetOutpostMenuVisibility(const bool isVisible) const;
-	void AttackOutpost(ACapital* outpost);
+	/* Capital */
+	void DisplayCapitalMenu(const FVector& Location);
+	void SetCapitalMenuVisibility(const bool isVisible) const;
 
 	/* Getters */
 	UFUNCTION(BlueprintCallable)
@@ -56,7 +54,7 @@ public:
 	
 	// Reference UMG widget in Editor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<class UUserWidget> wOutpostMenu;
+	TSubclassOf<class UUserWidget> wCapitalMenu;
 
 
 protected:
@@ -101,10 +99,7 @@ private:
 	void BuildBarracksArray();
 
 	UPROPERTY()
-	UUserWidget* _menuOutpost;
-
-	UPROPERTY()
-	ACapital* _selectedOutpost;
+	UUserWidget* _menuCapital;
 
 	/* Create UI */
 	void CreateUI();

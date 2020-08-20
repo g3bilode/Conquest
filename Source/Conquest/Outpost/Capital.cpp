@@ -18,20 +18,13 @@ ACapital::ACapital()
 
 bool ACapital::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
 {
-	UE_LOG(LogConquest, Log, TEXT("Outpost Selected! (%s)"), *GetNameSafe(this));
-	initiator->OnOutpostSelect(this);
 	AConquestPlayerState* conquestPlayerState = initiator->GetConquestPlayerState();
 	if (IsValid(conquestPlayerState))
 	{
 		if (conquestPlayerState->TeamName == TeamName)
 		{
 			// Friendly
-			initiator->DisplayOutpostMenu(GetActorLocation());
-		}
-		else
-		{
-			// Enemy
-			initiator->AttackOutpost(this);
+			initiator->DisplayCapitalMenu(GetActorLocation());
 		}
 	}
 	return true;
@@ -39,6 +32,6 @@ bool ACapital::OnSelectionGained_Implementation(AConquestPlayerController* initi
 
 bool ACapital::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
 {
-	initiator->SetOutpostMenuVisibility(false);
+	initiator->SetCapitalMenuVisibility(false);
 	return true;
 }
