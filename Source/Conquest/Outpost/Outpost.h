@@ -8,13 +8,13 @@
 #include "Outpost.generated.h"
 
 UCLASS()
-class CONQUEST_API AOutpost : public AActor, public IConquestSelectableInterface
+class CONQUEST_API ACapital : public AActor, public IConquestSelectableInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AOutpost();
+	ACapital();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Team")
 	FName TeamName;

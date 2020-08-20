@@ -266,7 +266,7 @@ void AConquestPlayerController::BuildLaneArray()
 
 	// Get the final destination: the enemy base
 	FVector enemyLocation;
-	for (TActorIterator<AOutpost> OutPostItr(GetWorld()); OutPostItr; ++OutPostItr)
+	for (TActorIterator<ACapital> OutPostItr(GetWorld()); OutPostItr; ++OutPostItr)
 	{
 		if (OutPostItr->TeamName != ConquestPlayerState->TeamName)
 		{
@@ -325,7 +325,7 @@ AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 	return ConquestPlayerState;
 }
 
-void AConquestPlayerController::OnOutpostSelect(AOutpost* outpost)
+void AConquestPlayerController::OnOutpostSelect(ACapital* outpost)
 {
 	_selectedOutpost = outpost;	
 }
@@ -352,7 +352,7 @@ void AConquestPlayerController::SetOutpostMenuVisibility(const bool isVisible) c
 	}
 }
 
-void AConquestPlayerController::AttackOutpost(AOutpost* outpost)
+void AConquestPlayerController::AttackOutpost(ACapital* outpost)
 {
 	UE_LOG(LogConquest, Log, TEXT("CHAAARGE ! ! !"));
 }

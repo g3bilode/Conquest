@@ -7,7 +7,7 @@
 #include "../PlayerCharacter/ConquestPlayerState.h"
 
 // Sets default values
-AOutpost::AOutpost()
+ACapital::ACapital()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -16,7 +16,7 @@ AOutpost::AOutpost()
 	CurrentHealth = MaxHealth;
 }
 
-bool AOutpost::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
+bool ACapital::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
 {
 	UE_LOG(LogConquest, Log, TEXT("Outpost Selected! (%s)"), *GetNameSafe(this));
 	initiator->OnOutpostSelect(this);
@@ -37,7 +37,7 @@ bool AOutpost::OnSelectionGained_Implementation(AConquestPlayerController* initi
 	return true;
 }
 
-bool AOutpost::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
+bool ACapital::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
 {
 	initiator->SetOutpostMenuVisibility(false);
 	return true;

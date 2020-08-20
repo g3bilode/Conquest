@@ -43,10 +43,10 @@ public:
 	AConquestPlayerState* GetConquestPlayerState();
 
 	/* Outpost */
-	void OnOutpostSelect(AOutpost* outpost);
+	void OnOutpostSelect(ACapital* outpost);
 	void DisplayOutpostMenu(const FVector& outpostLocation);
 	void SetOutpostMenuVisibility(const bool isVisible) const;
-	void AttackOutpost(AOutpost* outpost);
+	void AttackOutpost(ACapital* outpost);
 
 	/* Getters */
 	UFUNCTION(BlueprintCallable)
@@ -104,7 +104,7 @@ private:
 	UUserWidget* _menuOutpost;
 
 	UPROPERTY()
-	AOutpost* _selectedOutpost;
+	ACapital* _selectedOutpost;
 
 	/* Create UI */
 	void CreateUI();
