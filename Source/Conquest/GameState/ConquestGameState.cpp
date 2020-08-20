@@ -139,3 +139,12 @@ FText AConquestGameState::GetCurrentPhaseName() const
 	}
 	return FText();
 }
+
+void AConquestGameState::SkipResourcePhase()
+{
+	if (HasAuthority())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ResourcePhaseTimerHandle);
+		OnResourcePhaseEnd();
+	}
+}

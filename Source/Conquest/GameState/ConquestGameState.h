@@ -75,6 +75,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FText GetCurrentPhaseName() const;
 
+	/* Skip resource phase. */
+	void SkipResourcePhase();
+
 	/* Combat phase start delegate. */
 	FCombatPhaseBegin CombatPhase_OnStart;
 

@@ -36,3 +36,9 @@ void UConquestCheatManager::KillAll()
 		conquestUnit->TakeDamage(conquestUnit->Health, FDamageEvent(), nullptr, nullptr);
 	}
 }
+
+void UConquestCheatManager::SkipResourcePhase()
+{
+	AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
+	conquestGameState->SkipResourcePhase();
+}

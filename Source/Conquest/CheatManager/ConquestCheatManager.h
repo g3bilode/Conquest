@@ -21,5 +21,9 @@ class CONQUEST_API UConquestCheatManager : public UCheatManager
 	/* Kill all units. */
 	UFUNCTION(exec, Category = "Conquest Cheat Manager")
 	virtual void KillAll();
+
+	/* End resource phase. */
+	UFUNCTION(exec, Category = "Conquest Cheat Manager")
+	virtual void SkipResourcePhase();
 	
 };
