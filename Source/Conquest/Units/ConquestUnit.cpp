@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ConquestUnit.h"
-#include "Conquest.h"
-#include "UnrealNetwork.h"
+#include "../Conquest.h"
+#include "Net/UnrealNetwork.h"
 #include "Components/SphereComponent.h"
-#include "Components/UnitMovementComponent.h"
-#include "GameState/ConquestGameState.h"
+#include "../Components/UnitMovementComponent.h"
+#include "../GameState/ConquestGameState.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);

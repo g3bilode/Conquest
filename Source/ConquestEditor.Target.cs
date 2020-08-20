@@ -9,5 +9,6 @@ public class ConquestEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 		ExtraModuleNames.Add("Conquest");
-	}
+        DefaultBuildSettings = BuildSettingsVersion.V2;
+    }
 }

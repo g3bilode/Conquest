@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/ConquestSelectableInterface.h"
+#include "../Interfaces/ConquestSelectableInterface.h"
 #include "CapturePoint.generated.h"
 
 

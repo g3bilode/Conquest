@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CapturePoint.h"
-#include "Conquest.h"
-#include "GameState/ConquestGameState.h"
-#include "PlayerCharacter/ConquestPlayerState.h"
-#include "GameMode/ConquestGameMode.h"
-#include "UnrealNetwork.h"
+#include "../Conquest.h"
+#include "../GameState/ConquestGameState.h"
+#include "../PlayerCharacter/ConquestPlayerState.h"
+#include "../GameMode/ConquestGameMode.h"
+#include "Net/UnrealNetwork.h"
 
 
 bool ACapturePoint::OnSelectionGained_Implementation(AConquestPlayerController* initiator)

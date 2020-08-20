@@ -2,11 +2,11 @@
 
 
 #include "ConquestGameState.h"
-#include "Conquest.h"
-#include "PlayerCharacter/ConquestPlayerState.h"
-#include "Units/ConquestUnit.h"
+#include "../Conquest.h"
+#include "../PlayerCharacter/ConquestPlayerState.h"
+#include "../Units/ConquestUnit.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameMode/ConquestGameMode.h"
+#include "../GameMode/ConquestGameMode.h"
 
 
 const float AConquestGameState::ResourcePhaseTime = 10.0f;
