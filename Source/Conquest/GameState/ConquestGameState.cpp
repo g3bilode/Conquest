@@ -19,6 +19,8 @@ AConquestGameState::AConquestGameState()
 
 void AConquestGameState::BeginPlay()
 {
+	Super::BeginPlay();
+
 	if (HasAuthority())
 	{
 		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
