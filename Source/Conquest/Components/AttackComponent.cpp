@@ -18,37 +18,57 @@ UAttackComponent::UAttackComponent()
 }
 
 
-
-void UAttackComponent::DealDamage(AActor* TargetActor)
+void UAttackComponent::DealDamage()
 {
 	if (IsValid(TargetActor))
 	{
-		ACharacter* owningCharacter = (ACharacter*)GetOwner();
-		TargetActor->TakeDamage(BaseDamage, FDamageEvent(), owningCharacter->GetController(), owningCharacter);
+		TargetActor->TakeDamage(BaseDamage, FDamageEvent(), nullptr, GetOwningActor());
 	}
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &UAttackComponent::OnAttackCooldownExpired, AttackCooldown, false);
 }
 
 
-void UAttackComponent::AttemptAttack()
+void UAttackComponent::AttemptAttack(AActor* InTargetActor)
 {
 	if (!bIsOnCooldown)
 	{
 		bIsOnCooldown = true;
-		PlayAttackAnim();
+		TargetActor = InTargetActor;
+
+		if (IsValid(AttackMontage))
+		{
+			// Anim montage must call DealDamage
+			PlayAttackAnim();
+		}
+		else
+		{
+			// Deal damage directly
+			DealDamage();
+		}
 	}
 }
 
 
 void UAttackComponent::PlayAttackAnim_Implementation()
 {
-	// TODO: Save owner?
-	ACharacter* owningCharacter = (ACharacter*)GetOwner();
-	owningCharacter->PlayAnimMontage(AttackMontage);
+	ACharacter* owningCharacter = Cast<ACharacter>(GetOwningActor());
+	if (IsValid(owningCharacter))
+	{
+		owningCharacter->PlayAnimMontage(AttackMontage);
+	}
 }
 
 
 void UAttackComponent::OnAttackCooldownExpired()
 {
 	bIsOnCooldown = false;
+}
+
+AActor* UAttackComponent::GetOwningActor()
+{
+	if (!IsValid(_OwningActor))
+	{
+		_OwningActor = (AActor*) GetOwner();
+	}
+	return _OwningActor;
 }

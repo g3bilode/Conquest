@@ -108,7 +108,7 @@ void AConquestUnit::Tick(float DeltaTime)
 			{
 				// Attack
 				FaceTargetEnemy(DeltaTime);
-				AttackComponent->AttemptAttack();
+				AttackComponent->AttemptAttack(TargetEnemy);
 			}
 			else
 			{
@@ -128,11 +128,11 @@ void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestination
 	MovementComponent->SetLaneDestinations(InLaneDestinations);
 }
 
-void AConquestUnit::DealDamage()
+void AConquestUnit::OnAttackAnimHit()
 {
 	if (HasAuthority())
 	{
-		AttackComponent->DealDamage(TargetEnemy);
+		AttackComponent->DealDamage();
 	}
 }
 

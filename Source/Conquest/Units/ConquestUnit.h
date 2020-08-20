@@ -32,7 +32,7 @@ public:
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
 
 	UFUNCTION(BlueprintCallable)
-	void DealDamage();
+	void OnAttackAnimHit();
 	UFUNCTION(BlueprintCallable)
 	void DeathEnd();
 	UFUNCTION(BlueprintCallable)

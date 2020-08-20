@@ -23,9 +23,9 @@ public:
 	UAnimMontage* AttackMontage;
 
 	/* Attack target enemy. */
-	void AttemptAttack();
+	void AttemptAttack(AActor* TargetActor);
 	/* Deal damage to given actor. */
-	void DealDamage(AActor* TargetActor);
+	void DealDamage();
 
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
@@ -44,7 +44,14 @@ private:
 	/* Callback when cooldown timer runs out. */
 	void OnAttackCooldownExpired();
 
+	/* Get (and set) owning actor. */
+	AActor* GetOwningActor();
 
+
+	/* Component owner */
+	AActor* _OwningActor;
+	/* Target actor to attack. */
+	AActor* TargetActor;
 	/* Timer handle to manage attack cooldown */
 	FTimerHandle AttackCooldownTimerHandle;
 	/* Is our attack on cooldown? */
