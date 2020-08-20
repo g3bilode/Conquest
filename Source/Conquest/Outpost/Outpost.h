@@ -25,9 +25,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Stat")
 	float CurrentHealth;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSlot")
-	FVector AttackerSlotLocation;
-
 private:
 	virtual bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
 
