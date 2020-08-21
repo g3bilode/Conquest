@@ -52,8 +52,6 @@ public:
 	
 	
 	// STATS
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
-	float AttackRange;
 	UPROPERTY(Replicated, BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
 	float Health;
 

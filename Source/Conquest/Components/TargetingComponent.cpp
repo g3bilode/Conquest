@@ -7,6 +7,9 @@
 #include "Components/SphereComponent.h"
 
 
+DEFINE_LOG_CATEGORY_STATIC(LogConquestTargeting, Log, All);
+
+
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
 {
@@ -20,8 +23,10 @@ UTargetingComponent::UTargetingComponent()
 
 void UTargetingComponent::BeginPlay()
 {
+	Super::BeginPlay();
+
 	AActor* owningActor = GetOwner();
-	AggroSphere->InitSphereRadius(AggroSphereRadius);
+	AggroSphere->SetSphereRadius(AggroSphereRadius);
 	AggroSphere->AttachToComponent(owningActor->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 

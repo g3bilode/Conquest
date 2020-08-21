@@ -24,7 +24,6 @@ AConquestUnit::AConquestUnit()
 	// Setup TargetingComponent
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 
-	AttackRange = 180.0f;
 	Health = 100.0f;
 
 	bIsDead = false;
@@ -104,16 +103,16 @@ void AConquestUnit::Tick(float DeltaTime)
 		if (TargetingComponent->AcquireTargetEnemy())
 		{
 			// Move towards enemy
-			const FVector& enemyLocation = TargetingComponent->GetTargetEnemy()->GetActorLocation();
-			if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
+			AActor* TargetEnemy = TargetingComponent->GetTargetEnemy();
+			if (AttackComponent->IsTargetInRange(TargetEnemy))
 			{
 				// Attack
 				FaceTargetEnemy(DeltaTime);
-				AttackComponent->AttemptAttack(TargetingComponent->GetTargetEnemy());
+				AttackComponent->AttemptAttack(TargetEnemy);
 			}
 			else
 			{
-				MovementComponent->MoveToEnemy(enemyLocation);
+				MovementComponent->MoveToEnemy(TargetEnemy->GetActorLocation());
 			}
 		}
 		else

@@ -26,12 +26,16 @@ public:
 	void AttemptAttack(AActor* TargetActor);
 	/* Deal damage to given actor. */
 	void DealDamage();
+	/* Return true if target in range of attack. */
+	bool IsTargetInRange(AActor* TargetActor);
 
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
 	float BaseDamage;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
 	float AttackCooldown;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
+	float AttackRange;
 
 
 private:
@@ -51,7 +55,7 @@ private:
 	/* Component owner */
 	AActor* _OwningActor;
 	/* Target actor to attack. */
-	AActor* TargetActor;
+	AActor* _TargetActor;
 	/* Timer handle to manage attack cooldown */
 	FTimerHandle AttackCooldownTimerHandle;
 	/* Is our attack on cooldown? */

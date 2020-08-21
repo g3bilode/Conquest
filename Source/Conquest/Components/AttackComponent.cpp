@@ -14,26 +14,33 @@ UAttackComponent::UAttackComponent()
 
 	BaseDamage = 20.0f;
 	AttackCooldown = 1.0f;
+	AttackRange = 180.0f;
 	SetIsReplicatedByDefault(true);
 }
 
 
 void UAttackComponent::DealDamage()
 {
-	if (IsValid(TargetActor))
+	if (IsValid(_TargetActor))
 	{
-		TargetActor->TakeDamage(BaseDamage, FDamageEvent(), nullptr, GetOwningActor());
+		_TargetActor->TakeDamage(BaseDamage, FDamageEvent(), nullptr, GetOwningActor());
 	}
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &UAttackComponent::OnAttackCooldownExpired, AttackCooldown, false);
 }
 
+
+bool UAttackComponent::IsTargetInRange(AActor* TargetActor)
+{
+	FVector targetLocation = TargetActor->GetActorLocation();
+	return FVector::Dist(targetLocation, GetOwningActor()->GetActorLocation()) <= AttackRange;
+}
 
 void UAttackComponent::AttemptAttack(AActor* InTargetActor)
 {
 	if (!bIsOnCooldown)
 	{
 		bIsOnCooldown = true;
-		TargetActor = InTargetActor;
+		_TargetActor = InTargetActor;
 
 		if (IsValid(AttackMontage))
 		{

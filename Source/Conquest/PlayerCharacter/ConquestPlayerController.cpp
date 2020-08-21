@@ -268,7 +268,7 @@ void AConquestPlayerController::BuildLaneArray()
 	FVector enemyLocation;
 	for (TActorIterator<ACapital> CapitalItr(GetWorld()); CapitalItr; ++CapitalItr)
 	{
-		if (CapitalItr->TeamName != ConquestPlayerState->TeamName)
+		if (CapitalItr->TeamIndex != ConquestPlayerState->TeamIndex)
 		{
 			enemyLocation = CapitalItr->GetActorLocation();
 			break;
