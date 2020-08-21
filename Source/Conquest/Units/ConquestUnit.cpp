@@ -2,11 +2,11 @@
 
 #include "ConquestUnit.h"
 #include "../Conquest.h"
-#include "Net/UnrealNetwork.h"
-#include "Components/SphereComponent.h"
 #include "../Components/AttackComponent.h"
+#include "../Components/TargetingComponent.h"
 #include "../Components/UnitMovementComponent.h"
 #include "../GameState/ConquestGameState.h"
+#include "Net/UnrealNetwork.h"
 
 
 const FLinearColor AConquestUnit::AlternateColour(0.29f, 0.57f, 0.79f);
@@ -17,28 +17,19 @@ AConquestUnit::AConquestUnit()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Setup Collision Spheres
-	AggroSphere = CreateDefaultSubobject<USphereComponent>("AggroSphere");
-	AggroSphere->SetupAttachment(RootComponent);
-	AggroSphere->OnComponentBeginOverlap.AddDynamic(this, &AConquestUnit::OnAggroCollision);
-
 	// Setup UnitMovementCompontent
 	MovementComponent = CreateDefaultSubobject<UUnitMovementComponent>("MovementComponent");
 	// Setup AttackCompontent
 	AttackComponent = CreateDefaultSubobject<UAttackComponent>("AttackComponent");
+	// Setup TargetingComponent
+	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 
-	AggroSphereRadius = 300.0f;
 	AttackRange = 180.0f;
 	Health = 100.0f;
 
 	bIsDead = false;
 }
 
-void AConquestUnit::PostInitProperties()
-{
-	Super::PostInitProperties();
-	AggroSphere->InitSphereRadius(AggroSphereRadius);
-}
 
 float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -110,15 +101,15 @@ void AConquestUnit::Tick(float DeltaTime)
 			return;
 		}
 
-		if (AcquireTargetEnemy())
+		if (TargetingComponent->AcquireTargetEnemy())
 		{
 			// Move towards enemy
-			const FVector& enemyLocation = TargetEnemy->GetActorLocation();
+			const FVector& enemyLocation = TargetingComponent->GetTargetEnemy()->GetActorLocation();
 			if (FVector::Dist(enemyLocation, GetActorLocation()) <= AttackRange)
 			{
 				// Attack
 				FaceTargetEnemy(DeltaTime);
-				AttackComponent->AttemptAttack(TargetEnemy);
+				AttackComponent->AttemptAttack(TargetingComponent->GetTargetEnemy());
 			}
 			else
 			{
@@ -167,63 +158,10 @@ void AConquestUnit::RespondToCombatPhaseBegin()
 	SetActorTickEnabled(true);
 }
 
-void AConquestUnit::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
-{
-	// TODO: This may only need to be done on local client?
-	// Find a new target
-	AConquestUnit* OtherConquestUnit = Cast<AConquestUnit>(OtherActor);
-	if (IsValid(OtherConquestUnit))
-	{
-		// Found Unit
-		if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
-		{
-			if (IsTargetEnemy_Implementation(OtherActor))
-			{
-				KnownEnemies.Add(OtherConquestUnit);
-			}
-		}
-	}
-}
-
-void AConquestUnit::SetTargetEnemy(AConquestUnit* EnemyConquestUnit)
-{
-	TargetEnemy = EnemyConquestUnit;
-	UE_LOG(LogConquest, Log, TEXT("TARGET ACQUIRED: %s"), *GetNameSafe(EnemyConquestUnit));
-}
-
-bool AConquestUnit::AcquireTargetEnemy()
-{
-	if (!IsValid(TargetEnemy) || TargetEnemy->IsDead())
-	{
-		// Find new enemy
-		if (KnownEnemies.Num() > 0)
-		{
-			for (int32 i=KnownEnemies.Num()-1; i >= 0; i--)
-			{
-				AConquestUnit* knownEnemy = KnownEnemies[i];
-				if (IsValid(knownEnemy) && !knownEnemy->IsDead())
-				{
-					// New target found
-					SetTargetEnemy(knownEnemy);
-					return true;
-				}
-				else
-				{
-					KnownEnemies.RemoveAt(i);
-				}
-			}
-		}
-		// Found none
-		return false;
-	}
-	// Already have target
-	return true;
-}
-
 void AConquestUnit::FaceTargetEnemy(float DeltaTime)
 {
 	// Face enemy
-	FVector targetDirection = TargetEnemy->GetActorLocation() - GetActorLocation();
+	FVector targetDirection = TargetingComponent->GetTargetEnemy()->GetActorLocation() - GetActorLocation();
 	targetDirection.Normalize(SMALL_NUMBER);
 	FRotator newRotation = FMath::RInterpTo(GetActorRotation(), targetDirection.Rotation(), DeltaTime, 1.0);
 	SetActorRotation(newRotation);

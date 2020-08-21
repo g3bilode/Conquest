@@ -17,9 +17,6 @@ public:
 	// Sets default values for this character's properties
 	AConquestUnit();
 
-	// Setup things driven by BP properties
-	void PostInitProperties() override;
-
 	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	bool IsTargetEnemy_Implementation(AActor* OtherActor) override;
@@ -56,8 +53,6 @@ public:
 	
 	// STATS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
-	float AggroSphereRadius;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
 	float AttackRange;
 	UPROPERTY(Replicated, BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
 	float Health;
@@ -73,15 +68,8 @@ private:
 	/* Respond to combat phase begin delegate. */
 	void RespondToCombatPhaseBegin();
 
-	UFUNCTION()
-	/* Callback when unit overlaps our aggro sphere. */
-	void OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 	/* Return true if given enemy is in our lane. */
 	bool IsEnemyInMyLane(AConquestUnit* ConquestUnit);
-	/* Set new target enemy. */
-	void SetTargetEnemy(AConquestUnit* EnemyConquestUnit);
-	/* Find a new TargetEnemy. Returns true if found. */
-	bool AcquireTargetEnemy();
 	/* Smoothly face target enemy. */
 	void FaceTargetEnemy(float DeltaTime);
 	/* Begin death process. */
@@ -100,19 +88,11 @@ private:
 	/* Attack Component*/
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	class UAttackComponent* AttackComponent;
+	/* Targeting Component*/
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	class UTargetingComponent* TargetingComponent;
 
 
-	// Attack
-	
-	/* Currently targeted enemy*/
-	UPROPERTY()
-	AConquestUnit* TargetEnemy;
-	/* Known enemies */
-	UPROPERTY()
-	TArray<AConquestUnit*> KnownEnemies;
-	/* Aggro Trigger Sphere */
-	UPROPERTY()
-	class USphereComponent* AggroSphere;
 	/* Are we dead? */
 	UPROPERTY(ReplicatedUsing=OnRep_bIsDead)
 	bool bIsDead;
