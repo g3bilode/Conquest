@@ -28,9 +28,16 @@ bool AUnitSlot::SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, TArray<F
 }
 
 
+bool AUnitSlot::RespawnUnit(TArray<FVector> LaneDestinations, int32 TeamIndex, int32 LaneIndex)
+{
+	return SpawnUnit(OccupyingClass, LaneDestinations, TeamIndex, LaneIndex);
+}
+
+
 void AUnitSlot::Occupy(AConquestUnit* NewUnit)
 {
 	OccupyingUnit = NewUnit;
+	OccupyingClass = NewUnit->GetClass();
 	SetIsOccupied(true);
 }
 

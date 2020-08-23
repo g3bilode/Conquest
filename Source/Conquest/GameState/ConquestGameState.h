@@ -9,6 +9,8 @@
 
 /* Combat phase begin delegate */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatPhaseBegin);
+/* Resource phase begin delegate */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourcePhaseBegin);
 
 
 UENUM()
@@ -80,5 +82,6 @@ public:
 
 	/* Combat phase start delegate. */
 	FCombatPhaseBegin CombatPhase_OnStart;
-
+	/* Resource phase start delegate. */
+	FResourcePhaseBegin ResourcePhase_OnStart;
 };

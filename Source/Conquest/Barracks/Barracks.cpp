@@ -4,6 +4,7 @@
 #include "Barracks.h"
 #include "../Conquest.h"
 #include "UnitSlot.h"
+#include "../GameState/ConquestGameState.h"
 
 // Sets default values
 ABarracks::ABarracks()
@@ -19,6 +20,12 @@ void ABarracks::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// Bind resource phase start delegate
+	if (HasAuthority())
+	{
+		AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
+		conquestGameState->ResourcePhase_OnStart.AddDynamic(this, &ABarracks::RespondToResourcePhaseBegin);
+	}
 }
 
 
@@ -53,6 +60,25 @@ bool ABarracks::SpawnUnitInFreeSlot(TSubclassOf<class AConquestUnit> UnitToSpawn
 		UE_LOG(LogConquest, Error, TEXT("No free barracks slot."));
 	}
 	return false;
+}
+
+
+void ABarracks::RespawnUnitsInSlots()
+{
+	for (AUnitSlot* unitSlot : UnitSlots)
+	{
+		if (unitSlot->IsOccupied())
+		{
+			bool success = unitSlot->RespawnUnit(LaneDestinations, TeamIndex, LaneIndex);
+			ensure(success);
+		}
+	}
+}
+
+
+void ABarracks::RespondToResourcePhaseBegin()
+{
+	RespawnUnitsInSlots();
 }
 
 

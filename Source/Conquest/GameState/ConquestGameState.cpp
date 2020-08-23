@@ -64,6 +64,8 @@ void AConquestGameState::OnResourcePhaseStart_Implementation()
 	{
 		// Update resource phase timer with callback
 		GetWorld()->GetTimerManager().SetTimer(ResourcePhaseTimerHandle, this, &AConquestGameState::OnResourcePhaseEnd, ResourcePhaseTime, false);
+		// Broadcast resource phase start
+		ResourcePhase_OnStart.Broadcast();
 	}
 	else
 	{
@@ -95,7 +97,7 @@ void AConquestGameState::OnCombatPhaseStart_Implementation()
 		}
 		else
 		{
-			// Wake all units
+			// Broadcast combat phase start
 			CombatPhase_OnStart.Broadcast();
 		}
 	}

@@ -40,11 +40,17 @@ public:
 	/* Spawn given unit in free slot. */
 	bool SpawnUnitInFreeSlot(TSubclassOf<class AConquestUnit> UnitToSpawn);
 
-
 private:
 
 	bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
 	bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
+
+	/* Respawn units in slots. */
+	void RespawnUnitsInSlots();
+
+	/* Respond to combat phase begin delegate. */
+	UFUNCTION()
+	void RespondToResourcePhaseBegin();
 
 	/* Lane destinations for spawned units. */
 	TArray<FVector> LaneDestinations;
