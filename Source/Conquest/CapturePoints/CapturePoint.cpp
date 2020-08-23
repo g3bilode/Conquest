@@ -24,10 +24,9 @@ ACapturePoint::ACapturePoint()
 
 }
 
-void ACapturePoint::Capture(FName TeamName)
+void ACapturePoint::Capture(int32 TeamIndex)
 {
-	OccupierTeamName = TeamName;
-	UE_LOG(LogConquest, Log, TEXT("CAPTURED BY %s"), *TeamName.ToString());
+	OccupierTeamIndex = TeamIndex;
 }
 
 int8 ACapturePoint::GetLaneNumber() const
@@ -45,8 +44,8 @@ void ACapturePoint::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ACapturePoint::OnTriggerOverlapWithUnit(FName TeamName)
+void ACapturePoint::OnTriggerOverlapWithUnit(int32 TeamIndex)
 {
-	Capture(TeamName);
+	Capture(TeamIndex);
 }
 

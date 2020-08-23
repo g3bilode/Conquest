@@ -52,9 +52,11 @@ private:
 	AActor* GetOwningActor();
 
 
+	UPROPERTY()
 	/* Component owner */
 	AActor* _OwningActor;
 	/* Target actor to attack. */
+	UPROPERTY()
 	AActor* _TargetActor;
 	/* Timer handle to manage attack cooldown */
 	FTimerHandle AttackCooldownTimerHandle;

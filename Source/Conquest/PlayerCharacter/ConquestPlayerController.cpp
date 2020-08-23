@@ -67,7 +67,6 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 		location = freeSlot->GetActorLocation();
 		// Avoid spawn collision...
 		location += FVector(0, 0, 200);
-
 	}
 	else
 	{
@@ -83,7 +82,6 @@ void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<clas
 
 	if (ConquestPlayerState != nullptr && IsValid(conquestSpawnedUnit))
 	{
-		conquestSpawnedUnit->TeamName = ConquestPlayerState->TeamName;
 		conquestSpawnedUnit->TeamIndex = ConquestPlayerState->TeamIndex;
 		conquestSpawnedUnit->LaneIndex = LaneIndex;
 		conquestSpawnedUnit->SetLaneDestinations(LaneDestinations);

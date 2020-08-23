@@ -16,9 +16,7 @@ class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInte
 public:
 	ACapturePoint();
 
-	FVector* GetDestinationForUnit(const FName teamName);
-
-	void Capture(FName TeamName);
+	void Capture(int32 TeamIndex);
 
 	int8 GetLaneNumber() const;
 	int8 GetRowNumber() const;
@@ -33,12 +31,11 @@ private:
 	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
 	UFUNCTION(BlueprintCallable)
-	void OnTriggerOverlapWithUnit(FName TeamName);
+	void OnTriggerOverlapWithUnit(int32 TeamIndex);
 
 	
-	// TeamName currently occupying point
-	FName OccupierTeamName;
-
+	/* Team index currently occupying point */
+	int32  OccupierTeamIndex;
 	/* Lane position (ex: 0 = lane 0) */
 	UPROPERTY(EditAnywhere)
 	int8 LaneNumber;

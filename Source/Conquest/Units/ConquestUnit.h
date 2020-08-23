@@ -39,9 +39,6 @@ public:
 	bool IsDead();
 
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
-	FName TeamName;
-
-	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
 	int32 TeamIndex;
 
 	UPROPERTY(Replicated)
