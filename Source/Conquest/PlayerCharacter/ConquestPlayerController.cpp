@@ -52,46 +52,16 @@ bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class ACon
 
 void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations, int32 LaneIndex)
 {
-	
 	if (!CanPurchaseUnit(ActorToSpawn))
 	{
 		UE_LOG(LogConquest, Log, TEXT("Cannot purchase unit."));
 		return;
 	}
 
-	FVector location;
 	ABarracks* laneBarracks = GetBarracksForLane(LaneIndex);
-	AUnitSlot* freeSlot = laneBarracks->GetFreeUnitSlot();
-	if (IsValid(freeSlot))
+	if (laneBarracks->SpawnUnitInFreeSlot(ActorToSpawn))
 	{
-		location = freeSlot->GetActorLocation();
-		// Avoid spawn collision...
-		location += FVector(0, 0, 200);
-	}
-	else
-	{
-		UE_LOG(LogConquest, Error, TEXT("No free barracks slot."));
-		return;
-	}
-
-	FTransform spawnTransform;
-	spawnTransform.SetLocation(location);
-
-	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ActorToSpawn->GetDefaultObject()->GetClass(), spawnTransform, ESpawnActorCollisionHandlingMethod::Undefined, this);
-	AConquestUnit* conquestSpawnedUnit = Cast<AConquestUnit>(spawnedUnit);
-
-	if (ConquestPlayerState != nullptr && IsValid(conquestSpawnedUnit))
-	{
-		conquestSpawnedUnit->TeamIndex = ConquestPlayerState->TeamIndex;
-		conquestSpawnedUnit->LaneIndex = LaneIndex;
-		conquestSpawnedUnit->SetLaneDestinations(LaneDestinations);
-
-		UGameplayStatics::FinishSpawningActor(conquestSpawnedUnit, spawnTransform);
-		if (IsValid(conquestSpawnedUnit))
-		{
-			PurchaseUnit(ActorToSpawn);
-			freeSlot->SetIsOccupied(true);
-		}
+		PurchaseUnit(ActorToSpawn);
 	}
 }
 
@@ -243,7 +213,7 @@ void AConquestPlayerController::PurchaseUnit(const TSubclassOf<class AConquestUn
 
 void AConquestPlayerController::BuildLaneArray()
 {
-	// TODO: Improve this?
+	// TODO: Improve this? Move this?
 	// Init the LaneArray
 	int32 numLanes = ConquestUtils::LaneSpec.Num();
 	LaneArray.Init(FLaneDestinations(), numLanes);
@@ -302,6 +272,7 @@ void AConquestPlayerController::BuildBarracksArray()
 		if (BarracksItr->TeamIndex == ConquestPlayerState->TeamIndex)
 		{
 			int32 LaneIndex = BarracksItr->LaneIndex;
+			BarracksItr->SetLaneDestinations(GetLaneDestinations(LaneIndex));
 			BarracksArray[LaneIndex] = *BarracksItr;
 		}
 	}

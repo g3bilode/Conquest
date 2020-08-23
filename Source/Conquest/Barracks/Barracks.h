@@ -34,12 +34,18 @@ public:
 
 	class AUnitSlot* GetFreeUnitSlot();
 
+	/* Set LaneDestinations array. */
+	void SetLaneDestinations(TArray<FVector> InLaneDestinations);
+
+	/* Spawn given unit in free slot. */
+	bool SpawnUnitInFreeSlot(TSubclassOf<class AConquestUnit> UnitToSpawn);
+
 
 private:
 
 	bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
-
-
 	bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
+	/* Lane destinations for spawned units. */
+	TArray<FVector> LaneDestinations;
 };

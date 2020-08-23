@@ -35,6 +35,27 @@ AUnitSlot* ABarracks::GetFreeUnitSlot()
 }
 
 
+void ABarracks::SetLaneDestinations(TArray<FVector> InLaneDestinations)
+{
+	LaneDestinations = InLaneDestinations;
+}
+
+
+bool ABarracks::SpawnUnitInFreeSlot(TSubclassOf<class AConquestUnit> UnitToSpawn)
+{
+	AUnitSlot* freeSlot = GetFreeUnitSlot();
+	if (IsValid(freeSlot))
+	{
+		return freeSlot->SpawnUnit(UnitToSpawn, LaneDestinations, TeamIndex, LaneIndex);
+	}
+	else
+	{
+		UE_LOG(LogConquest, Error, TEXT("No free barracks slot."));
+	}
+	return false;
+}
+
+
 bool ABarracks::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
 {
 	return true;
