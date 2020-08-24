@@ -3,6 +3,8 @@
 
 #include "ConquestHUD.h"
 #include "Blueprint/UserWidget.h"
+#include "BarracksWidget.h"
+#include "GameplayWidget.h"
 
 AConquestHUD::AConquestHUD()
 {
@@ -10,12 +12,19 @@ AConquestHUD::AConquestHUD()
 	GameHUDWidgetClass = conquestHud.Class;
 }
 
+
+void AConquestHUD::OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots)
+{
+	GameHUDWidget->BarrackWidget->PopulateGridData(UnitSlots);
+}
+
+
 void AConquestHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// Setup Game HUD
-	GameHUDWidget = CreateWidget<UUserWidget>(GetWorld(), GameHUDWidgetClass, "Game HUD");
+	GameHUDWidget = CreateWidget<UGameplayWidget>(GetWorld(), GameHUDWidgetClass, "Game HUD");
 	GameHUDWidget->AddToViewport();
 
 }

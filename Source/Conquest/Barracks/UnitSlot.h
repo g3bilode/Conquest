@@ -22,6 +22,8 @@ public:
 	void SetIsOccupied(bool NewValue);
 	bool IsOccupied() const;
 
+	AConquestUnit* GetOccupyingUnit() const;
+
 private:
 	UPROPERTY()
 	class AConquestUnit* OccupyingUnit;

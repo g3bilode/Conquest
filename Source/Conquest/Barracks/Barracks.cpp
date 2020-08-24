@@ -5,6 +5,8 @@
 #include "../Conquest.h"
 #include "UnitSlot.h"
 #include "../GameState/ConquestGameState.h"
+#include "../HUD/ConquestHUD.h"
+#include "../PlayerCharacter/ConquestPlayerController.h"
 
 // Sets default values
 ABarracks::ABarracks()
@@ -90,6 +92,11 @@ bool ABarracks::OnSelectionChanged_Implementation(AConquestPlayerController* ini
 
 bool ABarracks::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
 {
-	UE_LOG(LogConquest, Log, TEXT("Barrack selected."));
+	if (initiator->GetConquestPlayerState()->TeamIndex == TeamIndex)
+	{
+		// Friendly
+		AConquestHUD* conquestHUD = (AConquestHUD*) initiator->GetHUD();
+		conquestHUD->OnBarrackSelection(UnitSlots);
+	}
 	return true;
 }

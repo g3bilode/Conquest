@@ -52,3 +52,8 @@ bool AUnitSlot::IsOccupied() const
 {
 	return bIsOccupied;
 }
+
+AConquestUnit* AUnitSlot::GetOccupyingUnit() const
+{
+	return OccupyingUnit;
+}

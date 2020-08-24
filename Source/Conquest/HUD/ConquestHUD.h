@@ -17,6 +17,8 @@ class CONQUEST_API AConquestHUD : public AHUD
 public:
 	AConquestHUD();
 
+	void OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots);
+
 protected:
 	void BeginPlay() override;
 
@@ -25,6 +27,6 @@ public:
 	TSubclassOf<UUserWidget> GameHUDWidgetClass;
 
 	UPROPERTY()
-	UUserWidget* GameHUDWidget;
+	class UGameplayWidget* GameHUDWidget;
 
 };
