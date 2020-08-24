@@ -46,6 +46,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
 	int32 PurchaseCost;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
+	UTexture* Icon;
 	
 	
 	// STATS
