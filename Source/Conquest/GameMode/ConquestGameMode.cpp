@@ -3,10 +3,11 @@
 
 #include "ConquestGameMode.h"
 #include "../Conquest.h"
+#include "../GameState/ConquestGameState.h"
+#include "../HUD/ConquestHUD.h"
+#include "../PlayerCharacter/ConquestCharacter.h"
 #include "../PlayerCharacter/ConquestPlayerState.h"
 #include "../PlayerCharacter/ConquestPlayerController.h"
-#include "../GameState/ConquestGameState.h"
-#include "../PlayerCharacter/ConquestCharacter.h"
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
 #include "UMG/Public/Blueprint/UserWidget.h"
@@ -31,8 +32,7 @@ AConquestGameMode::AConquestGameMode()
 	PlayerControllerClass = AConquestPlayerController::StaticClass();
 	GameStateClass = AConquestGameState::StaticClass();
 	PlayerStateClass = AConquestPlayerState::StaticClass();
-	static ConstructorHelpers::FClassFinder<UUserWidget> conquestHud(TEXT("/Game/Conquest/UI/HUD/Gameplay_HUD"));
-	HUDClass = conquestHud.Class;
+	HUDClass = AConquestHUD::StaticClass();
 }
 
 
