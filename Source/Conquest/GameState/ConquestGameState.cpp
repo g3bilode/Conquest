@@ -9,7 +9,7 @@
 #include "../GameMode/ConquestGameMode.h"
 
 
-const float AConquestGameState::ResourcePhaseTime = 10.0f;
+const float AConquestGameState::ResourcePhaseTime = 30.0f;
 
 
 AConquestGameState::AConquestGameState()
