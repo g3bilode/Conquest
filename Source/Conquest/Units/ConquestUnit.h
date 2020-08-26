@@ -38,15 +38,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsDead();
 
+	/* Unit's team index. */
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
 	int32 TeamIndex;
 
+	/* Unit's team lane. */
 	UPROPERTY(Replicated)
 	int32 LaneIndex;
 
+	/* UnitSlot we are occupying, for callback post-spawn. */
+	UPROPERTY(Replicated)
+	class AUnitSlot* UnitSlot;
+
+	/* Purchase cost for this unit. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
 	int32 PurchaseCost;
 
+	/* Icon for this unit. */
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
 	UTexture2D* Icon;
 	

@@ -6,18 +6,6 @@
 #include "Net/UnrealNetwork.h"
 
 
-void AUnitSlot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AUnitSlot, OccupyingUnit);
-	DOREPLIFETIME(AUnitSlot, bIsOccupied);
-}
-
-AUnitSlot::AUnitSlot()
-{
-	bReplicates = true;
-}
 
 bool AUnitSlot::SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, TArray<FVector> LaneDestinations, int32 TeamIndex, int32 LaneIndex)
 {
@@ -32,10 +20,10 @@ bool AUnitSlot::SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, TArray<F
 	{
 		conquestSpawnedUnit->TeamIndex = TeamIndex;
 		conquestSpawnedUnit->LaneIndex = LaneIndex;
+		conquestSpawnedUnit->UnitSlot = this;
 		conquestSpawnedUnit->SetLaneDestinations(LaneDestinations);
 
 		UGameplayStatics::FinishSpawningActor(conquestSpawnedUnit, spawnTransform);
-		Occupy(conquestSpawnedUnit);
 		return true;
 	}
 	return false;

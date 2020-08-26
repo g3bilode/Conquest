@@ -11,15 +11,12 @@ class CONQUEST_API AUnitSlot : public AActor
 {
 	GENERATED_BODY()
 
-public:
-	AUnitSlot();
-	
 public:	
 	/* Spawn Unit at this slot. Return true on success. */
 	bool SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, TArray<FVector> LaneDestinations, int32 TeamIndex, int32 LaneIndex);
 	/* Respawn previous unit. */
 	bool RespawnUnit(TArray<FVector> LaneDestinations, int32 TeamIndex, int32 LaneIndex);
-	/* Occupy this slot. */
+	/* Occupy this slot. Called by spawned unit. */
 	void Occupy(class AConquestUnit* NewUnit);
 
 	void SetIsOccupied(bool NewValue);
@@ -28,10 +25,10 @@ public:
 	AConquestUnit* GetOccupyingUnit() const;
 
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	class AConquestUnit* OccupyingUnit;
 	UPROPERTY()
 	TSubclassOf<class AConquestUnit> OccupyingClass;
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	bool bIsOccupied;
 };

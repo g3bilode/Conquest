@@ -2,6 +2,7 @@
 
 #include "ConquestUnit.h"
 #include "../Conquest.h"
+#include "../Barracks/UnitSlot.h"
 #include "../Components/AttackComponent.h"
 #include "../Components/TargetingComponent.h"
 #include "../Components/UnitMovementComponent.h"
@@ -56,10 +57,11 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AConquestUnit, TeamIndex);
-	DOREPLIFETIME(AConquestUnit, LaneIndex);
+	DOREPLIFETIME_CONDITION(AConquestUnit, TeamIndex, COND_InitialOnly);
+	DOREPLIFETIME_CONDITION(AConquestUnit, LaneIndex, COND_InitialOnly);
 	DOREPLIFETIME(AConquestUnit, Health);
 	DOREPLIFETIME(AConquestUnit, bIsDead);
+	DOREPLIFETIME_CONDITION(AConquestUnit, UnitSlot, COND_InitialOnly);
 }
 
 // Called when the game starts or when spawned
@@ -81,6 +83,11 @@ void AConquestUnit::BeginPlay()
 	{
 		AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
 		conquestGameState->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
+	}
+
+	if (ensure(IsValid(UnitSlot)))
+	{
+		UnitSlot->Occupy(this);
 	}
 
 	// Disable until combat phase
