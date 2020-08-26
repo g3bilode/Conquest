@@ -3,11 +3,10 @@
 
 #include "BarracksWidget.h"
 #include "../Barracks/UnitSlot.h"
-#include "../Units/ConquestUnit.h"
 #include "UnitSlotWidget.h"
 
 
-void UBarracksWidget::PopulateGridData(TArray<AUnitSlot*> UnitSlots)
+void UBarracksWidget::PopulateGridData(TArray<AUnitSlot*> UnitSlots, int32 LaneIndex)
 {
 	for (int32 i=0;  i < UnitSlots.Num(); i++)
 	{
@@ -16,15 +15,7 @@ void UBarracksWidget::PopulateGridData(TArray<AUnitSlot*> UnitSlots)
 		if (ensure(UnitSlotGrid.IsValidIndex(i)))
 		{
 			UUnitSlotWidget* unitSlotWidget = UnitSlotGrid[i];
-			if (unitSlot->IsOccupied())
-			{
-				UTexture2D* unitIcon = unitSlot->GetOccupyingUnit()->Icon;
-				unitSlotWidget->SetIcon(unitIcon);
-			}
-			else
-			{
-				unitSlotWidget->SetIcon(unitSlotWidget->DefaultUnitSlotIcon);
-			}
+			unitSlotWidget->Populate(unitSlot, LaneIndex);
 		}
 	}
 }

@@ -13,9 +13,9 @@ AConquestHUD::AConquestHUD()
 }
 
 
-void AConquestHUD::OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots)
+void AConquestHUD::OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots, int32 LaneIndex)
 {
-	GameHUDWidget->BarrackWidget->PopulateGridData(UnitSlots);
+	GameHUDWidget->BarrackWidget->PopulateGridData(UnitSlots, LaneIndex);
 }
 
 

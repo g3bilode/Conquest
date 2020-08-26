@@ -13,8 +13,17 @@ UCLASS()
 class CONQUEST_API UUnitSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+
 
 public:
+	/* Event on button click. */
+	UFUNCTION(BlueprintCallable)
+	void OnSlotSelected(TSubclassOf<class AConquestUnit> UnitToSpawn);
+
+	/* Populate with unit slot data. */
+	void Populate(class AUnitSlot* UnitSlot, int32 LaneIndex);
+
 	/* Set the unit slot button icon. */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetIcon(UTexture2D* NewIcon);
@@ -22,5 +31,15 @@ public:
 	/* Icon for empty unit slot. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UTexture2D* DefaultUnitSlotIcon;
-	
+
+
+private:
+	/* Corresponding UnitSlot actor. */
+	UPROPERTY()
+	AUnitSlot* _UnitSlot;
+	/* Lane index. */
+	int32 _LaneIndex;
+protected:
+	void NativeConstruct() override;
+
 };

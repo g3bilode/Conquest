@@ -96,7 +96,7 @@ bool ABarracks::OnSelectionGained_Implementation(AConquestPlayerController* init
 	{
 		// Friendly
 		AConquestHUD* conquestHUD = (AConquestHUD*) initiator->GetHUD();
-		conquestHUD->OnBarrackSelection(UnitSlots);
+		conquestHUD->OnBarrackSelection(UnitSlots, LaneIndex);
 	}
 	return true;
 }

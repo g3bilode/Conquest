@@ -2,4 +2,44 @@
 
 
 #include "UnitSlotWidget.h"
+#include "../Conquest.h"
+#include "../Barracks/UnitSlot.h"
+#include "../PlayerCharacter/ConquestPlayerController.h"
+#include "../Units/ConquestUnit.h"
 
+
+void UUnitSlotWidget::OnSlotSelected(TSubclassOf<class AConquestUnit> UnitToSpawn)
+{
+	if (_UnitSlot->IsOccupied())
+	{
+		UE_LOG(LogConquest, Log, TEXT("Upgrade time!"));
+	}
+	else
+	{
+		AConquestPlayerController* conquestPlayerController = GetWorld()->GetFirstPlayerController<AConquestPlayerController>();
+		conquestPlayerController->AttemptSpawnUnit(UnitToSpawn, _LaneIndex);
+	}
+}
+
+
+void UUnitSlotWidget::Populate(class AUnitSlot* UnitSlot, int32 LaneIndex)
+{
+	_UnitSlot = UnitSlot;
+	_LaneIndex = LaneIndex;
+	if (_UnitSlot->IsOccupied())
+	{
+		UTexture2D* unitIcon = _UnitSlot->GetOccupyingUnit()->Icon;
+		SetIcon(unitIcon);
+	}
+	else
+	{
+		SetIcon(DefaultUnitSlotIcon);
+	}
+	SetVisibility(ESlateVisibility::Visible);
+}
+
+void UUnitSlotWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	SetVisibility(ESlateVisibility::Hidden);
+}
