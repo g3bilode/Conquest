@@ -45,12 +45,12 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(AConquestPlayerController, ConquestPlayerState);
 }
 
-bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations, int32 LaneIndex)
+bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex)
 {
 	return true;
 }
 
-void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, const TArray<FVector>& LaneDestinations, int32 LaneIndex)
+void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex)
 {
 	if (!CanPurchaseUnit(ActorToSpawn))
 	{
