@@ -60,7 +60,6 @@ private:
 	// Phases
 	static const float ResourcePhaseTime;
 	FTimerHandle ResourcePhaseTimerHandle;
-	FTimerHandle ResourcePhaseTimerHandle_Client;
 	TEnumAsByte<EPhase> CurrentPhase;
 	int32 AliveUnitCount;
 
