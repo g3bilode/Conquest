@@ -42,7 +42,7 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AConquestPlayerController, ConquestPlayerState);
+	DOREPLIFETIME_CONDITION(AConquestPlayerController, ConquestPlayerState, COND_InitialOnly);
 }
 
 bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex)

@@ -8,6 +8,6 @@ void AConquestPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AConquestPlayerState, Gold);
-	DOREPLIFETIME(AConquestPlayerState, TeamName);
-	DOREPLIFETIME(AConquestPlayerState, TeamIndex);
+	DOREPLIFETIME_CONDITION(AConquestPlayerState, TeamName, COND_InitialOnly);
+	DOREPLIFETIME_CONDITION(AConquestPlayerState, TeamIndex, COND_InitialOnly);
 }
