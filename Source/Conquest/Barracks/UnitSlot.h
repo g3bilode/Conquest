@@ -10,6 +10,9 @@ UCLASS()
 class CONQUEST_API AUnitSlot : public AActor
 {
 	GENERATED_BODY()
+
+public:
+	AUnitSlot();
 	
 public:	
 	/* Spawn Unit at this slot. Return true on success. */
@@ -25,9 +28,10 @@ public:
 	AConquestUnit* GetOccupyingUnit() const;
 
 private:
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	class AConquestUnit* OccupyingUnit;
 	UPROPERTY()
 	TSubclassOf<class AConquestUnit> OccupyingClass;
+	UPROPERTY(Replicated)
 	bool bIsOccupied;
 };

@@ -12,15 +12,19 @@ void UBarracksWidget::PopulateGridData(TArray<AUnitSlot*> UnitSlots)
 	for (int32 i=0;  i < UnitSlots.Num(); i++)
 	{
 		AUnitSlot* unitSlot = UnitSlots[i];
-		UUnitSlotWidget* unitSlotWidget = UnitSlotGrid[i];
-		if (unitSlot->IsOccupied())
+
+		if (ensure(UnitSlotGrid.IsValidIndex(i)))
 		{
-			UTexture2D* unitIcon = unitSlot->GetOccupyingUnit()->Icon;
-			unitSlotWidget->SetIcon(unitIcon);
-		}
-		else
-		{
-			unitSlotWidget->SetIcon(unitSlotWidget->DefaultUnitSlotIcon);
+			UUnitSlotWidget* unitSlotWidget = UnitSlotGrid[i];
+			if (unitSlot->IsOccupied())
+			{
+				UTexture2D* unitIcon = unitSlot->GetOccupyingUnit()->Icon;
+				unitSlotWidget->SetIcon(unitIcon);
+			}
+			else
+			{
+				unitSlotWidget->SetIcon(unitSlotWidget->DefaultUnitSlotIcon);
+			}
 		}
 	}
 }

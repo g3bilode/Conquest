@@ -3,7 +3,21 @@
 #include "UnitSlot.h"
 #include "../Units/ConquestUnit.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
+
+void AUnitSlot::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AUnitSlot, OccupyingUnit);
+	DOREPLIFETIME(AUnitSlot, bIsOccupied);
+}
+
+AUnitSlot::AUnitSlot()
+{
+	bReplicates = true;
+}
 
 bool AUnitSlot::SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, TArray<FVector> LaneDestinations, int32 TeamIndex, int32 LaneIndex)
 {
