@@ -15,9 +15,16 @@ class CONQUEST_API UUnitSpawnerWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-
+	/* Populate the slot data. */
 	UFUNCTION(BlueprintImplementableEvent)
 	void Populate();
+
+	/* Enable this spawner for given lane. */
+	void EnableSpawner(int32 LaneIndex);
+
+	/* Event on button click. */
+	UFUNCTION(BlueprintCallable)
+	void OnSlotSelected();
 
 	/* Unit to spawn. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSpawner")
@@ -26,4 +33,7 @@ public:
 protected:
 	void NativeConstruct() override;
 
+private:
+	/* Lane index. */
+	int32 _LaneIndex;
 };

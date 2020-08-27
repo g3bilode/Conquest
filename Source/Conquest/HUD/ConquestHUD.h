@@ -19,6 +19,8 @@ public:
 
 	void OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots, int32 LaneIndex);
 
+	void OnEmptyUnitSlotSelection(int32 LaneIndex);
+
 protected:
 	void BeginPlay() override;
 

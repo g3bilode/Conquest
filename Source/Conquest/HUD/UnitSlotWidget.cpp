@@ -6,6 +6,7 @@
 #include "../Barracks/UnitSlot.h"
 #include "../PlayerCharacter/ConquestPlayerController.h"
 #include "../Units/ConquestUnit.h"
+#include "ConquestHUD.h"
 
 
 void UUnitSlotWidget::OnSlotSelected(TSubclassOf<class AConquestUnit> UnitToSpawn)
@@ -17,7 +18,8 @@ void UUnitSlotWidget::OnSlotSelected(TSubclassOf<class AConquestUnit> UnitToSpaw
 	else
 	{
 		AConquestPlayerController* conquestPlayerController = GetWorld()->GetFirstPlayerController<AConquestPlayerController>();
-		conquestPlayerController->AttemptSpawnUnit(UnitToSpawn, _LaneIndex);
+		AConquestHUD* conquestHUD = conquestPlayerController->GetHUD<AConquestHUD>();
+		conquestHUD->OnEmptyUnitSlotSelection(_LaneIndex);
 	}
 }
 
@@ -37,6 +39,7 @@ void UUnitSlotWidget::Populate(class AUnitSlot* UnitSlot, int32 LaneIndex)
 	}
 	SetVisibility(ESlateVisibility::Visible);
 }
+
 
 void UUnitSlotWidget::NativeConstruct()
 {

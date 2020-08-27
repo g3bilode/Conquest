@@ -16,7 +16,7 @@ class CONQUEST_API UUnitActionsWidget : public UUserWidget
 	
 public:
 	/* Populate the UnitSlotGrid UI. */
-	void PopulateGridData();
+	void PopulateGridData(int32 LaneIndex);
 
 	/* Grid of unit slot buttons for selected barrack. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSpawners")

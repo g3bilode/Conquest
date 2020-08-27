@@ -2,8 +2,12 @@
 
 
 #include "UnitActionsWidget.h"
+#include "UnitSpawnerWidget.h"
 
-void UUnitActionsWidget::PopulateGridData()
+void UUnitActionsWidget::PopulateGridData(int32 LaneIndex)
 {
-
+	for (UUnitSpawnerWidget* unitSpawnerWidget : UnitSpawnerGrid)
+	{
+		unitSpawnerWidget->EnableSpawner(LaneIndex);
+	}
 }

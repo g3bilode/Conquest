@@ -17,4 +17,7 @@ class CONQUEST_API UGameplayWidget : public UUserWidget
 public:
 	UPROPERTY(BlueprintReadWrite)
 	class UBarracksWidget* BarrackWidget;
+
+	UPROPERTY(BlueprintReadWrite)
+	class UUnitActionsWidget* UnitActionsWidget;
 };

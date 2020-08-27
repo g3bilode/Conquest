@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BarracksWidget.h"
 #include "GameplayWidget.h"
+#include "UnitActionsWidget.h"
 
 AConquestHUD::AConquestHUD()
 {
@@ -18,6 +19,11 @@ void AConquestHUD::OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots, int32 
 	GameHUDWidget->BarrackWidget->PopulateGridData(UnitSlots, LaneIndex);
 }
 
+
+void AConquestHUD::OnEmptyUnitSlotSelection(int32 LaneIndex)
+{
+	GameHUDWidget->UnitActionsWidget->PopulateGridData(LaneIndex);
+}
 
 void AConquestHUD::BeginPlay()
 {
