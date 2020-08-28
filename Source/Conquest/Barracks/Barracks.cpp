@@ -44,6 +44,16 @@ AUnitSlot* ABarracks::GetFreeUnitSlot()
 }
 
 
+class AUnitSlot* ABarracks::GetUnitSlotAtIndex(int32 SlotIndex)
+{
+	if (ensure(UnitSlots.IsValidIndex(SlotIndex)))
+	{
+		return UnitSlots[SlotIndex];
+	}
+	return nullptr;
+}
+
+
 void ABarracks::SetLaneDestinations(TArray<FVector> InLaneDestinations)
 {
 	LaneDestinations = InLaneDestinations;
@@ -52,16 +62,51 @@ void ABarracks::SetLaneDestinations(TArray<FVector> InLaneDestinations)
 
 bool ABarracks::SpawnUnitInFreeSlot(TSubclassOf<class AConquestUnit> UnitToSpawn)
 {
+	// TODO Remove this function
 	AUnitSlot* freeSlot = GetFreeUnitSlot();
 	if (IsValid(freeSlot))
 	{
-		return freeSlot->SpawnUnit(UnitToSpawn, LaneDestinations, TeamIndex, LaneIndex);
+		return SpawnUnitInSlot(UnitToSpawn, freeSlot);
 	}
 	else
 	{
 		UE_LOG(LogConquest, Error, TEXT("No free barracks slot."));
+		return false;
 	}
-	return false;
+}
+
+
+bool ABarracks::SpawnUnitAtIndex(TSubclassOf<class AConquestUnit> UnitToSpawn, int32 SlotIndex)
+{
+	AUnitSlot* indexedSlot = GetUnitSlotAtIndex(SlotIndex);
+	if (IsValid(indexedSlot))
+	{
+		return SpawnUnitInSlot(UnitToSpawn, indexedSlot);
+	}
+	else
+	{
+		UE_LOG(LogConquest, Error, TEXT("Invalid slot index."));
+		return false;
+	}
+}
+
+
+bool ABarracks::SpawnUnitInSlot(TSubclassOf<class AConquestUnit> UnitToSpawn, class AUnitSlot* UnitSlot)
+{
+	if (IsValid(UnitSlot))
+	{
+		if (UnitSlot->IsOccupied())
+		{
+			UE_LOG(LogConquest, Error, TEXT("Slot already occupied."));
+			return false;
+		}
+		return UnitSlot->SpawnUnit(UnitToSpawn, LaneDestinations, TeamIndex, LaneIndex);
+	}
+	else
+	{
+		UE_LOG(LogConquest, Error, TEXT("Invalid slot provided."));
+		return false;
+	}
 }
 
 

@@ -34,11 +34,19 @@ public:
 
 	class AUnitSlot* GetFreeUnitSlot();
 
+	class AUnitSlot* GetUnitSlotAtIndex(int32 SlotIndex);
+
 	/* Set LaneDestinations array. */
 	void SetLaneDestinations(TArray<FVector> InLaneDestinations);
 
 	/* Spawn given unit in free slot. */
 	bool SpawnUnitInFreeSlot(TSubclassOf<class AConquestUnit> UnitToSpawn);
+
+	/* Spawn given unit in given slot index. */
+	bool SpawnUnitAtIndex(TSubclassOf<class AConquestUnit> UnitToSpawn, int32 SlotIndex);
+
+	/* Spawn given unit in slot. */
+	bool SpawnUnitInSlot(TSubclassOf<class AConquestUnit> UnitToSpawn, class AUnitSlot* UnitSlot);
 
 private:
 

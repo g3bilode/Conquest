@@ -36,9 +36,9 @@ public:
 	AConquestPlayerController();
 
 	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation)
-	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex);
-	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex);
-	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex);
+	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex);
+	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex);
+	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex);
 
 	AConquestPlayerState* GetConquestPlayerState();
 

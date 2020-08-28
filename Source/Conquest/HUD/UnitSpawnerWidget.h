@@ -20,7 +20,7 @@ public:
 	void Populate();
 
 	/* Enable this spawner for given lane. */
-	void EnableSpawner(int32 LaneIndex);
+	void EnableSpawner(int32 LaneIndex, int32 SlotIndex);
 
 	/* Disable this spawner. */
 	void DisableSpawner();
@@ -39,4 +39,6 @@ protected:
 private:
 	/* Lane index. */
 	int32 _LaneIndex;
+	/* Unit slot index. */
+	int32 _SlotIndex;
 };

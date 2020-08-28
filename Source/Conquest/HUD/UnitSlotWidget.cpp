@@ -17,15 +17,16 @@ void UUnitSlotWidget::OnSlotSelected()
 	}
 	else
 	{
-		GetConquestHUD()->OnEmptyUnitSlotSelection(_LaneIndex);
+		GetConquestHUD()->OnEmptyUnitSlotSelection(_LaneIndex, _SlotIndex);
 	}
 }
 
 
-void UUnitSlotWidget::Populate(class AUnitSlot* UnitSlot, int32 LaneIndex)
+void UUnitSlotWidget::Populate(class AUnitSlot* UnitSlot, int32 LaneIndex, int32 SlotIndex)
 {
 	_UnitSlot = UnitSlot;
 	_LaneIndex = LaneIndex;
+	_SlotIndex = SlotIndex;
 	if (_UnitSlot->IsOccupied())
 	{
 		UTexture2D* unitIcon = _UnitSlot->GetOccupyingUnit()->Icon;

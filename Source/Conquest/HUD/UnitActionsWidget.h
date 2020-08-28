@@ -16,7 +16,7 @@ class CONQUEST_API UUnitActionsWidget : public UUserWidget
 	
 public:
 	/* Populate the UnitSlotGrid UI. */
-	void PopulateSpawnerGridData(int32 LaneIndex);
+	void PopulateSpawnerGridData(int32 LaneIndex, int32 SlotIndex);
 
 	/* Populate the UnitUpgradeGrid UI. */
 	void PopulateUpgradeGridData();

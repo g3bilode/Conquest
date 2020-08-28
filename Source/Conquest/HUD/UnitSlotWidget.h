@@ -22,7 +22,7 @@ public:
 	void OnSlotSelected();
 
 	/* Populate with unit slot data. */
-	void Populate(class AUnitSlot* UnitSlot, int32 LaneIndex);
+	void Populate(class AUnitSlot* UnitSlot, int32 LaneIndex, int32 SlotIndex);
 
 	/* Set the unit slot button icon. */
 	UFUNCTION(BlueprintImplementableEvent)
@@ -39,6 +39,8 @@ private:
 	AUnitSlot* _UnitSlot;
 	/* Lane index. */
 	int32 _LaneIndex;
+	/* Slot index. */
+	int32 _SlotIndex;
 	/* ConquestHUD reference. */
 	UPROPERTY()
 	class AConquestHUD* _ConquestHUD;

@@ -15,7 +15,7 @@ void UBarracksWidget::PopulateGridData(TArray<AUnitSlot*> UnitSlots, int32 LaneI
 		if (ensure(UnitSlotGrid.IsValidIndex(i)))
 		{
 			UUnitSlotWidget* unitSlotWidget = UnitSlotGrid[i];
-			unitSlotWidget->Populate(unitSlot, LaneIndex);
+			unitSlotWidget->Populate(unitSlot, LaneIndex, i);
 		}
 	}
 }
