@@ -22,6 +22,9 @@ public:
 	/* Enable this spawner for given lane. */
 	void EnableSpawner(int32 LaneIndex);
 
+	/* Disable this spawner. */
+	void DisableSpawner();
+
 	/* Event on button click. */
 	UFUNCTION(BlueprintCallable)
 	void OnSlotSelected();

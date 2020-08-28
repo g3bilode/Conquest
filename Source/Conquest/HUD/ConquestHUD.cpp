@@ -22,7 +22,12 @@ void AConquestHUD::OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots, int32 
 
 void AConquestHUD::OnEmptyUnitSlotSelection(int32 LaneIndex)
 {
-	GameHUDWidget->UnitActionsWidget->PopulateGridData(LaneIndex);
+	GameHUDWidget->UnitActionsWidget->PopulateSpawnerGridData(LaneIndex);
+}
+
+void AConquestHUD::OnOccupiedUnitSlotSelection()
+{
+	GameHUDWidget->UnitActionsWidget->PopulateUpgradeGridData();
 }
 
 void AConquestHUD::BeginPlay()

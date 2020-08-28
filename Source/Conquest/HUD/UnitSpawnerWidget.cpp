@@ -12,6 +12,11 @@ void UUnitSpawnerWidget::EnableSpawner(int32 LaneIndex)
 }
 
 
+void UUnitSpawnerWidget::DisableSpawner()
+{
+	SetVisibility(ESlateVisibility::Hidden);
+}
+
 void UUnitSpawnerWidget::OnSlotSelected()
 {
 	AConquestPlayerController* conquestPlayerController = GetWorld()->GetFirstPlayerController<AConquestPlayerController>();

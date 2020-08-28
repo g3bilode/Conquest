@@ -39,6 +39,13 @@ private:
 	AUnitSlot* _UnitSlot;
 	/* Lane index. */
 	int32 _LaneIndex;
+	/* ConquestHUD reference. */
+	UPROPERTY()
+	class AConquestHUD* _ConquestHUD;
+
+	/* Returns reference to ConquestHUD. */
+	class AConquestHUD* GetConquestHUD();
+
 protected:
 	void NativeConstruct() override;
 

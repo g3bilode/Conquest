@@ -21,6 +21,8 @@ public:
 
 	void OnEmptyUnitSlotSelection(int32 LaneIndex);
 
+	void OnOccupiedUnitSlotSelection();
+
 protected:
 	void BeginPlay() override;
 

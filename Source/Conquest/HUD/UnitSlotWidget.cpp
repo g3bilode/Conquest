@@ -13,13 +13,11 @@ void UUnitSlotWidget::OnSlotSelected()
 {
 	if (_UnitSlot->IsOccupied())
 	{
-		UE_LOG(LogConquest, Log, TEXT("Upgrade time!"));
+		GetConquestHUD()->OnOccupiedUnitSlotSelection();
 	}
 	else
 	{
-		AConquestPlayerController* conquestPlayerController = GetWorld()->GetFirstPlayerController<AConquestPlayerController>();
-		AConquestHUD* conquestHUD = conquestPlayerController->GetHUD<AConquestHUD>();
-		conquestHUD->OnEmptyUnitSlotSelection(_LaneIndex);
+		GetConquestHUD()->OnEmptyUnitSlotSelection(_LaneIndex);
 	}
 }
 
@@ -38,6 +36,17 @@ void UUnitSlotWidget::Populate(class AUnitSlot* UnitSlot, int32 LaneIndex)
 		SetIcon(DefaultUnitSlotIcon);
 	}
 	SetVisibility(ESlateVisibility::Visible);
+}
+
+
+class AConquestHUD* UUnitSlotWidget::GetConquestHUD()
+{
+	if (!IsValid(_ConquestHUD))
+	{
+		AConquestPlayerController* conquestPlayerController = GetWorld()->GetFirstPlayerController<AConquestPlayerController>();
+		_ConquestHUD = conquestPlayerController->GetHUD<AConquestHUD>();
+	}
+	return _ConquestHUD;
 }
 
 
