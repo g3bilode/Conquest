@@ -19,7 +19,7 @@ public:
 public:
 	/* Event on button click. */
 	UFUNCTION(BlueprintCallable)
-	void OnSlotSelected(TSubclassOf<class AConquestUnit> UnitToSpawn);
+	void OnSlotSelected();
 
 	/* Populate with unit slot data. */
 	void Populate(class AUnitSlot* UnitSlot, int32 LaneIndex);

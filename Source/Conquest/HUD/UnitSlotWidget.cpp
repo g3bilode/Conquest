@@ -9,7 +9,7 @@
 #include "ConquestHUD.h"
 
 
-void UUnitSlotWidget::OnSlotSelected(TSubclassOf<class AConquestUnit> UnitToSpawn)
+void UUnitSlotWidget::OnSlotSelected()
 {
 	if (_UnitSlot->IsOccupied())
 	{
