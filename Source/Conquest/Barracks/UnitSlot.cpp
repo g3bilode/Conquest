@@ -41,6 +41,7 @@ void AUnitSlot::Occupy(AConquestUnit* NewUnit)
 	OccupyingUnit = NewUnit;
 	OccupyingClass = NewUnit->GetClass();
 	SetIsOccupied(true);
+	UnitSlot_OnUpdate.ExecuteIfBound();
 }
 
 

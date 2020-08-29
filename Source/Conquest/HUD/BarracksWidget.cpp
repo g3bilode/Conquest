@@ -17,5 +17,15 @@ void UBarracksWidget::PopulateGridData(TArray<AUnitSlot*> UnitSlots, int32 LaneI
 			UUnitSlotWidget* unitSlotWidget = UnitSlotGrid[i];
 			unitSlotWidget->Populate(unitSlot, LaneIndex, i);
 		}
+		unitSlot->UnitSlot_OnUpdate.Clear();
+		unitSlot->UnitSlot_OnUpdate.BindDynamic(this, &UBarracksWidget::RefreshGrid);
+	}
+}
+
+void UBarracksWidget::RefreshGrid()
+{
+	for (UUnitSlotWidget* unitSlotWidget : UnitSlotGrid)
+	{
+		unitSlotWidget->RefreshDisplay();
 	}
 }

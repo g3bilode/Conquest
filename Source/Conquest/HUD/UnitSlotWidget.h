@@ -24,6 +24,8 @@ public:
 	/* Populate with unit slot data. */
 	void Populate(class AUnitSlot* UnitSlot, int32 LaneIndex, int32 SlotIndex);
 
+	void RefreshDisplay();
+
 	/* Set the unit slot button icon. */
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetIcon(UTexture2D* NewIcon);

@@ -18,6 +18,10 @@ public:
 	/* Populate the UnitSlotGrid UI. */
 	void PopulateGridData(TArray<class AUnitSlot*> UnitSlots, int32 LaneIndex);
 
+	/* Refresh a grid slots */
+	UFUNCTION()
+	void RefreshGrid();
+
 	/* Grid of unit slot buttons for selected barrack. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSlots")
 	TArray<class UUnitSlotWidget*> UnitSlotGrid;

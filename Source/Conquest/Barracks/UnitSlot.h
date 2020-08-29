@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "UnitSlot.generated.h"
 
+
+/* Unit slot update delegate */
+DECLARE_DYNAMIC_DELEGATE(FUnitSlotUpdate);
+
 UCLASS()
 class CONQUEST_API AUnitSlot : public AActor
 {
@@ -23,6 +27,9 @@ public:
 	bool IsOccupied() const;
 
 	AConquestUnit* GetOccupyingUnit() const;
+
+	/* Unit slot update delegate */
+	FUnitSlotUpdate UnitSlot_OnUpdate;
 
 private:
 	UPROPERTY()

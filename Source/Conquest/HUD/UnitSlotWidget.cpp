@@ -27,16 +27,25 @@ void UUnitSlotWidget::Populate(class AUnitSlot* UnitSlot, int32 LaneIndex, int32
 	_UnitSlot = UnitSlot;
 	_LaneIndex = LaneIndex;
 	_SlotIndex = SlotIndex;
-	if (_UnitSlot->IsOccupied())
-	{
-		UTexture2D* unitIcon = _UnitSlot->GetOccupyingUnit()->Icon;
-		SetIcon(unitIcon);
-	}
-	else
-	{
-		SetIcon(DefaultUnitSlotIcon);
-	}
+	RefreshDisplay();
 	SetVisibility(ESlateVisibility::Visible);
+}
+
+
+void UUnitSlotWidget::RefreshDisplay()
+{
+	if (IsValid(_UnitSlot))
+	{
+		if (_UnitSlot->IsOccupied())
+		{
+			UTexture2D* unitIcon = _UnitSlot->GetOccupyingUnit()->Icon;
+			SetIcon(unitIcon);
+		}
+		else
+		{
+			SetIcon(DefaultUnitSlotIcon);
+		}
+	}
 }
 
 
