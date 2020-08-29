@@ -59,23 +59,3 @@ bool ACapital::IsTargetEnemy_Implementation(AActor* OtherActor)
 	}
 	return false;
 }
-
-bool ACapital::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
-{
-	AConquestPlayerState* conquestPlayerState = initiator->GetConquestPlayerState();
-	if (IsValid(conquestPlayerState))
-	{
-		if (conquestPlayerState->TeamIndex == TeamIndex)
-		{
-			// Friendly
-			initiator->DisplayCapitalMenu(GetActorLocation());
-		}
-	}
-	return true;
-}
-
-bool ACapital::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
-{
-	initiator->SetCapitalMenuVisibility(false);
-	return true;
-}

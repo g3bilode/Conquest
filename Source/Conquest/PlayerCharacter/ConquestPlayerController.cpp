@@ -21,8 +21,6 @@
 AConquestPlayerController::AConquestPlayerController()
 {
 	bShowMouseCursor = true;
-	static ConstructorHelpers::FClassFinder<UUserWidget> capitalHud(TEXT("/Game/Conquest/UI/HUD/Capital_HUD"));
-	wCapitalMenu = capitalHud.Class;
 	CheatClass = UConquestCheatManager::StaticClass();
 }
 
@@ -32,10 +30,6 @@ void AConquestPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	ConquestPlayerState = Cast<AConquestPlayerState>(PlayerState);
-	if (IsLocalPlayerController())
-	{
-		CreateUI();
-	}
 }
 
 void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -279,41 +273,9 @@ void AConquestPlayerController::BuildBarracksArray()
 
 }
 
-void AConquestPlayerController::CreateUI()
-{
-	if (!_menuCapital)
-	{
-		_menuCapital = CreateWidget<UUserWidget>(this, wCapitalMenu, "CapitalMenu");
-		_menuCapital->AddToViewport();
-		_menuCapital->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
-
 AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 {
 	return ConquestPlayerState;
-}
-
-void AConquestPlayerController::DisplayCapitalMenu(const FVector& Location)
-{
-	FVector2D screenLocation;
-	ProjectWorldLocationToScreen(Location, screenLocation);
-	_menuCapital->SetPositionInViewport(screenLocation);
-	SetCapitalMenuVisibility(true);
-}
-
-void AConquestPlayerController::SetCapitalMenuVisibility(const bool isVisible) const
-{
-	if (IsValid(_menuCapital))
-	{
-		if (isVisible)
-		{
-			_menuCapital->SetVisibility(ESlateVisibility::Visible);
-		}
-		else {
-			_menuCapital->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
 }
 
 TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index)

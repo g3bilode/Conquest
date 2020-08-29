@@ -42,19 +42,10 @@ public:
 
 	AConquestPlayerState* GetConquestPlayerState();
 
-	/* Capital */
-	void DisplayCapitalMenu(const FVector& Location);
-	void SetCapitalMenuVisibility(const bool isVisible) const;
-
 	/* Getters */
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetLaneDestinations(int32 Index);
 	class ABarracks* GetBarracksForLane(int32 LaneIndex);
-
-	
-	// Reference UMG widget in Editor
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<class UUserWidget> wCapitalMenu;
 
 
 protected:
@@ -98,11 +89,6 @@ private:
 	/* Gather Barracks for this team and build array. */
 	void BuildBarracksArray();
 
-	UPROPERTY()
-	UUserWidget* _menuCapital;
-
-	/* Create UI */
-	void CreateUI();
 };
 
 

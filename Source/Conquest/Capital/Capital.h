@@ -9,7 +9,7 @@
 #include "Capital.generated.h"
 
 UCLASS()
-class CONQUEST_API ACapital : public AActor, public IConquestSelectableInterface, public ITargeterInterface
+class CONQUEST_API ACapital : public AActor, public ITargeterInterface
 {
 	GENERATED_BODY()
 	
@@ -27,10 +27,6 @@ public:
 	float CurrentHealth;
 
 private:
-	virtual bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
-
-	virtual bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
-
 	UPROPERTY()
 	/* Root component */
 	class USceneComponent* RootSceneComponent;
