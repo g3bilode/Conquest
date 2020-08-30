@@ -39,7 +39,7 @@ void UUnitSlotWidget::RefreshDisplay()
 		if (_UnitSlot->IsOccupied())
 		{
 			AConquestUnit* occupyingUnit = _UnitSlot->GetOccupyingUnit();
-			if (ensure(IsValid(occupyingUnit)))
+			if (IsValid(occupyingUnit))
 			{
 				UTexture2D* unitIcon = occupyingUnit->Icon;
 				SetIcon(unitIcon);
