@@ -35,8 +35,6 @@ public:
 	void OnAttackAnimHit();
 	UFUNCTION(BlueprintCallable)
 	void DeathEnd();
-	UFUNCTION(BlueprintCallable)
-	bool IsDead();
 
 	/* Unit's team index. */
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
@@ -57,11 +55,6 @@ public:
 	/* Icon for this unit. */
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
 	UTexture2D* Icon;
-	
-	
-	// STATS
-	UPROPERTY(Replicated, BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
-	float Health;
 
 	// ANIMS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
@@ -80,9 +73,10 @@ private:
 	void FaceTargetEnemy(float DeltaTime);
 	/* Begin death process. */
 	void DeathBegin();
-
-	UFUNCTION()
-	virtual void OnRep_bIsDead();
+	/* Play the death anim on server/clients. */
+	UFUNCTION(NetMulticast, Unreliable)
+	void PlayDeathAnim();
+	virtual void PlayDeathAnim_Implementation();
 
 	/* Alternate unit colour */
 	static const FLinearColor AlternateColour;
@@ -97,9 +91,7 @@ private:
 	/* Targeting Component*/
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	class UTargetingComponent* TargetingComponent;
-
-
-	/* Are we dead? */
-	UPROPERTY(ReplicatedUsing=OnRep_bIsDead)
-	bool bIsDead;
+	/* Health Component*/
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	class UHealthComponent* HealthComponent;
 };

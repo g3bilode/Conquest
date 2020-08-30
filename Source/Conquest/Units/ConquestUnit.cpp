@@ -4,6 +4,7 @@
 #include "../Conquest.h"
 #include "../Barracks/UnitSlot.h"
 #include "../Components/AttackComponent.h"
+#include "../Components/HealthComponent.h"
 #include "../Components/TargetingComponent.h"
 #include "../Components/UnitMovementComponent.h"
 #include "../GameState/ConquestGameState.h"
@@ -24,10 +25,8 @@ AConquestUnit::AConquestUnit()
 	AttackComponent = CreateDefaultSubobject<UAttackComponent>("AttackComponent");
 	// Setup TargetingComponent
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
-
-	Health = 100.0f;
-
-	bIsDead = false;
+	// Setup HealthComponent
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
 }
 
 
@@ -35,8 +34,8 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 {
 	// TODO: Only server should need to do this
 	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	Health -= ActualDamage;
-	if (Health <= 0.0f)
+	HealthComponent->TakeDamage(ActualDamage);
+	if (HealthComponent->IsDead())
 	{
 		DeathBegin();
 	}
@@ -59,8 +58,6 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 
 	DOREPLIFETIME_CONDITION(AConquestUnit, TeamIndex, COND_InitialOnly);
 	DOREPLIFETIME_CONDITION(AConquestUnit, LaneIndex, COND_InitialOnly);
-	DOREPLIFETIME(AConquestUnit, Health);
-	DOREPLIFETIME(AConquestUnit, bIsDead);
 	DOREPLIFETIME_CONDITION(AConquestUnit, UnitSlot, COND_InitialOnly);
 }
 
@@ -101,7 +98,7 @@ void AConquestUnit::Tick(float DeltaTime)
 
 	if (HasAuthority())
 	{
-		if (bIsDead)
+		if (HealthComponent->IsDead())
 		{
 			return;
 		}
@@ -152,10 +149,6 @@ void AConquestUnit::DeathEnd()
 	}
 }
 
-bool AConquestUnit::IsDead()
-{
-	return bIsDead;
-}
 
 void AConquestUnit::RespondToCombatPhaseBegin()
 {
@@ -174,18 +167,16 @@ void AConquestUnit::FaceTargetEnemy(float DeltaTime)
 
 void AConquestUnit::DeathBegin()
 {
-	if (HasAuthority())
-	{
-		bIsDead = true;
-		OnRep_bIsDead();
-	}
+	PlayDeathAnim();
 }
 
-void AConquestUnit::OnRep_bIsDead()
+
+void AConquestUnit::PlayDeathAnim_Implementation()
 {
 	// Ready to die
 	PlayAnimMontage(DeathMontage);
 }
+
 
 bool AConquestUnit::IsEnemyInMyLane(AConquestUnit* ConquestUnit)
 {

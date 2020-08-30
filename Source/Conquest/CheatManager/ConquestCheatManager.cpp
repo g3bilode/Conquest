@@ -32,8 +32,7 @@ void UConquestCheatManager::KillAll()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AConquestUnit::StaticClass(), conquestUnitActors);
 	for (AActor* conquestUnitActor : conquestUnitActors)
 	{
-		AConquestUnit* conquestUnit = Cast<AConquestUnit>(conquestUnitActor);
-		conquestUnit->TakeDamage(conquestUnit->Health, FDamageEvent(), nullptr, nullptr);
+		conquestUnitActor->TakeDamage(9000.0f, FDamageEvent(), nullptr, nullptr);
 	}
 }
 

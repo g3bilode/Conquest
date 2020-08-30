@@ -55,7 +55,7 @@ bool ACapital::IsTargetEnemy_Implementation(AActor* OtherActor)
 	AConquestUnit* otherConquestUnit = Cast<AConquestUnit>(OtherActor);
 	if (IsValid(otherConquestUnit))
 	{
-		return !otherConquestUnit->IsDead() && (TeamIndex != otherConquestUnit->TeamIndex);
+		return TeamIndex != otherConquestUnit->TeamIndex;
 	}
 	return false;
 }

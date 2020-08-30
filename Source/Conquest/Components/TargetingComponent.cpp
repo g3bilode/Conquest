@@ -3,8 +3,8 @@
 
 #include "TargetingComponent.h"
 #include "../Interfaces/TargeterInterface.h"
-#include "../Units/ConquestUnit.h"
 #include "Components/SphereComponent.h"
+#include "HealthComponent.h"
 
 
 DEFINE_LOG_CATEGORY_STATIC(LogConquestTargeting, Log, All);
@@ -87,7 +87,10 @@ void UTargetingComponent::OnAggroCollision(UPrimitiveComponent* OverlappedCompon
 
 bool UTargetingComponent::IsValidTarget(AActor* TargetActor)
 {
-	// TODO: cheating, should fix this and remove cyclical dependency
-	AConquestUnit* conquestUnit = Cast<AConquestUnit>(TargetActor);
-	return IsValid(conquestUnit) && !conquestUnit->IsDead();
+	if (IsValid(TargetActor))
+	{
+		UHealthComponent* targetHealthComponent = (UHealthComponent*)TargetActor->GetComponentByClass(UHealthComponent::StaticClass());
+		return IsValid(targetHealthComponent) && !targetHealthComponent->IsDead();
+	}
+	return false;
 }
