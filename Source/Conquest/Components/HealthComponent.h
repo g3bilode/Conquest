@@ -20,6 +20,8 @@ public:
 	float GetMaxHealth() const;
 	/* Return current health. */
 	float GetCurrentHealth() const;
+	/* Return percent of current health. */
+	float GetHealthPercent() const;
 	/* Take health damage. */
 	void TakeDamage(float Damage);
 	/* Return true if dead. */
@@ -28,7 +30,7 @@ public:
 
 
 	/* Base health for actor. */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Health")
 	float BaseHealth;
 
 private:
@@ -38,4 +40,7 @@ private:
 	/* Is actor dead? */
 	UPROPERTY(Replicated)
 	bool bIsDead;
+public:
+	void BeginPlay() override;
+
 };

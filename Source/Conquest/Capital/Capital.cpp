@@ -3,6 +3,7 @@
 #include "Capital.h"
 #include "../Conquest.h"
 #include "../Components/AttackComponent.h"
+#include "../Components/HealthComponent.h"
 #include "../Components/TargetingComponent.h"
 #include "../PlayerCharacter/ConquestPlayerController.h"
 #include "../PlayerCharacter/ConquestPlayerState.h"
@@ -15,9 +16,7 @@ ACapital::ACapital()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	MaxHealth = 100.f;
-	CurrentHealth = MaxHealth;
+	SetReplicates(true);
 
 	// Setup a RootComponent
 	RootSceneComponent = CreateDefaultSubobject<USceneComponent>("RootScene");
@@ -27,7 +26,10 @@ ACapital::ACapital()
 	AttackComponent = CreateDefaultSubobject<UAttackComponent>("AttackComponent");
 	// Setup TargetingComponent
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
+	// Setup HealthComponent
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
 }
+
 
 void ACapital::Tick(float DeltaTime)
 {
@@ -49,6 +51,20 @@ void ACapital::Tick(float DeltaTime)
 		}
 	}
 }
+
+
+float ACapital::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	// TODO: Only server should need to do this
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	HealthComponent->TakeDamage(ActualDamage);
+	if (HealthComponent->IsDead())
+	{
+		UE_LOG(LogConquest, Log, TEXT("CAPITAL LOST: %s"), *GetNameSafe(this));
+	}
+	return ActualDamage;
+}
+
 
 bool ACapital::IsTargetEnemy_Implementation(AActor* OtherActor)
 {

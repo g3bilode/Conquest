@@ -13,8 +13,6 @@ UHealthComponent::UHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	BaseHealth = 100.0f;
-	CurrentHealth = GetMaxHealth();
-
 	bIsDead = false;
 
 	SetIsReplicatedByDefault(true);
@@ -42,6 +40,12 @@ float UHealthComponent::GetCurrentHealth() const
 }
 
 
+float UHealthComponent::GetHealthPercent() const
+{
+	return CurrentHealth / GetMaxHealth();
+}
+
+
 void UHealthComponent::TakeDamage(float Damage)
 {
 	CurrentHealth -= Damage;
@@ -55,4 +59,11 @@ void UHealthComponent::TakeDamage(float Damage)
 bool UHealthComponent::IsDead() const
 {
 	return bIsDead;
+}
+
+
+void UHealthComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	CurrentHealth = GetMaxHealth();
 }

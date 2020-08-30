@@ -17,14 +17,10 @@ public:
 	// Sets default values for this actor's properties
 	ACapital();
 
+	/* Team Index */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Team")
 	int32 TeamIndex;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stat")
-	float MaxHealth;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Stat")
-	float CurrentHealth;
 
 private:
 	UPROPERTY()
@@ -36,11 +32,17 @@ private:
 	/* Targeting Component*/
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	class UTargetingComponent* TargetingComponent;
+	/* Health Component*/
+	UPROPERTY(EditAnywhere, Category = "Health")
+	class UHealthComponent* HealthComponent;
 	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	bool IsTargetEnemy_Implementation(AActor* OtherActor) override;
+
+
+	float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 };

@@ -1,22 +1,23 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "ConquestPlayerController.h"
-#include "Blueprint/UserWidget.h"
-#include "../Conquest.h"
 #include "ConquestCharacter.h"
-#include "Engine/LocalPlayer.h"
-#include "../CapturePoints/CapturePoint.h"
-#include "../Units/ConquestUnit.h"
-#include "Kismet/GameplayStatics.h"
-#include "../Barracks/UnitSlot.h"
-#include "Net/UnrealNetwork.h"
-#include "EngineUtils.h"
-#include "../GameState/ConquestGameState.h"
-#include "../Capital/Capital.h"
-#include "Algo/Reverse.h"
-#include "../Utils/ConquestUtils.h"
+#include "../Conquest.h"
 #include "../Barracks/Barracks.h"
+#include "../Barracks/UnitSlot.h"
+#include "../Capital/Capital.h"
+#include "../CapturePoints/CapturePoint.h"
 #include "../CheatManager/ConquestCheatManager.h"
+#include "../Components/HealthComponent.h"
+#include "../GameState/ConquestGameState.h"
+#include "../Units/ConquestUnit.h"
+#include "../Utils/ConquestUtils.h"
+#include "Algo/Reverse.h"
+#include "Blueprint/UserWidget.h"
+#include "EngineUtils.h"
+#include "Engine/LocalPlayer.h"
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 AConquestPlayerController::AConquestPlayerController()
 {
@@ -30,6 +31,10 @@ void AConquestPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	ConquestPlayerState = Cast<AConquestPlayerState>(PlayerState);
+	if (HasAuthority())
+	{
+		OnRep_ConquestPlayerState();
+	}
 }
 
 void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
@@ -191,6 +196,13 @@ void AConquestPlayerController::OnSelect()
 	}
 }
 
+
+void AConquestPlayerController::OnRep_ConquestPlayerState()
+{
+	GatherCapitals();
+}
+
+
 bool AConquestPlayerController::CanPurchaseUnit(const TSubclassOf<class AConquestUnit> unit) const
 {
 	int32 cost = unit->GetDefaultObject<AConquestUnit>()->PurchaseCost;
@@ -273,6 +285,21 @@ void AConquestPlayerController::BuildBarracksArray()
 
 }
 
+void AConquestPlayerController::GatherCapitals()
+{
+	for (TActorIterator<ACapital> CapitalItr(GetWorld()); CapitalItr; ++CapitalItr)
+	{
+		if (CapitalItr->TeamIndex == ConquestPlayerState->TeamIndex)
+		{
+			FriendlyCapital = *CapitalItr;
+		}
+		else
+		{
+			EnemyCapital = *CapitalItr;
+		}
+	}
+}
+
 AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 {
 	return ConquestPlayerState;
@@ -294,4 +321,14 @@ class ABarracks* AConquestPlayerController::GetBarracksForLane(int32 LaneIndex)
 		BuildBarracksArray();
 	}
 	return BarracksArray[LaneIndex];
+}
+
+float AConquestPlayerController::GetFriendlyCapitalHealthPercent()
+{
+	if (ensure(IsValid(FriendlyCapital)))
+	{
+		UHealthComponent* capitalHealthComponent = (UHealthComponent*)FriendlyCapital->GetComponentByClass(UHealthComponent::StaticClass());
+		return capitalHealthComponent->GetHealthPercent();
+	}
+	return 0.0f;
 }

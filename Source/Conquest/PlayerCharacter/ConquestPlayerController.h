@@ -46,6 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetLaneDestinations(int32 Index);
 	class ABarracks* GetBarracksForLane(int32 LaneIndex);
+	/* Get Friendly Capital Health Percent */
+	UFUNCTION(BlueprintPure)
+	float GetFriendlyCapitalHealthPercent();
 
 
 protected:
@@ -71,7 +74,7 @@ private:
 	int32 mouseLockPositionY;
 
 	TWeakObjectPtr<AActor> SelectedActor;
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_ConquestPlayerState)
 	AConquestPlayerState* ConquestPlayerState;
 	
 	UPROPERTY()
@@ -79,6 +82,16 @@ private:
 	UPROPERTY()
 	TArray<class ABarracks*> BarracksArray;
 
+	/* Friendly Capital */
+	UPROPERTY()
+	class ACapital* FriendlyCapital;
+	/* Enemy Capital. */
+	UPROPERTY()
+	class ACapital* EnemyCapital;
+
+	/* On rep player state */
+	UFUNCTION()
+	void OnRep_ConquestPlayerState();
 
 	/* Check if can purchase unit. */
 	bool CanPurchaseUnit(const TSubclassOf<class AConquestUnit> unit) const;
@@ -88,7 +101,8 @@ private:
 	void BuildLaneArray();
 	/* Gather Barracks for this team and build array. */
 	void BuildBarracksArray();
-
+	/* Gather Capitals. */
+	void GatherCapitals();
 };
 
 

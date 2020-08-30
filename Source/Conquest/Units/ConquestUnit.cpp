@@ -3,6 +3,7 @@
 #include "ConquestUnit.h"
 #include "../Conquest.h"
 #include "../Barracks/UnitSlot.h"
+#include "../Capital/Capital.h"
 #include "../Components/AttackComponent.h"
 #include "../Components/HealthComponent.h"
 #include "../Components/TargetingComponent.h"
@@ -44,10 +45,16 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 
 bool AConquestUnit::IsTargetEnemy_Implementation(AActor* OtherActor)
 {
+	// TODO: create team component
 	AConquestUnit* otherConquestUnit = Cast<AConquestUnit>(OtherActor);
 	if (IsValid(otherConquestUnit))
 	{
 		return (otherConquestUnit->TeamIndex != TeamIndex) && IsEnemyInMyLane(otherConquestUnit);
+	}
+	ACapital* otherCapital = Cast<ACapital>(OtherActor);
+	if (IsValid(otherCapital))
+	{
+		return (otherCapital->TeamIndex != TeamIndex);
 	}
 	return false;
 }

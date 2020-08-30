@@ -71,7 +71,7 @@ void UTargetingComponent::OnAggroCollision(UPrimitiveComponent* OverlappedCompon
 {
 	// TODO: This may only need to be done on server?
 	// Find a new target
-	if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
+	//if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
 	{
 		if (ensure(GetOwner()->GetClass()->ImplementsInterface(UTargeterInterface::StaticClass())))
 		{
