@@ -30,7 +30,7 @@ public:
 
 
 	/* Base health for actor. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Health")
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
 	float BaseHealth;
 
 private:

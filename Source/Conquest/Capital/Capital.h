@@ -33,7 +33,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	class UTargetingComponent* TargetingComponent;
 	/* Health Component*/
-	UPROPERTY(EditAnywhere, Category = "Health")
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	class UHealthComponent* HealthComponent;
 	
 public:
