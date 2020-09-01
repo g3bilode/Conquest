@@ -3,6 +3,7 @@
 
 #include "HealthComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/SphereComponent.h"
 
 
 // Sets default values for this component's properties
@@ -14,6 +15,10 @@ UHealthComponent::UHealthComponent()
 
 	BaseHealth = 100.0f;
 	bIsDead = false;
+
+	// Setup Collision Sphere
+	HitSphere = CreateDefaultSubobject<USphereComponent>("HitSphere");
+	HitSphereRadius = 50.0f;
 
 	SetIsReplicatedByDefault(true);
 }
@@ -62,8 +67,10 @@ bool UHealthComponent::IsDead() const
 }
 
 
-void UHealthComponent::BeginPlay()
+void UHealthComponent::OnRegister()
 {
-	Super::BeginPlay();
+	Super::OnRegister();
 	CurrentHealth = GetMaxHealth();
+	HitSphere->SetSphereRadius(HitSphereRadius);
+	HitSphere->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }

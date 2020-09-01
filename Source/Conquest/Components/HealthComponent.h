@@ -32,6 +32,9 @@ public:
 	/* Base health for actor. */
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
 	float BaseHealth;
+	/* Radius of HitSphere. */
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Health")
+	float HitSphereRadius;
 
 private:
 	/* Actor's current health. */
@@ -40,7 +43,11 @@ private:
 	/* Is actor dead? */
 	UPROPERTY(Replicated)
 	bool bIsDead;
-public:
-	void BeginPlay() override;
+	/* Hitbox trigger sphere */
+	UPROPERTY()
+	class USphereComponent* HitSphere;
+
+protected:
+	void OnRegister() override;
 
 };

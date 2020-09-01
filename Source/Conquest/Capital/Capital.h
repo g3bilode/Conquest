@@ -27,13 +27,13 @@ private:
 	/* Root component */
 	class USceneComponent* RootSceneComponent;
 	/* Attack Component*/
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
 	class UAttackComponent* AttackComponent;
 	/* Targeting Component*/
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
 	class UTargetingComponent* TargetingComponent;
 	/* Health Component*/
-	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	UPROPERTY(VisibleAnywhere, Category = "Health")
 	class UHealthComponent* HealthComponent;
 	
 public:

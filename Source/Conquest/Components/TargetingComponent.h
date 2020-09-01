@@ -17,8 +17,7 @@ public:
 	UTargetingComponent();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void OnRegister() override;
 
 public:
 	/* Return TargetEnemy. */
@@ -47,5 +46,5 @@ private:
 	/* Aggro Trigger Sphere */
 	UPROPERTY()
 	class USphereComponent* AggroSphere;
-		
+
 };

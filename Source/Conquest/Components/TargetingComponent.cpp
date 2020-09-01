@@ -21,13 +21,11 @@ UTargetingComponent::UTargetingComponent()
 }
 
 
-void UTargetingComponent::BeginPlay()
+void UTargetingComponent::OnRegister()
 {
-	Super::BeginPlay();
-
-	AActor* owningActor = GetOwner();
+	Super::OnRegister();
 	AggroSphere->SetSphereRadius(AggroSphereRadius);
-	AggroSphere->AttachToComponent(owningActor->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	AggroSphere->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 
@@ -70,8 +68,8 @@ bool UTargetingComponent::AcquireTargetEnemy()
 void UTargetingComponent::OnAggroCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
 	// TODO: This may only need to be done on server?
-	// Find a new target
-	//if (GetNameSafe(OtherComp) == FString("CollisionCylinder"))
+	// Objects with a "HitSphere" have a HealthComponent, so assume valid target
+	if (GetNameSafe(OtherComp) == FString("HitSphere"))
 	{
 		if (ensure(GetOwner()->GetClass()->ImplementsInterface(UTargeterInterface::StaticClass())))
 		{
