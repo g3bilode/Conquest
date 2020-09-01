@@ -26,6 +26,7 @@ void UTargetingComponent::OnRegister()
 	Super::OnRegister();
 	AggroSphere->SetSphereRadius(AggroSphereRadius);
 	AggroSphere->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	_OwningActor = GetOwner();
 }
 
 
@@ -42,14 +43,21 @@ bool UTargetingComponent::AcquireTargetEnemy()
 		// Find new enemy
 		if (KnownEnemies.Num() > 0)
 		{
+			float nearestEnemyDistance = MAX_FLT;
+			FVector currentLocation = _OwningActor->GetActorLocation();
 			for (int32 i = KnownEnemies.Num() - 1; i >= 0; i--)
 			{
 				AActor* knownEnemy = KnownEnemies[i];
 				if (IsValidTarget(knownEnemy))
 				{
-					// New target found
-					TargetEnemy = knownEnemy;
-					return true;
+					float enemyDistance = FVector::Dist(currentLocation, knownEnemy->GetActorLocation());
+					if (enemyDistance < nearestEnemyDistance)
+					{
+						// New target found
+						TargetEnemy = knownEnemy;
+						nearestEnemyDistance = enemyDistance;
+						continue;
+					}
 				}
 				else
 				{
@@ -57,8 +65,8 @@ bool UTargetingComponent::AcquireTargetEnemy()
 				}
 			}
 		}
-		// Found none
-		return false;
+		// Valid if we've found a new target
+		return IsValid(TargetEnemy);
 	}
 	// Already have target
 	return true;

@@ -46,5 +46,7 @@ private:
 	/* Aggro Trigger Sphere */
 	UPROPERTY()
 	class USphereComponent* AggroSphere;
-
+	UPROPERTY()
+	/* Component owner */
+	AActor* _OwningActor;
 };
