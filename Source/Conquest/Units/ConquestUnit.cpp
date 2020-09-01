@@ -169,6 +169,7 @@ void AConquestUnit::FaceTargetEnemy(float DeltaTime)
 	FVector targetDirection = TargetingComponent->GetTargetEnemy()->GetActorLocation() - GetActorLocation();
 	targetDirection.Normalize(SMALL_NUMBER);
 	FRotator newRotation = FMath::RInterpTo(GetActorRotation(), targetDirection.Rotation(), DeltaTime, 1.0);
+	newRotation.Pitch = 0;
 	SetActorRotation(newRotation);
 }
 
