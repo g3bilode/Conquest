@@ -13,7 +13,6 @@
 #include "../Units/ConquestUnit.h"
 #include "../Utils/ConquestUtils.h"
 #include "Algo/Reverse.h"
-#include "Blueprint/UserWidget.h"
 #include "EngineUtils.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -325,7 +324,7 @@ class ABarracks* AConquestPlayerController::GetBarracksForLane(int32 LaneIndex)
 
 float AConquestPlayerController::GetFriendlyCapitalHealthPercent()
 {
-	if (ensure(IsValid(FriendlyCapital)))
+	if (IsValid(FriendlyCapital))
 	{
 		UHealthComponent* capitalHealthComponent = (UHealthComponent*)FriendlyCapital->GetComponentByClass(UHealthComponent::StaticClass());
 		return capitalHealthComponent->GetHealthPercent();
