@@ -36,6 +36,9 @@ public:
 	/* Set LaneDestinations. */
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
 
+	/* Return Target Destination. */
+	FVector GetTargetDestination();
+
 
 private:
 	/* Current target destination */

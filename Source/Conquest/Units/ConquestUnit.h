@@ -35,6 +35,8 @@ public:
 	void OnAttackAnimHit();
 	UFUNCTION(BlueprintCallable)
 	void DeathEnd();
+	UFUNCTION(BlueprintCallable)
+	FVector GetTargetDestination();
 
 	/* Unit's team index. */
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")

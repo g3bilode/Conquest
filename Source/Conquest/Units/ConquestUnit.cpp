@@ -157,6 +157,12 @@ void AConquestUnit::DeathEnd()
 }
 
 
+FVector AConquestUnit::GetTargetDestination()
+{
+	return MovementComponent->GetTargetDestination();
+}
+
+
 void AConquestUnit::RespondToCombatPhaseBegin()
 {
 	UE_LOG(LogConquest, Log, TEXT("COMBAT BEGIN: %s"), *GetNameSafe(this));

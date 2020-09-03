@@ -5,7 +5,7 @@
 #include "GameFramework/Character.h"
 
 
-const float UUnitMovementComponent::DestinationDistanceLimit = 50.0f;
+const float UUnitMovementComponent::DestinationDistanceLimit = 1000.0f;
 
 
 // Sets default values for this component's properties
@@ -30,7 +30,8 @@ void UUnitMovementComponent::BeginPlay()
 
 void UUnitMovementComponent::MoveToEnemy(const FVector& Destination)
 {
-	MoveToDestination(Destination);
+	//MoveToDestination(Destination);
+	SetTargetDestination(Destination);
 }
 
 
@@ -38,7 +39,7 @@ void UUnitMovementComponent::MoveThroughLane()
 {
 	if (!bIsAtFinalDestination)
 	{
-		MoveToDestination(TargetDestination);
+		//MoveToDestination(TargetDestination);
 		if (HasArrivedAtDestination())
 		{
 			ProgressNextDestination();
@@ -81,6 +82,11 @@ void UUnitMovementComponent::SetLaneDestinations(const TArray<FVector>& InLaneDe
 	LaneDestinations = InLaneDestinations;
 }
 
+
+FVector UUnitMovementComponent::GetTargetDestination()
+{
+	return TargetDestination;
+}
 
 void UUnitMovementComponent::SetTargetDestination(FVector newLocation)
 {
