@@ -40,6 +40,7 @@ bool UTargetingComponent::AcquireTargetEnemy()
 {
 	if (!IsValidTarget(TargetEnemy))
 	{
+		TargetEnemy = nullptr;
 		// Find new enemy
 		if (KnownEnemies.Num() > 0)
 		{
