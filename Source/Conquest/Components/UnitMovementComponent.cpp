@@ -3,7 +3,10 @@
 
 #include "UnitMovementComponent.h"
 #include "GameFramework/Character.h"
+#include "DrawDebugHelpers.h"
 
+
+DEFINE_LOG_CATEGORY_STATIC(LogConquestMovement, Log, All);
 
 const float UUnitMovementComponent::DestinationDistanceLimit = 50.0f;
 
@@ -28,6 +31,13 @@ void UUnitMovementComponent::BeginPlay()
 }
 
 
+void UUnitMovementComponent::OnRegister()
+{
+	Super::OnRegister();
+	_OwningCharacter = (ACharacter*)GetOwner();
+}
+
+
 void UUnitMovementComponent::MoveToEnemy(const FVector& Destination)
 {
 	MoveToDestination(Destination);
@@ -49,15 +59,17 @@ void UUnitMovementComponent::MoveThroughLane()
 
 void UUnitMovementComponent::MoveToDestination(const FVector& Destination)
 {
-	// TODO: If hasn't moved in a while, disable collision for a bit
-	ACharacter* owningCharacter = (ACharacter*)GetOwner();
-	if (IsValid(owningCharacter))
+	if (IsValid(_OwningCharacter))
 	{
-		FVector targetDirection = Destination - owningCharacter->GetActorLocation();
+		FVector currentLocation = _OwningCharacter->GetActorLocation();
+		CheckIsStuck(currentLocation);
+
+		FVector targetDirection = Destination - currentLocation;
 		targetDirection.Normalize(SMALL_NUMBER);
 
-		owningCharacter->SetActorRotation(FVector(targetDirection.X, targetDirection.Y, 0).Rotation());
-		owningCharacter->AddMovementInput(targetDirection);
+		_OwningCharacter->SetActorRotation(FVector(targetDirection.X, targetDirection.Y, 0).Rotation());
+		_OwningCharacter->AddMovementInput(targetDirection);
+		LastLocation = currentLocation;
 	}
 }
 
@@ -91,4 +103,15 @@ void UUnitMovementComponent::SetTargetDestination(FVector newLocation)
 bool UUnitMovementComponent::HasArrivedAtDestination()
 {
 	return FVector::DistXY(TargetDestination, GetOwner()->GetActorLocation()) < DestinationDistanceLimit;
+}
+
+
+void UUnitMovementComponent::CheckIsStuck(const FVector& CurrentLocation) const
+{
+	if (CurrentLocation == LastLocation)
+	{
+		// TODO: Remove debug
+		UE_LOG(LogConquestMovement, Log, TEXT("DETECTED STUCK UNIT: %s"), *GetNameSafe(_OwningCharacter));
+		DrawDebugSphere(GetWorld(), CurrentLocation + FVector(0.f, 0.f, 100.f), 10.f, 16, FColor::Red);
+	}
 }

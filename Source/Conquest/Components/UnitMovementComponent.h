@@ -20,7 +20,10 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+
+	void OnRegister() override;
+
+public:
 	/* Move towards enemy. */
 	void MoveToEnemy(const FVector& Destination);
 
@@ -33,6 +36,9 @@ public:
 	/* Return True if has arrived at destination. */
 	bool HasArrivedAtDestination();
 
+	/* Return True if we are stuck during movement. */
+	void CheckIsStuck(const FVector& CurrentLocation) const;
+
 	/* Set LaneDestinations. */
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
 
@@ -40,6 +46,9 @@ public:
 private:
 	/* Current target destination */
 	FVector TargetDestination;
+
+	/* Last Location, to check if stuck. */
+	FVector LastLocation;
 
 	/* Is at destination? */
 	bool bIsAtFinalDestination;
@@ -51,6 +60,10 @@ private:
 	int8 CurrentDestinationIndex;
 
 	static const float DestinationDistanceLimit;
+
+	/* Component owner */
+	ACharacter* _OwningCharacter;
+
 
 	/* Set Target Destination. */
 	void SetTargetDestination(FVector newLocation);
