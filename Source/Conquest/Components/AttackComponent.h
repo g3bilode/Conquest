@@ -23,7 +23,7 @@ public:
 	UAnimMontage* AttackMontage;
 
 	/* Attack target enemy. */
-	void AttemptAttack(AActor* TargetActor);
+	bool AttemptAttack(AActor* TargetActor);
 	/* Deal damage to given actor. */
 	void DealDamage();
 	/* Return true if target in range of attack. */

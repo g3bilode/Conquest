@@ -35,24 +35,27 @@ bool UAttackComponent::IsTargetInRange(AActor* TargetActor)
 	return FVector::Dist(targetLocation, GetOwningActor()->GetActorLocation()) <= AttackRange;
 }
 
-void UAttackComponent::AttemptAttack(AActor* InTargetActor)
+bool UAttackComponent::AttemptAttack(AActor* TargetActor)
 {
 	if (!bIsOnCooldown)
 	{
 		bIsOnCooldown = true;
-		_TargetActor = InTargetActor;
+		_TargetActor = TargetActor;
 
 		if (IsValid(AttackMontage))
 		{
 			// Anim montage must call DealDamage
 			PlayAttackAnim();
+			return true;
 		}
 		else
 		{
 			// Deal damage directly
 			DealDamage();
+			return true;
 		}
 	}
+	return false;
 }
 
 

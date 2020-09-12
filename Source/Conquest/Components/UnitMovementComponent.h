@@ -33,11 +33,17 @@ public:
 	/* Move to given destination. */
 	void MoveToDestination(const FVector& Destination);
 
-	/* Return True if has arrived at destination. */
-	bool HasArrivedAtDestination();
+	/* Move by shove */
+	void MoveByShove();
 
-	/* Return True if we are stuck during movement. */
-	void CheckIsStuck(const FVector& CurrentLocation) const;
+	/* Request a shove to given destination. */
+	void RequestShove(const FVector& InShoveDestination);
+
+	/* Return true if we are being shoved. */
+	bool IsBeingShoved() const;
+
+	/* Return True if has arrived at Destination. */
+	bool HasArrivedAtDestination(const FVector& Destination);
 
 	/* Set LaneDestinations. */
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
@@ -46,6 +52,12 @@ public:
 private:
 	/* Current target destination */
 	FVector TargetDestination;
+
+	/* Shove destination */
+	FVector ShoveDestination;
+
+	/* Is being shoved. */
+	bool bIsShoved;
 
 	/* Last Location, to check if stuck. */
 	FVector LastLocation;
@@ -70,5 +82,16 @@ private:
 
 	/* Progress to the next destination. */
 	void ProgressNextDestination();
+
+	/* Return True if we are stuck during movement. */
+	void CheckIsStuck(const FVector& CurrentLocation) const;
+
+	/* When stuck, attempt a friendly shove. */
+	void ShoveNeighbours() const;
+
+	TArray<AActor*> GetNeighbours() const;
+
+	/* Return FVector destination of the shove. */
+	FVector GetShoveDestination(AActor* ActorToShove) const;
 
 };

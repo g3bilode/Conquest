@@ -118,7 +118,12 @@ void AConquestUnit::Tick(float DeltaTime)
 			{
 				// Attack
 				FaceTargetEnemy(DeltaTime);
-				AttackComponent->AttemptAttack(TargetEnemy);
+				bool bDidAttack = AttackComponent->AttemptAttack(TargetEnemy);
+				if (!bDidAttack && MovementComponent->IsBeingShoved())
+				{
+					// Move outta the way!
+					MovementComponent->MoveByShove();
+				}
 			}
 			else
 			{
