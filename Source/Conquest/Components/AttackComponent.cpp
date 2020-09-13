@@ -4,6 +4,7 @@
 #include "AttackComponent.h"
 #include "../Conquest.h"
 #include "GameFramework/Character.h"
+#include "HealthComponent.h"
 
 // Sets default values for this component's properties
 UAttackComponent::UAttackComponent()
@@ -32,7 +33,14 @@ void UAttackComponent::DealDamage()
 bool UAttackComponent::IsTargetInRange(AActor* TargetActor)
 {
 	FVector targetLocation = TargetActor->GetActorLocation();
-	return FVector::Dist(targetLocation, GetOwningActor()->GetActorLocation()) <= AttackRange;
+	float hitSphereDistance = 0.f;
+	UHealthComponent* targetHealthComponent = (UHealthComponent*)TargetActor->GetComponentByClass(UHealthComponent::StaticClass());
+	if (IsValid(targetHealthComponent))
+	{
+		hitSphereDistance = targetHealthComponent->HitSphereRadius;
+	}
+
+	return FVector::Dist(targetLocation, GetOwningActor()->GetActorLocation()) <= AttackRange + hitSphereDistance;
 }
 
 void UAttackComponent::AttemptAttack(AActor* InTargetActor)
@@ -75,7 +83,7 @@ AActor* UAttackComponent::GetOwningActor()
 {
 	if (!IsValid(_OwningActor))
 	{
-		_OwningActor = (AActor*) GetOwner();
+		_OwningActor = GetOwner();
 	}
 	return _OwningActor;
 }
