@@ -83,7 +83,7 @@ private:
 
 
 	/* Unit Movement Component*/
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	class UUnitMovementComponent* MovementComponent;
 	/* Attack Component*/
 	UPROPERTY(VisibleAnywhere, Category = "Attack")

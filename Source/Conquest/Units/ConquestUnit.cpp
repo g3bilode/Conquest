@@ -9,6 +9,7 @@
 #include "../Components/TargetingComponent.h"
 #include "../Components/UnitMovementComponent.h"
 #include "../GameState/ConquestGameState.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -88,6 +89,13 @@ void AConquestUnit::BeginPlay()
 		AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
 		conquestGameState->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
 	}
+
+	// Avoidance
+	UCharacterMovementComponent* characterMovement = GetCharacterMovement();
+	characterMovement->SetAvoidanceGroup(TeamIndex + 1);
+	characterMovement->SetGroupsToAvoid(TeamIndex + 1);
+	characterMovement->AvoidanceConsiderationRadius = 50.f;
+	characterMovement->SetAvoidanceEnabled(true);
 
 	if (ensure(IsValid(UnitSlot)))
 	{
