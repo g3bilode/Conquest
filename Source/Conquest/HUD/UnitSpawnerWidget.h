@@ -31,7 +31,7 @@ public:
 
 	/* Unit to spawn. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSpawner")
-	TSubclassOf<class AConquestUnit> UnitClass;
+	TSubclassOf<class AUnitSpawner> UnitClass;
 
 protected:
 	void NativeConstruct() override;

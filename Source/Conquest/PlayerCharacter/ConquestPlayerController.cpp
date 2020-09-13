@@ -12,6 +12,7 @@
 #include "../GameState/ConquestGameState.h"
 #include "../Units/ConquestUnit.h"
 #include "../Utils/ConquestUtils.h"
+#include "../Units/Spawners/UnitSpawner.h"
 #include "Algo/Reverse.h"
 #include "EngineUtils.h"
 #include "Engine/LocalPlayer.h"
@@ -107,6 +108,7 @@ void AConquestPlayerController::OnMouseHorizontal(float axisValue)
 		pawn->AddControllerYawInput(axisValue);
 		Cast<ULocalPlayer>(Player)->ViewportClient->Viewport->SetMouse(mouseLockPositionX, mouseLockPositionY);
 	}
+	UpdateSpawnerPosition();
 }
 
 void AConquestPlayerController::OnMouseVertical(float axisValue)
@@ -121,6 +123,7 @@ void AConquestPlayerController::OnMouseVertical(float axisValue)
 		}
 		Cast<ULocalPlayer>(Player)->ViewportClient->Viewport->SetMouse(mouseLockPositionX, mouseLockPositionY);
 	}
+	UpdateSpawnerPosition();
 }
 
 void AConquestPlayerController::OnZoomInAction()
@@ -299,6 +302,18 @@ void AConquestPlayerController::GatherCapitals()
 	}
 }
 
+
+void AConquestPlayerController::UpdateSpawnerPosition()
+{
+	if (IsValid(ActiveSpawner))
+	{
+		FHitResult HitResult;
+		GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, HitResult);
+		ActiveSpawner->UpdatePosition(HitResult.Location);
+	}
+}
+
+
 AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 {
 	return ConquestPlayerState;
@@ -330,4 +345,15 @@ float AConquestPlayerController::GetFriendlyCapitalHealthPercent()
 		return capitalHealthComponent->GetHealthPercent();
 	}
 	return 0.0f;
+}
+
+
+void AConquestPlayerController::EnableSpawningMode(TSubclassOf<class AUnitSpawner> SpawnerClass)
+{
+	bIsSpawningMode = true;
+	if (IsValid(SpawnerClass))
+	{
+		ActiveSpawner = (AUnitSpawner*) GetWorld()->SpawnActor(SpawnerClass->GetDefaultObject()->GetClass(), &FVector::ZeroVector );
+		UE_LOG(LogConquest, Log, TEXT("Enter spawning mode with class: %s"), *GetNameSafe(SpawnerClass));
+	}
 }

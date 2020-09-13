@@ -50,6 +50,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetFriendlyCapitalHealthPercent();
 
+	/* Enable spawning mode. */
+	void EnableSpawningMode(TSubclassOf<class AUnitSpawner> SpawnerClass);
+
 
 protected:
 	// Begin PlayerController interface
@@ -72,6 +75,12 @@ private:
 	bool lookAroundEnabled = false;
 	int32 mouseLockPositionX;
 	int32 mouseLockPositionY;
+
+	/* Is in spawning mode? */
+	bool bIsSpawningMode;
+	/* Currently active spawner object. */
+	UPROPERTY()
+	class AUnitSpawner* ActiveSpawner;
 
 	TWeakObjectPtr<AActor> SelectedActor;
 	UPROPERTY(ReplicatedUsing=OnRep_ConquestPlayerState)
@@ -103,6 +112,8 @@ private:
 	void BuildBarracksArray();
 	/* Gather Capitals. */
 	void GatherCapitals();
+	/* Update active unit spawner location. */
+	void UpdateSpawnerPosition();
 };
 
 
