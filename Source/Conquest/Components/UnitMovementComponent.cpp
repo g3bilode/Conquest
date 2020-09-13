@@ -4,6 +4,8 @@
 #include "UnitMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h" //remove this on refactor
+#include "../Units/ConquestUnit.h" //remove this on refactor
 
 
 DEFINE_LOG_CATEGORY_STATIC(LogConquestMovement, Log, All);
@@ -19,6 +21,10 @@ UUnitMovementComponent::UUnitMovementComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	CurrentDestinationIndex = -1;
+
+	TargetDirectionWeight = 10.f;
+	AvoidanceWeight = 5.f;
+	AvoidanceDistanceLimit = 60.f;
 }
 
 
@@ -62,14 +68,39 @@ void UUnitMovementComponent::MoveToDestination(const FVector& Destination)
 	if (IsValid(_OwningCharacter))
 	{
 		FVector currentLocation = _OwningCharacter->GetActorLocation();
-		CheckIsStuck(currentLocation);
+		///CheckIsStuck(currentLocation);
 
 		FVector targetDirection = Destination - currentLocation;
-		targetDirection.Normalize(SMALL_NUMBER);
+		targetDirection.Normalize();
+
+		// get friends in range
+		// get vector away * distance = avoidance vectors
+		// do for each friend
+		TArray<FVector> avoidanceVectors = GatherAvoidanceVectors(currentLocation);
+		/// boost Y value ?
+
+		// (target direction * target direction weight)+(avoidance vectors * avoidance weight)
+		FVector finalDirection = targetDirection * TargetDirectionWeight;
+		for (FVector avoidanceVector : avoidanceVectors)
+		{
+			finalDirection += avoidanceVector * AvoidanceWeight;
+		}
+		// divide by num avoidance +1
+		finalDirection /= avoidanceVectors.Num() + 1;
+		// normalize
+		finalDirection.Normalize();
+
+		/// Notify friend that he should move?
 
 		_OwningCharacter->SetActorRotation(FVector(targetDirection.X, targetDirection.Y, 0).Rotation());
-		_OwningCharacter->AddMovementInput(targetDirection);
+		///_OwningCharacter->AddMovementInput(targetDirection);
+		_OwningCharacter->AddMovementInput(finalDirection);
 		LastLocation = currentLocation;
+
+		// TODO: remove debug
+		UWorld* world = GetWorld();
+		DrawDebugLine(world, currentLocation, currentLocation + targetDirection * 100, FColor::Blue);
+		DrawDebugLine(world, currentLocation, currentLocation + finalDirection * 100, FColor::Green);
 	}
 }
 
@@ -87,6 +118,27 @@ void UUnitMovementComponent::ProgressNextDestination()
 	}
 }
 
+
+TArray<FVector> UUnitMovementComponent::GatherAvoidanceVectors(FVector CurrentLocation)
+{
+	// TODO: Improve performance
+	TArray<FVector> avoidanceVectors;
+	TArray<AActor*> conquestUnitActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AConquestUnit::StaticClass(), conquestUnitActors);
+	for (AActor* conquestUnitActor : conquestUnitActors)
+	{
+		float unitDistance = FVector::DistXY(CurrentLocation, conquestUnitActor->GetActorLocation());
+		if ((0.f < unitDistance) && (unitDistance < AvoidanceDistanceLimit))
+		{
+			//FVector avoidanceVector = conquestUnitActor->GetActorLocation() - CurrentLocation;
+			FVector avoidanceVector = CurrentLocation - conquestUnitActor->GetActorLocation();
+			avoidanceVector.Normalize();
+			float importance = 1.f; //AvoidanceDistanceLimit - unitDistance;
+			avoidanceVectors.Add(avoidanceVector * importance);
+		}
+	}
+	return avoidanceVectors;
+}
 
 void UUnitMovementComponent::SetLaneDestinations(const TArray<FVector>& InLaneDestinations)
 {

@@ -42,6 +42,13 @@ public:
 	/* Set LaneDestinations. */
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite);
+	float TargetDirectionWeight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite);
+	float AvoidanceWeight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite);
+	float AvoidanceDistanceLimit;
+
 
 private:
 	/* Current target destination */
@@ -70,5 +77,8 @@ private:
 
 	/* Progress to the next destination. */
 	void ProgressNextDestination();
+
+	/* Return array of vectors pointing away from nearby units. */
+	TArray<FVector> GatherAvoidanceVectors(FVector CurrentLocation);
 
 };
