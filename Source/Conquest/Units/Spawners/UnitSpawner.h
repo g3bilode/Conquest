@@ -17,7 +17,7 @@ public:
 
 public:	
 	/* Update unit spawner location. */
-	void UpdatePosition(FVector TargetLocation);
+	void UpdatePosition(APlayerController* LocalController);
 
 	/* Icon for this unit spawner. */
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")

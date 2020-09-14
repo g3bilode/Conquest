@@ -307,9 +307,7 @@ void AConquestPlayerController::UpdateSpawnerPosition()
 {
 	if (IsValid(ActiveSpawner))
 	{
-		FHitResult HitResult;
-		GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, HitResult);
-		ActiveSpawner->UpdatePosition(HitResult.Location);
+		ActiveSpawner->UpdatePosition(this);
 	}
 }
 

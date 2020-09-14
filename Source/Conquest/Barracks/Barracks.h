@@ -36,6 +36,9 @@ public:
 
 	class AUnitSlot* GetUnitSlotAtIndex(int32 SlotIndex);
 
+	/* Return location of the nearest slot, if free. If occupied, returns null. */
+	FVector GetNearestFreeSlotLocation(FVector TargetLocation);
+
 	/* Set LaneDestinations array. */
 	void SetLaneDestinations(TArray<FVector> InLaneDestinations);
 
@@ -60,6 +63,20 @@ private:
 	UFUNCTION()
 	void RespondToResourcePhaseBegin();
 
+	/* Generate slot grid. */
+	void GenerateSlotGrid();
+
 	/* Lane destinations for spawned units. */
 	TArray<FVector> LaneDestinations;
+
+	/* Slot grid. True if occupied. */
+	TMap<int32, bool> SlotGridMap;
+	/* Number of unit slot grid columns. */
+	static const int32 SlotGridColumnNum;
+	/* Number of unit slot grid rows. */
+	static const int32 SlotGridRowNum;
+	/* Grid size Y. Determined by Barracks size. */
+	float GridSizeY;
+	/* Grid size X. Determined by Barracks size. */
+	float GridSizeX;
 };

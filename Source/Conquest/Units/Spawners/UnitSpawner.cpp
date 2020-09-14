@@ -2,6 +2,7 @@
 
 
 #include "UnitSpawner.h"
+#include "../../Barracks/Barracks.h"
 
 // Sets default values
 AUnitSpawner::AUnitSpawner()
@@ -12,8 +13,24 @@ AUnitSpawner::AUnitSpawner()
 }
 
 
-void AUnitSpawner::UpdatePosition(FVector TargetLocation)
+void AUnitSpawner::UpdatePosition(APlayerController* LocalController)
 {
-	SetActorLocation(TargetLocation);
+	FHitResult HitResult;
+	LocalController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, HitResult);
+	FVector location = HitResult.Location;
+	AActor* const hitActor = HitResult.GetActor();
+	if (IsValid(hitActor))
+	{
+		// Hit something
+		if (hitActor->GetClass()->IsChildOf(ABarracks::StaticClass()))
+		{
+			// Hit Barrack! Snap to grid
+			ABarracks* hitBarracks = Cast<ABarracks>(hitActor);
+			location = hitBarracks->GetNearestFreeSlotLocation(location);
+		}
+	}
+
+
+	SetActorLocation(location);
 }
 

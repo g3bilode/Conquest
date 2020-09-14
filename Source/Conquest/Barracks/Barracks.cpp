@@ -8,6 +8,12 @@
 #include "../HUD/ConquestHUD.h"
 #include "../PlayerCharacter/ConquestPlayerController.h"
 
+
+const int32 ABarracks::SlotGridColumnNum(3);
+
+const int32 ABarracks::SlotGridRowNum(3);
+
+
 // Sets default values
 ABarracks::ABarracks()
 {
@@ -28,6 +34,15 @@ void ABarracks::BeginPlay()
 		AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
 		conquestGameState->ResourcePhase_OnStart.AddDynamic(this, &ABarracks::RespondToResourcePhaseBegin);
 	}
+
+	// Set grid bounds
+	FVector origin;
+	FVector boxExtent;
+	GetActorBounds(false, origin, boxExtent);
+	GridSizeX = boxExtent.X * 2 / SlotGridRowNum;
+	GridSizeY = boxExtent.Y * 2 / SlotGridColumnNum;
+
+
 }
 
 
@@ -51,6 +66,16 @@ class AUnitSlot* ABarracks::GetUnitSlotAtIndex(int32 SlotIndex)
 		return UnitSlots[SlotIndex];
 	}
 	return nullptr;
+}
+
+
+FVector ABarracks::GetNearestFreeSlotLocation(FVector TargetLocation)
+{
+	float newX = (round((TargetLocation.X - GetActorLocation().X) / GridSizeX) * GridSizeX) + GetActorLocation().X;
+	float newY = (round((TargetLocation.Y - GetActorLocation().Y) / GridSizeY) * GridSizeY) + GetActorLocation().Y;
+	/// if this grid location is free...
+	return FVector(newX, newY, TargetLocation.Z);
+	/// else return original
 }
 
 
@@ -126,6 +151,12 @@ void ABarracks::RespawnUnitsInSlots()
 void ABarracks::RespondToResourcePhaseBegin()
 {
 	RespawnUnitsInSlots();
+}
+
+
+void ABarracks::GenerateSlotGrid()
+{
+
 }
 
 
