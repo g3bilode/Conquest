@@ -79,4 +79,8 @@ private:
 	float GridSizeY;
 	/* Grid size X. Determined by Barracks size. */
 	float GridSizeX;
+	/* Offset to center grid Y. */
+	float GridCenterOffsetY;
+	/* Offset to center grid X. */
+	float GridCenterOffsetX;
 };

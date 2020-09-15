@@ -9,7 +9,7 @@
 #include "../PlayerCharacter/ConquestPlayerController.h"
 
 
-const int32 ABarracks::SlotGridColumnNum(3);
+const int32 ABarracks::SlotGridColumnNum(4);
 
 const int32 ABarracks::SlotGridRowNum(3);
 
@@ -41,6 +41,8 @@ void ABarracks::BeginPlay()
 	GetActorBounds(false, origin, boxExtent);
 	GridSizeX = boxExtent.X * 2 / SlotGridRowNum;
 	GridSizeY = boxExtent.Y * 2 / SlotGridColumnNum;
+	GridCenterOffsetX = origin.X + boxExtent.X + (GridSizeX / 2);
+	GridCenterOffsetY = origin.Y + boxExtent.Y + (GridSizeY / 2);
 
 
 }
@@ -71,8 +73,8 @@ class AUnitSlot* ABarracks::GetUnitSlotAtIndex(int32 SlotIndex)
 
 FVector ABarracks::GetNearestFreeSlotLocation(FVector TargetLocation)
 {
-	float newX = (round((TargetLocation.X - GetActorLocation().X) / GridSizeX) * GridSizeX) + GetActorLocation().X;
-	float newY = (round((TargetLocation.Y - GetActorLocation().Y) / GridSizeY) * GridSizeY) + GetActorLocation().Y;
+	float newX = (round((TargetLocation.X - GridCenterOffsetX) / GridSizeX) * GridSizeX) + GridCenterOffsetX;
+	float newY = (round((TargetLocation.Y - GridCenterOffsetY) / GridSizeY) * GridSizeY) + GridCenterOffsetY;
 	/// if this grid location is free...
 	return FVector(newX, newY, TargetLocation.Z);
 	/// else return original
