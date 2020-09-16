@@ -16,6 +16,7 @@ AUnitSpawner::AUnitSpawner()
 
 void AUnitSpawner::UpdatePosition(APlayerController* LocalController)
 {
+	bool onFriendlyBarrack = false;
 	FHitResult HitResult;
 	LocalController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, HitResult);
 	FVector location = HitResult.Location;
@@ -25,17 +26,17 @@ void AUnitSpawner::UpdatePosition(APlayerController* LocalController)
 		// Hit something
 		if (hitActor->GetClass()->IsChildOf(ABarracks::StaticClass()))
 		{
-			// Hit Barrack! Snap to grid
-			/// VALIDATE ALLY
-			ActiveBarracks = Cast<ABarracks>(hitActor);
-			location = ActiveBarracks->GetNearestFreeSlotLocation(location);
-		}
-		else
-		{
-			ActiveBarracks = nullptr;
+			// Hit Barrack! Snap to grid if friendly
+			ABarracks* barracks = Cast<ABarracks>(hitActor);
+			if (TeamIndex == barracks->TeamIndex)
+			{
+				ActiveBarracks = barracks;
+				location = ActiveBarracks->GetNearestFreeSlotLocation(location);
+				onFriendlyBarrack = true;
+			}
 		}
 	}
-	else
+	if (IsValid(ActiveBarracks) && !onFriendlyBarrack)
 	{
 		ActiveBarracks = nullptr;
 	}

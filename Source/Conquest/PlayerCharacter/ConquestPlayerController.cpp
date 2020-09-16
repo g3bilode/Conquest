@@ -360,5 +360,6 @@ void AConquestPlayerController::EnableSpawningMode(TSubclassOf<class AUnitSpawne
 	if (IsValid(SpawnerClass))
 	{
 		ActiveSpawner = (AUnitSpawner*) GetWorld()->SpawnActor(SpawnerClass->GetDefaultObject()->GetClass(), &FVector::ZeroVector );
+		ActiveSpawner->TeamIndex = ConquestPlayerState->TeamIndex;
 	}
 }

@@ -26,6 +26,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
 	UTexture2D* Icon;
 
+	/* Team index. */
+	int32 TeamIndex;
+
 private:
 	/* Currently selected barracks. */
 	class ABarracks* ActiveBarracks;
