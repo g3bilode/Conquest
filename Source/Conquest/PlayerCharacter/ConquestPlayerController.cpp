@@ -166,11 +166,19 @@ void AConquestPlayerController::OnSelect()
 {
 	if (!lookAroundEnabled)
 	{
+		if (bIsSpawningMode)
+		{
+			// TODO: Validate purchase on server
+			ActiveSpawner->AttemptPurchase();
+			ActiveSpawner = nullptr;
+			// TODO: SHIFT to spawn a new spawner
+			bIsSpawningMode = false;
+			return;
+		}
+
 		FHitResult HitResult;
 		GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
-
 		AActor* const NewSelection = HitResult.GetActor();
-
 
 		if (IsValid(NewSelection))
 		{
@@ -305,7 +313,7 @@ void AConquestPlayerController::GatherCapitals()
 
 void AConquestPlayerController::UpdateSpawnerPosition()
 {
-	if (IsValid(ActiveSpawner))
+	if (bIsSpawningMode && IsValid(ActiveSpawner))
 	{
 		ActiveSpawner->UpdatePosition(this);
 	}
@@ -352,6 +360,5 @@ void AConquestPlayerController::EnableSpawningMode(TSubclassOf<class AUnitSpawne
 	if (IsValid(SpawnerClass))
 	{
 		ActiveSpawner = (AUnitSpawner*) GetWorld()->SpawnActor(SpawnerClass->GetDefaultObject()->GetClass(), &FVector::ZeroVector );
-		UE_LOG(LogConquest, Log, TEXT("Enter spawning mode with class: %s"), *GetNameSafe(SpawnerClass));
 	}
 }

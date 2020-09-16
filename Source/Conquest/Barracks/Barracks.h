@@ -51,6 +51,18 @@ public:
 	/* Spawn given unit in slot. */
 	bool SpawnUnitInSlot(TSubclassOf<class AConquestUnit> UnitToSpawn, class AUnitSlot* UnitSlot);
 
+	/* Occupy slot of given ID. Return true on success. */
+	bool OccupySlot(int32 SlotID);
+
+	/* Return true if slot at given ID is occupied. */
+	bool IsSlotOccupied(int32 SlotID) const;
+
+	/* Get slot ID from given location. */
+	int32 GetSlotIDFromLocation(FVector Location);
+
+	/* Get slot ID from grid Row and Column. */
+	int32 GetSlotIDFromRowColumn(int32 Row, int32 Column);
+
 private:
 
 	bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
@@ -63,8 +75,14 @@ private:
 	UFUNCTION()
 	void RespondToResourcePhaseBegin();
 
-	/* Generate slot grid. */
-	void GenerateSlotGrid();
+	/* Get slot column for given Y */
+	int32 GetSlotColumn(float Y) const;
+
+	/* Get slot row for given X */
+	int32 GetSlotRow(float X) const;
+
+	/* Helper to return row/column number of slot axis. */
+	int32 GetGridAxisValue(float AxisValue, float AxisOffset, float AxisGridSize) const;
 
 	/* Lane destinations for spawned units. */
 	TArray<FVector> LaneDestinations;

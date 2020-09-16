@@ -73,11 +73,21 @@ class AUnitSlot* ABarracks::GetUnitSlotAtIndex(int32 SlotIndex)
 
 FVector ABarracks::GetNearestFreeSlotLocation(FVector TargetLocation)
 {
-	float newX = (round((TargetLocation.X - GridCenterOffsetX) / GridSizeX) * GridSizeX) + GridCenterOffsetX;
-	float newY = (round((TargetLocation.Y - GridCenterOffsetY) / GridSizeY) * GridSizeY) + GridCenterOffsetY;
-	/// if this grid location is free...
-	return FVector(newX, newY, TargetLocation.Z);
-	/// else return original
+	int32 rowNumber = GetSlotRow(TargetLocation.X);
+	int32 columnNumber = GetSlotColumn(TargetLocation.Y);
+	int32 slotID = GetSlotIDFromRowColumn(rowNumber, columnNumber);
+	if (!IsSlotOccupied(slotID))
+	{
+		// Valid slot, let's snap
+		float newX = (rowNumber * GridSizeX) + GridCenterOffsetX;
+		float newY = (columnNumber * GridSizeY) + GridCenterOffsetY;
+		return FVector(newX, newY, TargetLocation.Z);
+	}
+	else
+	{
+		// Occupied, don't snap
+		return TargetLocation;
+	}
 }
 
 
@@ -137,6 +147,38 @@ bool ABarracks::SpawnUnitInSlot(TSubclassOf<class AConquestUnit> UnitToSpawn, cl
 }
 
 
+bool ABarracks::OccupySlot(int32 SlotID)
+{
+	if (!IsSlotOccupied(SlotID))
+	{
+		SlotGridMap.Add(SlotID, true);
+		return true;
+	}
+	return false;
+}
+
+
+bool ABarracks::IsSlotOccupied(int32 SlotID) const
+{
+	bool slotValue = SlotGridMap.Find(SlotID);
+	return slotValue;
+}
+
+
+int32 ABarracks::GetSlotIDFromLocation(FVector Location)
+{
+	int32 columnNumber = GetSlotColumn(Location.Y);
+	int32 rowNumber = GetSlotRow(Location.X);
+	return GetSlotIDFromRowColumn(rowNumber, columnNumber);
+}
+
+
+int32 ABarracks::GetSlotIDFromRowColumn(int32 Row, int32 Column)
+{
+	return Row * 1000 + Column;
+}
+
+
 void ABarracks::RespawnUnitsInSlots()
 {
 	for (AUnitSlot* unitSlot : UnitSlots)
@@ -156,9 +198,21 @@ void ABarracks::RespondToResourcePhaseBegin()
 }
 
 
-void ABarracks::GenerateSlotGrid()
+int32 ABarracks::GetSlotColumn(float Y) const
 {
+	return GetGridAxisValue(Y, GridCenterOffsetY, GridSizeY);
+}
 
+
+int32 ABarracks::GetSlotRow(float X) const
+{
+	return GetGridAxisValue(X, GridCenterOffsetX, GridSizeX);
+}
+
+
+int32 ABarracks::GetGridAxisValue(float AxisValue, float AxisOffset, float AxisGridSize) const
+{
+	return round((AxisValue - AxisOffset) / AxisGridSize);
 }
 
 

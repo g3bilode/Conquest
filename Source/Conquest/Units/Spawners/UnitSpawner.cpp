@@ -4,6 +4,7 @@
 #include "UnitSpawner.h"
 #include "../../Barracks/Barracks.h"
 
+
 // Sets default values
 AUnitSpawner::AUnitSpawner()
 {
@@ -25,12 +26,35 @@ void AUnitSpawner::UpdatePosition(APlayerController* LocalController)
 		if (hitActor->GetClass()->IsChildOf(ABarracks::StaticClass()))
 		{
 			// Hit Barrack! Snap to grid
-			ABarracks* hitBarracks = Cast<ABarracks>(hitActor);
-			location = hitBarracks->GetNearestFreeSlotLocation(location);
+			/// VALIDATE ALLY
+			ActiveBarracks = Cast<ABarracks>(hitActor);
+			location = ActiveBarracks->GetNearestFreeSlotLocation(location);
+		}
+		else
+		{
+			ActiveBarracks = nullptr;
 		}
 	}
-
+	else
+	{
+		ActiveBarracks = nullptr;
+	}
 
 	SetActorLocation(location);
+}
+
+
+void AUnitSpawner::AttemptPurchase()
+{
+	bool isSuccess = false;
+	if (IsValid(ActiveBarracks))
+	{
+		int32 slotId = ActiveBarracks->GetSlotIDFromLocation(GetActorLocation());
+		isSuccess = ActiveBarracks->OccupySlot(slotId);
+	}
+	if (!isSuccess)
+	{
+		Destroy();
+	}
 }
 
