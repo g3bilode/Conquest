@@ -45,7 +45,7 @@ void AUnitSpawner::UpdatePosition(APlayerController* LocalController)
 }
 
 
-void AUnitSpawner::AttemptPurchase()
+bool AUnitSpawner::AttemptPurchase()
 {
 	bool isSuccess = false;
 	if (IsValid(ActiveBarracks))
@@ -57,5 +57,6 @@ void AUnitSpawner::AttemptPurchase()
 	{
 		Destroy();
 	}
+	return isSuccess;
 }
 

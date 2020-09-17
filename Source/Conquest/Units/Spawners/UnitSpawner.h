@@ -20,11 +20,15 @@ public:
 	void UpdatePosition(APlayerController* LocalController);
 
 	/* Attempt to purchase this spawner. */
-	void AttemptPurchase();
+	bool AttemptPurchase();
 
 	/* Icon for this unit spawner. */
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
 	UTexture2D* Icon;
+
+	/* Purchase cost for this unit spawner. */
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Cost")
+	int32 PurchaseCost;
 
 	/* Team index. */
 	int32 TeamIndex;

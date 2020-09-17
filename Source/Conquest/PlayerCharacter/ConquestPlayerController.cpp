@@ -19,11 +19,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+
 AConquestPlayerController::AConquestPlayerController()
 {
 	bShowMouseCursor = true;
 	CheatClass = UConquestCheatManager::StaticClass();
 }
+
 
 // Called when the game starts or when spawned
 void AConquestPlayerController::BeginPlay()
@@ -37,6 +39,7 @@ void AConquestPlayerController::BeginPlay()
 	}
 }
 
+
 void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -44,25 +47,29 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME_CONDITION(AConquestPlayerController, ConquestPlayerState, COND_InitialOnly);
 }
 
-bool AConquestPlayerController::AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex)
+
+bool AConquestPlayerController::AttemptPurchaseSpawner_Validate(TSubclassOf<class AUnitSpawner> SpawnerClass)
 {
 	return true;
 }
 
-void AConquestPlayerController::AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex)
-{
-	if (!CanPurchaseUnit(ActorToSpawn))
-	{
-		UE_LOG(LogConquest, Log, TEXT("Cannot purchase unit."));
-		return;
-	}
 
-	ABarracks* laneBarracks = GetBarracksForLane(LaneIndex);
-	if (laneBarracks->SpawnUnitAtIndex(ActorToSpawn, SlotIndex))
-	{
-		PurchaseUnit(ActorToSpawn);
-	}
+void AConquestPlayerController::AttemptPurchaseSpawner_Implementation(TSubclassOf<class AUnitSpawner> SpawnerClass)
+{
+	PurchaseUnitSpawner_Auth(SpawnerClass);
+// 	if (!CanPurchaseUnitSpawner())
+// 	{
+// 		UE_LOG(LogConquest, Log, TEXT("Cannot purchase unit spawner."));
+// 		return;
+// 	}
+// 
+// 	ABarracks* laneBarracks = GetBarracksForLane(LaneIndex);
+// 	if (laneBarracks->SpawnUnitAtIndex(ActorToSpawn, SlotIndex))
+// 	{
+// 		PurchaseUnitSpawner();
+// 	}
 }
+
 
 void AConquestPlayerController::SetupInputComponent()
 {
@@ -80,6 +87,7 @@ void AConquestPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Select", EInputEvent::IE_Pressed, this, &AConquestPlayerController::OnSelect);
 }
 
+
 void AConquestPlayerController::OnMoveForwardAxis(float axisValue)
 {
 	APawn* const pawn = GetPawn();
@@ -89,6 +97,7 @@ void AConquestPlayerController::OnMoveForwardAxis(float axisValue)
 		character->MoveCharacterForward(axisValue);
 	}
 }
+
 
 void AConquestPlayerController::OnMoveRightAxis(float axisValue)
 {
@@ -100,6 +109,7 @@ void AConquestPlayerController::OnMoveRightAxis(float axisValue)
 	}
 }
 
+
 void AConquestPlayerController::OnMouseHorizontal(float axisValue)
 {
 	if (lookAroundEnabled)
@@ -110,6 +120,7 @@ void AConquestPlayerController::OnMouseHorizontal(float axisValue)
 	}
 	UpdateSpawnerPosition();
 }
+
 
 void AConquestPlayerController::OnMouseVertical(float axisValue)
 {
@@ -126,6 +137,7 @@ void AConquestPlayerController::OnMouseVertical(float axisValue)
 	UpdateSpawnerPosition();
 }
 
+
 void AConquestPlayerController::OnZoomInAction()
 {
 	APawn* const pawn = GetPawn();
@@ -135,6 +147,7 @@ void AConquestPlayerController::OnZoomInAction()
 		character->ChangeCameraArmLength(-1.0f);
 	}
 }
+
 
 void AConquestPlayerController::OnZoomOutAction()
 {
@@ -146,6 +159,7 @@ void AConquestPlayerController::OnZoomOutAction()
 	}
 }
 
+
 void AConquestPlayerController::OnLookAroundStart()
 {
 	//Lock mouse cursor
@@ -155,12 +169,14 @@ void AConquestPlayerController::OnLookAroundStart()
 	mouseLockPositionY = Cast<ULocalPlayer>(Player)->ViewportClient->Viewport->GetMouseY();
 }
 
+
 void AConquestPlayerController::OnLookAroundStop()
 {
 	//Unlock mouse cursor
 	lookAroundEnabled = false;
 	bShowMouseCursor = true;
 }
+
 
 void AConquestPlayerController::OnSelect()
 {
@@ -169,11 +185,18 @@ void AConquestPlayerController::OnSelect()
 		if (bIsSpawningMode)
 		{
 			// TODO: Validate purchase on server
-			ActiveSpawner->AttemptPurchase();
-			ActiveSpawner = nullptr;
-			// TODO: SHIFT to spawn a new spawner
-			bIsSpawningMode = false;
-			return;
+			if (CanPurchaseUnitSpawner())
+			{
+				if (ActiveSpawner->AttemptPurchase())
+				{
+					// TODO: Validate success on server
+					AttemptPurchaseSpawner(ActiveSpawner->GetClass());
+					ActiveSpawner = nullptr;
+					// TODO: SHIFT to spawn a new spawner
+					bIsSpawningMode = false;
+					return;
+				}
+			}
 		}
 
 		FHitResult HitResult;
@@ -213,16 +236,15 @@ void AConquestPlayerController::OnRep_ConquestPlayerState()
 }
 
 
-bool AConquestPlayerController::CanPurchaseUnit(const TSubclassOf<class AConquestUnit> unit) const
+bool AConquestPlayerController::CanPurchaseUnitSpawner() const
 {
-	int32 cost = unit->GetDefaultObject<AConquestUnit>()->PurchaseCost;
-	return cost <= ConquestPlayerState->Gold;
+	return ActiveSpawner->PurchaseCost <= ConquestPlayerState->Gold;
 }
 
 
-void AConquestPlayerController::PurchaseUnit(const TSubclassOf<class AConquestUnit> unit)
+void AConquestPlayerController::PurchaseUnitSpawner_Auth(TSubclassOf<class AUnitSpawner> SpawnerClass)
 {
-	int32 cost = unit->GetDefaultObject<AConquestUnit>()->PurchaseCost;
+	int32 cost = SpawnerClass->GetDefaultObject<AUnitSpawner>()->PurchaseCost;
 	ConquestPlayerState->Gold -= cost;
 }
 
@@ -277,6 +299,7 @@ void AConquestPlayerController::BuildLaneArray()
 	}
 }
 
+
 void AConquestPlayerController::BuildBarracksArray()
 {
 	int32 numBarracks = ConquestUtils::LaneSpec.Num();
@@ -294,6 +317,7 @@ void AConquestPlayerController::BuildBarracksArray()
 	}
 
 }
+
 
 void AConquestPlayerController::GatherCapitals()
 {
@@ -325,6 +349,7 @@ AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 	return ConquestPlayerState;
 }
 
+
 TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index)
 {
 	if (LaneArray.Num() == 0)
@@ -334,6 +359,7 @@ TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index)
 	return LaneArray[Index].LaneDestinations;
 }
 
+
 class ABarracks* AConquestPlayerController::GetBarracksForLane(int32 LaneIndex)
 {
 	if (BarracksArray.Num() == 0)
@@ -342,6 +368,7 @@ class ABarracks* AConquestPlayerController::GetBarracksForLane(int32 LaneIndex)
 	}
 	return BarracksArray[LaneIndex];
 }
+
 
 float AConquestPlayerController::GetFriendlyCapitalHealthPercent()
 {

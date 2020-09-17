@@ -36,9 +36,9 @@ public:
 	AConquestPlayerController();
 
 	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation)
-	void AttemptSpawnUnit(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex);
-	virtual bool AttemptSpawnUnit_Validate(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex);
-	virtual void AttemptSpawnUnit_Implementation(TSubclassOf<class AConquestUnit> ActorToSpawn, int32 LaneIndex, int32 SlotIndex);
+	void AttemptPurchaseSpawner(TSubclassOf<class AUnitSpawner> SpawnerClass);
+	virtual bool AttemptPurchaseSpawner_Validate(TSubclassOf<class AUnitSpawner> SpawnerClass);
+	virtual void AttemptPurchaseSpawner_Implementation(TSubclassOf<class AUnitSpawner> SpawnerClass);
 
 	AConquestPlayerState* GetConquestPlayerState();
 
@@ -103,9 +103,9 @@ private:
 	void OnRep_ConquestPlayerState();
 
 	/* Check if can purchase unit. */
-	bool CanPurchaseUnit(const TSubclassOf<class AConquestUnit> unit) const;
+	bool CanPurchaseUnitSpawner() const;
 	/* Pay the purchase cost of a unit. */
-	void PurchaseUnit(const TSubclassOf<class AConquestUnit> unit);
+	void PurchaseUnitSpawner_Auth(TSubclassOf<class AUnitSpawner> SpawnerClass);
 	/* Gather CapturePoints and build lane array. */
 	void BuildLaneArray();
 	/* Gather Barracks for this team and build array. */
