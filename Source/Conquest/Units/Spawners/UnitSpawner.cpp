@@ -25,7 +25,7 @@ void AUnitSpawner::BeginPlay()
 
 	// Bind to combat phase start
 	AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
-	conquestGameState->CombatPhase_OnStart.AddDynamic(this, &AUnitSpawner::RespondToCombatPhaseBegin);
+	conquestGameState->ResourcePhase_OnEnd.AddDynamic(this, &AUnitSpawner::RespondToCombatPhaseBegin);
 }
 
 

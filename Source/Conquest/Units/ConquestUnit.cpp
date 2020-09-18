@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ConquestUnit.h"
-#include "../Conquest.h"
 #include "../Barracks/UnitSlot.h"
 #include "../Capital/Capital.h"
 #include "../Components/AttackComponent.h"
@@ -97,6 +96,8 @@ void AConquestUnit::BeginPlay()
 	characterMovement->AvoidanceConsiderationRadius = 50.f;
 	characterMovement->SetAvoidanceEnabled(true);
 
+	// Disable until combat phase
+	SetActorTickEnabled(false);
 }
 
 // Called every frame
@@ -160,7 +161,7 @@ void AConquestUnit::DeathEnd()
 
 void AConquestUnit::RespondToCombatPhaseBegin()
 {
-	UE_LOG(LogConquest, Log, TEXT("COMBAT BEGIN: %s"), *GetNameSafe(this));
+	SetActorTickEnabled(true);
 }
 
 void AConquestUnit::FaceTargetEnemy(float DeltaTime)

@@ -11,14 +11,17 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatPhaseBegin);
 /* Resource phase begin delegate */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourcePhaseBegin);
+/* Resource phase end delegate */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourcePhaseEnd);
 
 
 UENUM()
 enum EPhase
 {
-	NonePhase		UMETA(DisplayName = "None Phase"),
-	ResourcePhase	UMETA(DisplayName = "Resource Phase"),
-	CombatPhase		UMETA(DisplayName = "Combat Phase")
+	NonePhase			UMETA(DisplayName = "None Phase"),
+	ResourcePhase		UMETA(DisplayName = "Resource Phase"),
+	ResourcePhaseEnd	UMETA(DisplayName = "Resource Phase End"),
+	CombatPhase			UMETA(DisplayName = "Combat Phase")
 };
 
 
@@ -39,8 +42,11 @@ private:
 	UFUNCTION(NetMulticast, Reliable)
 	void OnResourcePhaseStart();
 	virtual void OnResourcePhaseStart_Implementation();
-	/* Callback on end of resource phase time. */
+	/* Multicast to clients on resource phase end. */
+	UFUNCTION(NetMulticast, Reliable)
 	void OnResourcePhaseEnd();
+	virtual void OnResourcePhaseEnd_Implementation();
+
 
 	/* Multicast to clients on combat phase start. */
 	UFUNCTION(NetMulticast, Reliable)
@@ -57,10 +63,17 @@ private:
 	int32 CountAliveUnits() const;
 
 
-	// Phases
+	/* Duration of the resource phase. */
 	static const float ResourcePhaseTime;
+	/* Timer for resource phase. */
 	FTimerHandle ResourcePhaseTimerHandle;
+	/* Duration of the phase transition. */
+	static const float PhaseTransitionTime;
+	/* Timer for phase transition. */
+	FTimerHandle PhaseTransitionTimerHandle;
+	/* Current phase. */
 	TEnumAsByte<EPhase> CurrentPhase;
+	/* Count of alive units for current combat phase. */
 	int32 AliveUnitCount;
 
 public:
@@ -83,4 +96,6 @@ public:
 	FCombatPhaseBegin CombatPhase_OnStart;
 	/* Resource phase start delegate. */
 	FResourcePhaseBegin ResourcePhase_OnStart;
+	/* Resource phase end delegate. */
+	FResourcePhaseEnd ResourcePhase_OnEnd;
 };

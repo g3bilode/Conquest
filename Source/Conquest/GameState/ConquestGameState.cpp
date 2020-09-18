@@ -11,6 +11,8 @@
 
 const float AConquestGameState::ResourcePhaseTime = 30.0f;
 
+const float AConquestGameState::PhaseTransitionTime = 2.0f;
+
 
 AConquestGameState::AConquestGameState()
 {
@@ -43,6 +45,7 @@ int32 AConquestGameState::CountAliveUnits() const
 	return conquestUnitActors.Num();
 }
 
+
 TArray<class AConquestPlayerState*> AConquestGameState::GetConquestPlayerArray()
 {
 	TArray<AConquestPlayerState*> conquestPlayerArray;
@@ -74,11 +77,19 @@ void AConquestGameState::OnResourcePhaseStart_Implementation()
 }
 
 
-void AConquestGameState::OnResourcePhaseEnd()
+void AConquestGameState::OnResourcePhaseEnd_Implementation()
 {
 	UE_LOG(LogConquest, Log, TEXT("Resource phase end"));
+	CurrentPhase = EPhase::ResourcePhaseEnd;
+	
+	// Broadcast resource phase start
+	ResourcePhase_OnEnd.Broadcast();
 
-	OnCombatPhaseStart();
+	if (HasAuthority())
+	{
+		// Update resource phase timer with callback
+		GetWorld()->GetTimerManager().SetTimer(PhaseTransitionTimerHandle, this, &AConquestGameState::OnCombatPhaseStart, PhaseTransitionTime, false);
+	}
 }
 
 
@@ -100,10 +111,6 @@ void AConquestGameState::OnCombatPhaseStart_Implementation()
 			// Broadcast combat phase start
 			CombatPhase_OnStart.Broadcast();
 		}
-	}
-	else
-	{
-		// Nothing yet
 	}
 }
 
