@@ -116,15 +116,3 @@ int32 ABarracks::GetGridAxisValue(float AxisValue, float AxisOffset, float AxisG
 {
 	return round((AxisValue - AxisOffset) / AxisGridSize);
 }
-
-
-bool ABarracks::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
-{
-	return true;
-}
-
-
-bool ABarracks::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
-{
-	return true;
-}

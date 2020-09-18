@@ -8,7 +8,7 @@
 #include "Barracks.generated.h"
 
 UCLASS()
-class CONQUEST_API ABarracks : public AActor, public IConquestSelectableInterface
+class CONQUEST_API ABarracks : public AActor
 {
 	GENERATED_BODY()
 	
@@ -51,9 +51,6 @@ public:
 	int32 GetSlotIDFromRowColumn(int32 Row, int32 Column);
 
 private:
-
-	bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
-	bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
 
 	/* Get slot column for given Y */
 	int32 GetSlotColumn(float Y) const;
