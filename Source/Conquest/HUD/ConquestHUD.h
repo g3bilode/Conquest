@@ -17,12 +17,6 @@ class CONQUEST_API AConquestHUD : public AHUD
 public:
 	AConquestHUD();
 
-	void OnBarrackSelection(TArray<class AUnitSlot*> UnitSlots, int32 LaneIndex);
-
-	void OnEmptyUnitSlotSelection(int32 LaneIndex, int32 SlotIndex);
-
-	void OnOccupiedUnitSlotSelection();
-
 protected:
 	void BeginPlay() override;
 

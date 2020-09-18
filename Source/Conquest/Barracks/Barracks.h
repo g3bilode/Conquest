@@ -23,18 +23,11 @@ protected:
 
 public:
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UnitSlots")
-	TArray<class AUnitSlot*> UnitSlots;
-
 	UPROPERTY(EditAnywhere, Category = "Team")
 	int32 TeamIndex;
 
 	UPROPERTY(EditAnywhere, Category = "Team")
 	int32 LaneIndex;
-
-	class AUnitSlot* GetFreeUnitSlot();
-
-	class AUnitSlot* GetUnitSlotAtIndex(int32 SlotIndex);
 
 	/* Return location of the nearest slot, if free. If occupied, returns null. */
 	FVector GetNearestFreeSlotLocation(FVector TargetLocation);
@@ -44,15 +37,6 @@ public:
 
 	/* Set LaneDestinations array. */
 	void SetLaneDestinations(TArray<FVector> InLaneDestinations);
-
-	/* Spawn given unit in free slot. */
-	bool SpawnUnitInFreeSlot(TSubclassOf<class AConquestUnit> UnitToSpawn);
-
-	/* Spawn given unit in given slot index. */
-	bool SpawnUnitAtIndex(TSubclassOf<class AConquestUnit> UnitToSpawn, int32 SlotIndex);
-
-	/* Spawn given unit in slot. */
-	bool SpawnUnitInSlot(TSubclassOf<class AConquestUnit> UnitToSpawn, class AUnitSlot* UnitSlot);
 
 	/* Occupy slot of given ID. Return true on success. */
 	bool OccupySlot(int32 SlotID);
@@ -70,13 +54,6 @@ private:
 
 	bool OnSelectionGained_Implementation(AConquestPlayerController* initiator) override;
 	bool OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection) override;
-
-	/* Respawn units in slots. */
-	void RespawnUnitsInSlots();
-
-	/* Respond to combat phase begin delegate. */
-	UFUNCTION()
-	void RespondToResourcePhaseBegin();
 
 	/* Get slot column for given Y */
 	int32 GetSlotColumn(float Y) const;

@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ConquestUnit.h"
-#include "../Barracks/UnitSlot.h"
 #include "../Capital/Capital.h"
 #include "../Components/AttackComponent.h"
 #include "../Components/HealthComponent.h"
@@ -65,7 +64,6 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 
 	DOREPLIFETIME_CONDITION(AConquestUnit, TeamIndex, COND_InitialOnly);
 	DOREPLIFETIME_CONDITION(AConquestUnit, LaneIndex, COND_InitialOnly);
-	DOREPLIFETIME_CONDITION(AConquestUnit, UnitSlot, COND_InitialOnly);
 }
 
 // Called when the game starts or when spawned

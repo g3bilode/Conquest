@@ -4,7 +4,6 @@
 #include "ConquestCharacter.h"
 #include "../Conquest.h"
 #include "../Barracks/Barracks.h"
-#include "../Barracks/UnitSlot.h"
 #include "../Capital/Capital.h"
 #include "../CapturePoints/CapturePoint.h"
 #include "../CheatManager/ConquestCheatManager.h"

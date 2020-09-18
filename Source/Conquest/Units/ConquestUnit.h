@@ -44,10 +44,6 @@ public:
 	UPROPERTY(Replicated)
 	int32 LaneIndex;
 
-	/* UnitSlot we are occupying, for callback post-spawn. */
-	UPROPERTY(Replicated)
-	class AUnitSlot* UnitSlot;
-
 	/* Purchase cost for this unit. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
 	int32 PurchaseCost;

@@ -15,15 +15,9 @@ class CONQUEST_API UUnitActionsWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	/* Populate the UnitSlotGrid UI. */
-	void PopulateSpawnerGridData(int32 LaneIndex, int32 SlotIndex);
 
 	/* Populate the UnitUpgradeGrid UI. */
 	void PopulateUpgradeGridData();
-
-	/* Grid of unit slot buttons for selected barrack. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Unit Spawners")
-	TArray<class UUnitSpawnerWidget*> UnitSpawnerGrid;
 
 	/* Grid of unit upgrade buttons for selected barrack. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Unit Upgrades")

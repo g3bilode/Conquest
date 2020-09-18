@@ -19,12 +19,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void Populate();
 
-	/* Enable this spawner for given lane. */
-	void EnableSpawner(int32 LaneIndex, int32 SlotIndex);
-
-	/* Disable this spawner. */
-	void DisableSpawner();
-
 	/* Event on button click. */
 	UFUNCTION(BlueprintCallable)
 	void OnSlotSelected();
