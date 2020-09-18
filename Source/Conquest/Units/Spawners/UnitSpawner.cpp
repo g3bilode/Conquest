@@ -78,6 +78,7 @@ bool AUnitSpawner::AttemptPurchase()
 		// Purchase Success
 		LaneIndex = ActiveBarracks->LaneIndex;
 		LaneDestinations = ActiveBarracks->GetLaneDestinations();
+		bIsActive = true;
 	}
 	return isSuccess;
 }
@@ -85,7 +86,9 @@ bool AUnitSpawner::AttemptPurchase()
 
 void AUnitSpawner::RespondToCombatPhaseBegin()
 {
-	UE_LOG(LogConquestUnitSpawner, Log, TEXT("COMBAT BEGIN: %s"), *GetNameSafe(this));
-	AConquestPlayerController* playerController = (AConquestPlayerController*)GetWorld()->GetFirstPlayerController();
-	playerController->SpawnUnit(UnitClass, GetActorLocation() + FVector(0, 0, 200), TeamIndex, LaneIndex, LaneDestinations);
+	if (bIsActive)
+	{
+		AConquestPlayerController* playerController = (AConquestPlayerController*)GetWorld()->GetFirstPlayerController();
+		playerController->SpawnUnit(UnitClass, GetActorLocation() + FVector(0, 0, 200), TeamIndex, LaneIndex, LaneDestinations);
+	}
 }

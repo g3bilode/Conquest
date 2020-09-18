@@ -45,6 +45,9 @@ private:
 	/* Currently selected barracks. */
 	class ABarracks* ActiveBarracks;
 
+	/* Is current spawner active? */
+	bool bIsActive;
+
 	/* Lane index for spawner's owning barracks. */
 	int32 LaneIndex;
 
