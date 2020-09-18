@@ -97,7 +97,10 @@ void AConquestPlayerController::SetupInputComponent()
 	InputComponent->BindAction("ZoomOut", EInputEvent::IE_Pressed, this, &AConquestPlayerController::OnZoomOutAction);
 	InputComponent->BindAction("LookAround", EInputEvent::IE_Pressed, this, &AConquestPlayerController::OnLookAroundStart);
 	InputComponent->BindAction("LookAround", EInputEvent::IE_Released, this, &AConquestPlayerController::OnLookAroundStop);
-	InputComponent->BindAction("Select", EInputEvent::IE_Pressed, this, &AConquestPlayerController::OnSelect);
+	DECLARE_DELEGATE_OneParam(FInputDelegateOneParam, const bool);
+	InputComponent->BindAction<FInputDelegateOneParam>("Select", EInputEvent::IE_Pressed, this, &AConquestPlayerController::OnClick, false);
+	InputComponent->BindAction<FInputDelegateOneParam>("ShiftSelect", EInputEvent::IE_Pressed, this, &AConquestPlayerController::OnClick, true);
+
 }
 
 
@@ -191,7 +194,7 @@ void AConquestPlayerController::OnLookAroundStop()
 }
 
 
-void AConquestPlayerController::OnSelect()
+void AConquestPlayerController::OnClick(bool WithShift)
 {
 	if (!lookAroundEnabled)
 	{
@@ -203,10 +206,15 @@ void AConquestPlayerController::OnSelect()
 				if (ActiveSpawner->AttemptPurchase())
 				{
 					// TODO: Validate success on server
-					AttemptPurchaseSpawner(ActiveSpawner->GetClass());
+					TSubclassOf<AUnitSpawner> activeSpawnerClass = ActiveSpawner->GetClass();
+					AttemptPurchaseSpawner(activeSpawnerClass);
 					ActiveSpawner = nullptr;
-					// TODO: SHIFT to spawn a new spawner
 					bIsSpawningMode = false;
+					if (WithShift)
+					{
+						// Continue with spawnings
+						EnableSpawningMode(activeSpawnerClass);
+					}
 					return;
 				}
 			}

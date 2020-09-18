@@ -73,7 +73,7 @@ protected:
 	void OnZoomOutAction();
 	void OnLookAroundStart();
 	void OnLookAroundStop();
-	void OnSelect();
+	void OnClick(bool WithShift);
 
 private:
 	bool lookAroundEnabled = false;
