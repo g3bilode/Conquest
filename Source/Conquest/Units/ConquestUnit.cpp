@@ -97,13 +97,6 @@ void AConquestUnit::BeginPlay()
 	characterMovement->AvoidanceConsiderationRadius = 50.f;
 	characterMovement->SetAvoidanceEnabled(true);
 
-	if (ensure(IsValid(UnitSlot)))
-	{
-		UnitSlot->Occupy(this);
-	}
-
-	// Disable until combat phase
-	SetActorTickEnabled(false);
 }
 
 // Called every frame
@@ -168,7 +161,6 @@ void AConquestUnit::DeathEnd()
 void AConquestUnit::RespondToCombatPhaseBegin()
 {
 	UE_LOG(LogConquest, Log, TEXT("COMBAT BEGIN: %s"), *GetNameSafe(this));
-	SetActorTickEnabled(true);
 }
 
 void AConquestUnit::FaceTargetEnemy(float DeltaTime)

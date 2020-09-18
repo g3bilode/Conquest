@@ -57,17 +57,31 @@ bool AConquestPlayerController::AttemptPurchaseSpawner_Validate(TSubclassOf<clas
 void AConquestPlayerController::AttemptPurchaseSpawner_Implementation(TSubclassOf<class AUnitSpawner> SpawnerClass)
 {
 	PurchaseUnitSpawner_Auth(SpawnerClass);
-// 	if (!CanPurchaseUnitSpawner())
-// 	{
-// 		UE_LOG(LogConquest, Log, TEXT("Cannot purchase unit spawner."));
-// 		return;
-// 	}
-// 
-// 	ABarracks* laneBarracks = GetBarracksForLane(LaneIndex);
-// 	if (laneBarracks->SpawnUnitAtIndex(ActorToSpawn, SlotIndex))
-// 	{
-// 		PurchaseUnitSpawner();
-// 	}
+}
+
+
+bool AConquestPlayerController::SpawnUnit_Validate(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations)
+{
+	return true;
+}
+
+
+void AConquestPlayerController::SpawnUnit_Implementation(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations)
+{
+	FTransform spawnTransform;
+	spawnTransform.SetLocation(Location);
+
+	AActor* spawnedUnit = UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), UnitToSpawn->GetDefaultObject()->GetClass(), spawnTransform, ESpawnActorCollisionHandlingMethod::DontSpawnIfColliding, this);
+	AConquestUnit* conquestSpawnedUnit = Cast<AConquestUnit>(spawnedUnit);
+
+	if (IsValid(conquestSpawnedUnit))
+	{
+		conquestSpawnedUnit->TeamIndex = TeamIndex;
+		conquestSpawnedUnit->LaneIndex = LaneIndex;
+		conquestSpawnedUnit->SetLaneDestinations(LaneDestinations);
+
+		UGameplayStatics::FinishSpawningActor(conquestSpawnedUnit, spawnTransform);
+	}
 }
 
 
@@ -233,6 +247,7 @@ void AConquestPlayerController::OnSelect()
 void AConquestPlayerController::OnRep_ConquestPlayerState()
 {
 	GatherCapitals();
+	BuildBarracksArray();
 }
 
 
@@ -360,16 +375,6 @@ TArray<FVector> AConquestPlayerController::GetLaneDestinations(int32 Index)
 }
 
 
-class ABarracks* AConquestPlayerController::GetBarracksForLane(int32 LaneIndex)
-{
-	if (BarracksArray.Num() == 0)
-	{
-		BuildBarracksArray();
-	}
-	return BarracksArray[LaneIndex];
-}
-
-
 float AConquestPlayerController::GetFriendlyCapitalHealthPercent()
 {
 	if (IsValid(FriendlyCapital))
@@ -386,7 +391,7 @@ void AConquestPlayerController::EnableSpawningMode(TSubclassOf<class AUnitSpawne
 	bIsSpawningMode = true;
 	if (IsValid(SpawnerClass))
 	{
-		ActiveSpawner = (AUnitSpawner*) GetWorld()->SpawnActor(SpawnerClass->GetDefaultObject()->GetClass(), &FVector::ZeroVector );
+		ActiveSpawner = (AUnitSpawner*)GetWorld()->SpawnActor(SpawnerClass->GetDefaultObject()->GetClass(), &FVector::ZeroVector);
 		ActiveSpawner->TeamIndex = ConquestPlayerState->TeamIndex;
 	}
 }

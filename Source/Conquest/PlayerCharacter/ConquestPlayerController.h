@@ -35,17 +35,21 @@ class AConquestPlayerController : public APlayerController
 public:
 	AConquestPlayerController();
 
-	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation)
+	UFUNCTION(Server, Reliable, WithValidation)
 	void AttemptPurchaseSpawner(TSubclassOf<class AUnitSpawner> SpawnerClass);
 	virtual bool AttemptPurchaseSpawner_Validate(TSubclassOf<class AUnitSpawner> SpawnerClass);
 	virtual void AttemptPurchaseSpawner_Implementation(TSubclassOf<class AUnitSpawner> SpawnerClass);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
+	virtual bool SpawnUnit_Validate(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
+	virtual void SpawnUnit_Implementation(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
 
 	AConquestPlayerState* GetConquestPlayerState();
 
 	/* Getters */
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetLaneDestinations(int32 Index);
-	class ABarracks* GetBarracksForLane(int32 LaneIndex);
 	/* Get Friendly Capital Health Percent */
 	UFUNCTION(BlueprintPure)
 	float GetFriendlyCapitalHealthPercent();
@@ -79,7 +83,6 @@ private:
 	/* Is in spawning mode? */
 	bool bIsSpawningMode;
 	/* Currently active spawner object. */
-	UPROPERTY()
 	class AUnitSpawner* ActiveSpawner;
 
 	TWeakObjectPtr<AActor> SelectedActor;

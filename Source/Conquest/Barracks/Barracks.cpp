@@ -91,6 +91,12 @@ FVector ABarracks::GetNearestFreeSlotLocation(FVector TargetLocation)
 }
 
 
+TArray<FVector> ABarracks::GetLaneDestinations() const
+{
+	return LaneDestinations;
+}
+
+
 void ABarracks::SetLaneDestinations(TArray<FVector> InLaneDestinations)
 {
 	LaneDestinations = InLaneDestinations;

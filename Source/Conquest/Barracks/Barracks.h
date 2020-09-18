@@ -39,6 +39,9 @@ public:
 	/* Return location of the nearest slot, if free. If occupied, returns null. */
 	FVector GetNearestFreeSlotLocation(FVector TargetLocation);
 
+	/* Get LaneDestinations array.*/
+	TArray<FVector> GetLaneDestinations() const;
+
 	/* Set LaneDestinations array. */
 	void SetLaneDestinations(TArray<FVector> InLaneDestinations);
 
