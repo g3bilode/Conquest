@@ -203,21 +203,24 @@ void AConquestPlayerController::OnClick(bool WithShift)
 			// TODO: Validate purchase on server
 			if (CanPurchaseUnitSpawner())
 			{
+				bool bWasSuccess = false;
+				TSubclassOf<AUnitSpawner> activeSpawnerClass = ActiveSpawner->GetClass();
 				if (ActiveSpawner->AttemptPurchase())
 				{
 					// TODO: Validate success on server
-					TSubclassOf<AUnitSpawner> activeSpawnerClass = ActiveSpawner->GetClass();
 					AttemptPurchaseSpawner(activeSpawnerClass);
-					ActiveSpawner = nullptr;
-					bIsSpawningMode = false;
-					if (WithShift)
-					{
-						// Continue with spawnings
-						EnableSpawningMode(activeSpawnerClass);
-					}
-					return;
+					bWasSuccess = true;
+				}
+				// Done with this spawn, on either success/fail
+				ActiveSpawner = nullptr;
+				bIsSpawningMode = false;
+				// Continue with new spawning ?
+				if (bWasSuccess && WithShift)
+				{
+					EnableSpawningMode(activeSpawnerClass);
 				}
 			}
+			return;
 		}
 
 		FHitResult HitResult;
