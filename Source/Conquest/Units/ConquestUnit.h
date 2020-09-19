@@ -52,6 +52,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
 	UTexture2D* Icon;
 
+	/* Class that this unit can evolve into. */
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "ConquestUnit")
+	TSubclassOf<class AConquestUnit> Evolution;
+
 	// ANIMS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
 	UAnimMontage* DeathMontage;
@@ -76,7 +80,6 @@ private:
 
 	/* Alternate unit colour */
 	static const FLinearColor AlternateColour;
-
 
 	/* Unit Movement Component*/
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
