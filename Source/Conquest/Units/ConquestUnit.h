@@ -56,10 +56,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "ConquestUnit")
 	TArray<TSubclassOf<class AConquestUnit>> Evolutions;
 
+	/* Base unit colour. */
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "ConquestUnit")
+	FLinearColor BaseColour;
+	/* Alternate unit colour */
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "ConquestUnit")
+	FLinearColor AlternateColour;
+
 	// ANIMS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
 	UAnimMontage* DeathMontage;
-
 
 private:
 
@@ -77,9 +83,6 @@ private:
 	UFUNCTION(NetMulticast, Unreliable)
 	void PlayDeathAnim();
 	virtual void PlayDeathAnim_Implementation();
-
-	/* Alternate unit colour */
-	static const FLinearColor AlternateColour;
 
 	/* Unit Movement Component*/
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
