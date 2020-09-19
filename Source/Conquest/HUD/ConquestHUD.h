@@ -17,6 +17,8 @@ class CONQUEST_API AConquestHUD : public AHUD
 public:
 	AConquestHUD();
 
+	void OnSpawnerSelected(class AUnitSpawner* SelectedSpawner);
+
 protected:
 	void BeginPlay() override;
 

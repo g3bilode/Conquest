@@ -2,19 +2,36 @@
 
 
 #include "UnitUpgradeWidget.h"
+#include "../Units/Spawners/UnitSpawner.h"
 
-void UUnitUpgradeWidget::EnableUpgrade()
+
+void UUnitUpgradeWidget::Populate(class AUnitSpawner* InUnitSpawner, int32 InEvolutionIndex)
 {
-	SetVisibility(ESlateVisibility::Visible);
+	UnitSpawner = InUnitSpawner;
+	EvolutionIndex = InEvolutionIndex;
+	GenerateUI(UnitSpawner->GetUnitEvolutions()[EvolutionIndex]);
 }
 
-void UUnitUpgradeWidget::DisableUpgrade()
+
+void UUnitUpgradeWidget::ClearData()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	UnitSpawner = nullptr;
+	EvolutionIndex = -1;
+	GenerateUI(nullptr);
 }
+
+
+void UUnitUpgradeWidget::OnSlotSelected()
+{
+	// tell spawner to upgrade
+	if (IsValid(UnitSpawner))
+	{
+		UnitSpawner->AttemptEvolve(EvolutionIndex);
+	}
+}
+
 
 void UUnitUpgradeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SetVisibility(ESlateVisibility::Hidden);
 }

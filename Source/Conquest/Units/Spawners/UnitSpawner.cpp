@@ -5,6 +5,7 @@
 #include "../ConquestUnit.h"
 #include "../../Barracks/Barracks.h"
 #include "../../GameState/ConquestGameState.h"
+#include "../../HUD/ConquestHUD.h"
 #include "../../PlayerCharacter/ConquestPlayerController.h"
 
 
@@ -33,7 +34,8 @@ void AUnitSpawner::UpdatePosition(APlayerController* LocalController)
 {
 	bool onFriendlyBarrack = false;
 	FHitResult HitResult;
-	LocalController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, HitResult);
+	// Reuse Camera collision channel. Maybe should create custom collider instead?
+	LocalController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Camera), false, HitResult);
 	FVector location = HitResult.Location;
 	AActor* const hitActor = HitResult.GetActor();
 	if (IsValid(hitActor))
@@ -84,6 +86,27 @@ bool AUnitSpawner::AttemptPurchase()
 }
 
 
+bool AUnitSpawner::AttemptEvolve(int32 EvolutionIndex)
+{
+	TArray<TSubclassOf<class AConquestUnit>> evolutions = GetUnitEvolutions();
+	if (evolutions.IsValidIndex(EvolutionIndex))
+	{
+		TSubclassOf<AConquestUnit> evolution = evolutions[EvolutionIndex];
+		// TODO: Validate cost
+		UnitClass = evolution;
+		UE_LOG(LogConquestUnitSpawner, Log, TEXT("EVOLVED: %s"), *GetNameSafe(UnitClass));
+		return true;
+	}
+	return false;
+}
+
+
+TArray<TSubclassOf<class AConquestUnit>> AUnitSpawner::GetUnitEvolutions()
+{
+	return UnitClass->GetDefaultObject<AConquestUnit>()->Evolutions;
+}
+
+
 void AUnitSpawner::RespondToCombatPhaseBegin()
 {
 	if (bIsActive)
@@ -91,4 +114,22 @@ void AUnitSpawner::RespondToCombatPhaseBegin()
 		AConquestPlayerController* playerController = (AConquestPlayerController*)GetWorld()->GetFirstPlayerController();
 		playerController->SpawnUnit(UnitClass, GetActorLocation() + FVector(0, 0, 200), TeamIndex, LaneIndex, LaneDestinations);
 	}
+}
+
+
+bool AUnitSpawner::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
+{
+	return true;
+}
+
+
+bool AUnitSpawner::OnSelectionGained_Implementation(AConquestPlayerController* initiator)
+{
+	if (initiator->GetConquestPlayerState()->TeamIndex == TeamIndex)
+	{
+		// Friendly
+		AConquestHUD* conquestHUD = (AConquestHUD*)initiator->GetHUD();
+		conquestHUD->OnSpawnerSelected(this);
+	}
+	return true;
 }

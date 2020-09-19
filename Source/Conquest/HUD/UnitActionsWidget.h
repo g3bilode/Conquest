@@ -17,7 +17,7 @@ class CONQUEST_API UUnitActionsWidget : public UUserWidget
 public:
 
 	/* Populate the UnitUpgradeGrid UI. */
-	void PopulateUpgradeGridData();
+	void PopulateUpgradeGridData(class AUnitSpawner* UnitSpawner);
 
 	/* Grid of unit upgrade buttons for selected barrack. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Unit Upgrades")

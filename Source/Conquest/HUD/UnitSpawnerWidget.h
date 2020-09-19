@@ -30,9 +30,4 @@ public:
 protected:
 	void NativeConstruct() override;
 
-private:
-	/* Lane index. */
-	int32 _LaneIndex;
-	/* Unit slot index. */
-	int32 _SlotIndex;
 };

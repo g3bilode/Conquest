@@ -52,9 +52,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
 	UTexture2D* Icon;
 
-	/* Class that this unit can evolve into. */
+	/* Classes that this unit can evolve into. */
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "ConquestUnit")
-	TSubclassOf<class AConquestUnit> Evolution;
+	TArray<TSubclassOf<class AConquestUnit>> Evolutions;
 
 	// ANIMS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")

@@ -6,10 +6,17 @@
 #include "GameplayWidget.h"
 #include "UnitActionsWidget.h"
 
+
 AConquestHUD::AConquestHUD()
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> conquestHud(TEXT("/Game/Conquest/UI/HUD/Gameplay_HUD"));
 	GameHUDWidgetClass = conquestHud.Class;
+}
+
+
+void AConquestHUD::OnSpawnerSelected(class AUnitSpawner* SelectedSpawner)
+{
+	GameHUDWidget->UnitActionsWidget->PopulateUpgradeGridData(SelectedSpawner);
 }
 
 

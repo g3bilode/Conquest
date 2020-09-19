@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "../Interfaces/ConquestSelectableInterface.h"
 #include "Barracks.generated.h"
 
 UCLASS()
