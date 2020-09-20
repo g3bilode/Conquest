@@ -35,10 +35,14 @@ class AConquestPlayerController : public APlayerController
 public:
 	AConquestPlayerController();
 
+	/* Check if can make purchase. */
+	bool CanMakePurchase(int32 Cost) const;
+
+	/* Make a purchase on server. */
 	UFUNCTION(Server, Reliable, WithValidation)
-	void AttemptPurchaseSpawner(TSubclassOf<class AUnitSpawner> SpawnerClass);
-	virtual bool AttemptPurchaseSpawner_Validate(TSubclassOf<class AUnitSpawner> SpawnerClass);
-	virtual void AttemptPurchaseSpawner_Implementation(TSubclassOf<class AUnitSpawner> SpawnerClass);
+	void MakePurchase(int32 Cost);
+	virtual bool MakePurchase_Validate(int32 Cost);
+	virtual void MakePurchase_Implementation(int32 Cost);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
@@ -105,10 +109,6 @@ private:
 	UFUNCTION()
 	void OnRep_ConquestPlayerState();
 
-	/* Check if can purchase unit. */
-	bool CanPurchaseUnitSpawner() const;
-	/* Pay the purchase cost of a unit. */
-	void PurchaseUnitSpawner_Auth(TSubclassOf<class AUnitSpawner> SpawnerClass);
 	/* Gather CapturePoints and build lane array. */
 	void BuildLaneArray();
 	/* Gather Barracks for this team and build array. */

@@ -47,15 +47,15 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 }
 
 
-bool AConquestPlayerController::AttemptPurchaseSpawner_Validate(TSubclassOf<class AUnitSpawner> SpawnerClass)
+bool AConquestPlayerController::MakePurchase_Validate(int32 Cost)
 {
-	return true;
+	return CanMakePurchase(Cost);
 }
 
 
-void AConquestPlayerController::AttemptPurchaseSpawner_Implementation(TSubclassOf<class AUnitSpawner> SpawnerClass)
+void AConquestPlayerController::MakePurchase_Implementation(int32 Cost)
 {
-	PurchaseUnitSpawner_Auth(SpawnerClass);
+	ConquestPlayerState->Gold -= Cost;
 }
 
 
@@ -201,14 +201,14 @@ void AConquestPlayerController::OnClick(bool WithShift)
 		if (bIsSpawningMode)
 		{
 			// TODO: Validate purchase on server
-			if (CanPurchaseUnitSpawner())
+			if (CanMakePurchase(ActiveSpawner->PurchaseCost))
 			{
 				bool bWasSuccess = false;
 				TSubclassOf<AUnitSpawner> activeSpawnerClass = ActiveSpawner->GetClass();
 				if (ActiveSpawner->AttemptPurchase())
 				{
 					// TODO: Validate success on server
-					AttemptPurchaseSpawner(activeSpawnerClass);
+					MakePurchase(ActiveSpawner->PurchaseCost);
 					bWasSuccess = true;
 				}
 				// Done with this spawn, on either success/fail
@@ -261,16 +261,9 @@ void AConquestPlayerController::OnRep_ConquestPlayerState()
 }
 
 
-bool AConquestPlayerController::CanPurchaseUnitSpawner() const
+bool AConquestPlayerController::CanMakePurchase(int32 Cost) const
 {
-	return ActiveSpawner->PurchaseCost <= ConquestPlayerState->Gold;
-}
-
-
-void AConquestPlayerController::PurchaseUnitSpawner_Auth(TSubclassOf<class AUnitSpawner> SpawnerClass)
-{
-	int32 cost = SpawnerClass->GetDefaultObject<AUnitSpawner>()->PurchaseCost;
-	ConquestPlayerState->Gold -= cost;
+	return Cost <= ConquestPlayerState->Gold;
 }
 
 

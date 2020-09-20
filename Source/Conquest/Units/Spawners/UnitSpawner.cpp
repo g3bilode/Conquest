@@ -24,9 +24,18 @@ void AUnitSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Bind to combat phase start
-	AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
-	conquestGameState->ResourcePhase_OnEnd.AddDynamic(this, &AUnitSpawner::RespondToCombatPhaseBegin);
+	UWorld* world = GetWorld();
+
+	// Store reference to local player controller
+	LocalPlayerController = Cast<AConquestPlayerController>(world->GetFirstPlayerController());
+
+	// Bind to resource phase end
+	AConquestGameState* conquestGameState = Cast<AConquestGameState>(world->GetGameState());
+	if (IsValid(conquestGameState))
+	{
+		conquestGameState->ResourcePhase_OnEnd.AddDynamic(this, &AUnitSpawner::RespondToCombatPhaseBegin);
+	}
+
 }
 
 
@@ -88,16 +97,20 @@ bool AUnitSpawner::AttemptPurchase()
 
 bool AUnitSpawner::AttemptEvolve(int32 EvolutionIndex)
 {
+	bool isSuccess = false;
 	TArray<TSubclassOf<class AConquestUnit>> evolutions = GetUnitEvolutions();
 	if (evolutions.IsValidIndex(EvolutionIndex))
 	{
 		TSubclassOf<AConquestUnit> evolution = evolutions[EvolutionIndex];
-		// TODO: Validate cost
-		UnitClass = evolution;
-		UE_LOG(LogConquestUnitSpawner, Log, TEXT("EVOLVED: %s"), *GetNameSafe(UnitClass));
-		return true;
+		int32 evolutionCost = evolution->GetDefaultObject<AConquestUnit>()->PurchaseCost;
+		if (LocalPlayerController->CanMakePurchase(evolutionCost))
+		{
+			LocalPlayerController->MakePurchase(evolutionCost);
+			UnitClass = evolution;
+			isSuccess = true;
+		}
 	}
-	return false;
+	return isSuccess;
 }
 
 
@@ -111,8 +124,7 @@ void AUnitSpawner::RespondToCombatPhaseBegin()
 {
 	if (bIsActive)
 	{
-		AConquestPlayerController* playerController = (AConquestPlayerController*)GetWorld()->GetFirstPlayerController();
-		playerController->SpawnUnit(UnitClass, GetActorLocation() + FVector(0, 0, 200), TeamIndex, LaneIndex, LaneDestinations);
+		LocalPlayerController->SpawnUnit(UnitClass, GetActorLocation() + FVector(0, 0, 200), TeamIndex, LaneIndex, LaneDestinations);
 	}
 }
 

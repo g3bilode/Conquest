@@ -60,6 +60,9 @@ private:
 	/* LaneDestinations for spawner's owning barracks. */
 	TArray<FVector> LaneDestinations;
 
+	/* Local player controller. */
+	class AConquestPlayerController* LocalPlayerController;
+
 	/* Respond to combat phase begin delegate. */
 	UFUNCTION()
 	void RespondToCombatPhaseBegin();
