@@ -39,6 +39,14 @@ void AUnitSpawner::BeginPlay()
 }
 
 
+void AUnitSpawner::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	Icon = UnitClass->GetDefaultObject<AConquestUnit>()->Icon;
+	PurchaseCost = UnitClass->GetDefaultObject<AConquestUnit>()->PurchaseCost;
+}
+
+
 void AUnitSpawner::UpdatePosition(APlayerController* LocalController)
 {
 	bool onFriendlyBarrack = false;

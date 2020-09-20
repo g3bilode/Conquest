@@ -19,6 +19,8 @@ public:
 protected:
 	void BeginPlay() override;
 
+	void PostInitializeComponents() override;
+
 public:	
 	/* Update unit spawner location. */
 	void UpdatePosition(APlayerController* LocalController);
@@ -36,12 +38,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Unit")
 	TSubclassOf<class AConquestUnit> UnitClass;
 
-	/* Icon for this unit spawner. */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")
+	/* Icon for this unit spawner, retrieved from base unit. */
+	UPROPERTY(BlueprintReadOnly, Category = "UI")
 	UTexture2D* Icon;
 
-	/* Purchase cost for this unit spawner. */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Cost")
+	/* Purchase cost for this unit spawner, retrieved from base unit. */
+	UPROPERTY(BlueprintReadOnly, Category = "Cost")
 	int32 PurchaseCost;
 
 	/* Team index. */
