@@ -49,7 +49,9 @@ void AConquestPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 
 bool AConquestPlayerController::MakePurchase_Validate(int32 Cost)
 {
-	return CanMakePurchase(Cost);
+	// TODO: Fix this - This can fail since client doesn't check CanMakePurchase on server...
+	//return CanMakePurchase(Cost);
+	return true;
 }
 
 
