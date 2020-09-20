@@ -85,8 +85,11 @@ void AConquestUnit::BeginPlay()
 	// Bind combat phase start delegate
 	if (HasAuthority())
 	{
-		AConquestGameState* conquestGameState = (AConquestGameState*)GetWorld()->GetGameState();
-		conquestGameState->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
+		AConquestGameState* conquestGameState = Cast<AConquestGameState>(GetWorld()->GetGameState());
+		if (IsValid(conquestGameState))
+		{
+			conquestGameState->CombatPhase_OnStart.AddDynamic(this, &AConquestUnit::RespondToCombatPhaseBegin);
+		}
 	}
 
 	// Avoidance
