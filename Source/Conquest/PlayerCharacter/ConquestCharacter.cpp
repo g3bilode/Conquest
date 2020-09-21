@@ -74,8 +74,3 @@ void AConquestCharacter::MoveCharacterRight(float changeValue)
 {
 	AddMovementInput(GetActorRightVector(), changeValue);
 }
-
-void AConquestCharacter::OnSelectActor(AActor* actor)
-{
-	UE_LOG(LogConquest, Log, TEXT("Selection: %s"), *GetNameSafe(actor));
-}

@@ -95,7 +95,6 @@ bool AUnitSpawner::AttemptPurchase()
 	else
 	{
 		// Purchase Success
-		RefreshHUD(true);
 		LaneIndex = ActiveBarracks->LaneIndex;
 		LaneDestinations = ActiveBarracks->GetLaneDestinations();
 		bIsActive = true;

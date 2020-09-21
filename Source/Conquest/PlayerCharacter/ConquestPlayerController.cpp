@@ -213,44 +213,34 @@ void AConquestPlayerController::OnClick(bool WithShift)
 					MakePurchase(ActiveSpawner->PurchaseCost);
 					bWasSuccess = true;
 				}
-				// Done with this spawn, on either success/fail
-				ActiveSpawner = nullptr;
-				bIsSpawningMode = false;
 				// Continue with new spawning ?
-				if (bWasSuccess && WithShift)
+				if (bWasSuccess)
 				{
-					EnableSpawningMode(activeSpawnerClass);
+					if (WithShift)
+					{
+						// Continue spawning
+						EnableSpawningMode(activeSpawnerClass);
+					}
+					else
+					{
+						// Select newly spawned spawner.
+						OnSelectActor(ActiveSpawner);
+					}
+				}
+				if (!bWasSuccess || (bWasSuccess && !WithShift))
+				{
+					// Done with this spawn, clear if not still spawning
+					ActiveSpawner = nullptr;
+					bIsSpawningMode = false;
 				}
 			}
-			return;
 		}
-
-		FHitResult HitResult;
-		GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
-		AActor* const NewSelection = HitResult.GetActor();
-
-		if (IsValid(NewSelection))
+		else
 		{
-			// Previous Selection action
-			if (IsValid(SelectedActor.Get()))
-			{
-				IConquestSelectableInterface::Execute_OnSelectionChanged(SelectedActor.Get(), this, NewSelection);
-			}
-
-			// Selection action
-			if (NewSelection->GetClass()->ImplementsInterface(UConquestSelectableInterface::StaticClass()))
-			{
-				IConquestSelectableInterface::Execute_OnSelectionGained(NewSelection, this);
-				SelectedActor = NewSelection;
-			}
-		}
-		
-		// Character action
-		APawn* const pawn = GetPawn();
-		AConquestCharacter* const character = Cast<AConquestCharacter>(pawn);
-		if (character)
-		{
-			character->OnSelectActor(SelectedActor.Get());
+			// Not actively spawning
+			FHitResult HitResult;
+			GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, HitResult);
+			OnSelectActor(HitResult.GetActor());
 		}
 	}
 }
@@ -361,6 +351,27 @@ void AConquestPlayerController::UpdateSpawnerPosition()
 	{
 		ActiveSpawner->UpdatePosition(this);
 	}
+}
+
+
+void AConquestPlayerController::OnSelectActor(AActor* NewSelection)
+{
+	if (IsValid(NewSelection))
+	{
+		// Previous Selection action
+		if (IsValid(SelectedActor.Get()))
+		{
+			IConquestSelectableInterface::Execute_OnSelectionChanged(SelectedActor.Get(), this, NewSelection);
+		}
+
+		// Selection action
+		if (NewSelection->GetClass()->ImplementsInterface(UConquestSelectableInterface::StaticClass()))
+		{
+			IConquestSelectableInterface::Execute_OnSelectionGained(NewSelection, this);
+			SelectedActor = NewSelection;
+		}
+	}
+	UE_LOG(LogConquest, Log, TEXT("Selection: %s"), *GetNameSafe(NewSelection));
 }
 
 

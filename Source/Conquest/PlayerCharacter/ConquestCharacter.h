@@ -29,8 +29,6 @@ public:
 	void MoveCharacterForward(float changeValue);
 	void MoveCharacterRight(float changeValue);
 
-	void OnSelectActor(AActor* actor);
-
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

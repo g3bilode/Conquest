@@ -117,6 +117,8 @@ private:
 	void GatherCapitals();
 	/* Update active unit spawner location. */
 	void UpdateSpawnerPosition();
+	/* On Actor selection. */
+	void OnSelectActor(AActor* NewSelection);
 };
 
 
