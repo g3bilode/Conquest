@@ -95,6 +95,7 @@ bool AUnitSpawner::AttemptPurchase()
 	else
 	{
 		// Purchase Success
+		RefreshHUD(true);
 		LaneIndex = ActiveBarracks->LaneIndex;
 		LaneDestinations = ActiveBarracks->GetLaneDestinations();
 		bIsActive = true;
@@ -115,6 +116,7 @@ bool AUnitSpawner::AttemptEvolve(int32 EvolutionIndex)
 		{
 			LocalPlayerController->MakePurchase(evolutionCost);
 			UnitClass = evolution;
+			RefreshHUD(true);
 			isSuccess = true;
 		}
 	}
@@ -125,6 +127,20 @@ bool AUnitSpawner::AttemptEvolve(int32 EvolutionIndex)
 TArray<TSubclassOf<class AConquestUnit>> AUnitSpawner::GetUnitEvolutions()
 {
 	return UnitClass->GetDefaultObject<AConquestUnit>()->Evolutions;
+}
+
+
+void AUnitSpawner::RefreshHUD(bool IsSelected)
+{
+	AConquestHUD* conquestHUD = (AConquestHUD*)LocalPlayerController->GetHUD();
+	if (IsSelected)
+	{
+		conquestHUD->OnSpawnerSelected(this);
+	}
+	else
+	{
+		conquestHUD->OnSpawnerDeselected();
+	}
 }
 
 
@@ -139,6 +155,7 @@ void AUnitSpawner::RespondToCombatPhaseBegin()
 
 bool AUnitSpawner::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
 {
+	RefreshHUD(false);
 	return true;
 }
 
@@ -148,8 +165,7 @@ bool AUnitSpawner::OnSelectionGained_Implementation(AConquestPlayerController* i
 	if (initiator->GetConquestPlayerState()->TeamIndex == TeamIndex)
 	{
 		// Friendly
-		AConquestHUD* conquestHUD = (AConquestHUD*)initiator->GetHUD();
-		conquestHUD->OnSpawnerSelected(this);
+		RefreshHUD(true);
 	}
 	return true;
 }

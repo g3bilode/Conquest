@@ -19,6 +19,8 @@ public:
 
 	void OnSpawnerSelected(class AUnitSpawner* SelectedSpawner);
 
+	void OnSpawnerDeselected();
+
 protected:
 	void BeginPlay() override;
 

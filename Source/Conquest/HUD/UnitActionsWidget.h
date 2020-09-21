@@ -19,6 +19,9 @@ public:
 	/* Populate the UnitUpgradeGrid UI. */
 	void PopulateUpgradeGridData(class AUnitSpawner* UnitSpawner);
 
+	/* Clear the UnitUpgradeGrid UI. */
+	void ClearUpgradeGridData();
+
 	/* Grid of unit upgrade buttons for selected barrack. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Unit Upgrades")
 	TArray<class UUnitUpgradeWidget*> UnitUpgradeGrid;

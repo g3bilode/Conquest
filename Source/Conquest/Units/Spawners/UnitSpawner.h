@@ -65,6 +65,9 @@ private:
 	/* Local player controller. */
 	class AConquestPlayerController* LocalPlayerController;
 
+	/* Refresh the UI for current spawner. */
+	void RefreshHUD(bool IsSelected);
+
 	/* Respond to combat phase begin delegate. */
 	UFUNCTION()
 	void RespondToCombatPhaseBegin();

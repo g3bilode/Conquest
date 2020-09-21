@@ -20,6 +20,12 @@ void AConquestHUD::OnSpawnerSelected(class AUnitSpawner* SelectedSpawner)
 }
 
 
+void AConquestHUD::OnSpawnerDeselected()
+{
+	GameHUDWidget->UnitActionsWidget->ClearUpgradeGridData();
+}
+
+
 void AConquestHUD::BeginPlay()
 {
 	Super::BeginPlay();

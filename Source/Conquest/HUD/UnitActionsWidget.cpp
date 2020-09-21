@@ -24,3 +24,12 @@ void UUnitActionsWidget::PopulateUpgradeGridData(AUnitSpawner* UnitSpawner)
 		slotNum++;
 	}
 }
+
+
+void UUnitActionsWidget::ClearUpgradeGridData()
+{
+	for (UUnitUpgradeWidget* unitUpgradeWidget : UnitUpgradeGrid)
+	{
+		unitUpgradeWidget->ClearData();
+	}
+}
