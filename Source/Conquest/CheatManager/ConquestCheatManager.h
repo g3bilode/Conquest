@@ -18,6 +18,10 @@ class CONQUEST_API UConquestCheatManager : public UCheatManager
 	UFUNCTION(exec, Category = "Conquest Cheat Manager")
 	virtual void AddGold(int32 GoldAmount, int32 PlayerIndex = -1);
 
+	/** Add glint to player at given index. If no index provided, add to all. */
+	UFUNCTION(exec, Category = "Conquest Cheat Manager")
+	virtual void AddGlint(int32 GlintAmount, int32 PlayerIndex = -1);
+
 	/* Kill all units. */
 	UFUNCTION(exec, Category = "Conquest Cheat Manager")
 	virtual void KillAll();
