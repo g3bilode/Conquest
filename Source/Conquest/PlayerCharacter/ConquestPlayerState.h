@@ -15,17 +15,29 @@ class CONQUEST_API AConquestPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
-	AConquestPlayerState() : GoldGainMultiplayer(1) {}
+	AConquestPlayerState();
 
+	/* Gold resource. */
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Resources")
 	int32 Gold;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Resources")
-	int32 GoldGainMultiplayer;
+	/* Glint resource. */
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Resources")
+	int32 Glint;
 
+	/* Glint gained per worker. */
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Resources")
+	int32 GlintGainPerWorker;
+
+	/* Number of Glint workers. */
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Resources")
+	int32 GlintWorkers;
+
+	/* Player's team name. */
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Team")
 	FName TeamName;
 
+	/* Player's, team index. */
 	UPROPERTY(Replicated)
 	int32 TeamIndex;
 

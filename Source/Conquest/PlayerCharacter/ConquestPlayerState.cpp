@@ -3,11 +3,22 @@
 #include "ConquestPlayerState.h"
 #include "Net/UnrealNetwork.h"
 
+
+AConquestPlayerState::AConquestPlayerState()
+{
+	GlintWorkers = 1;
+	GlintGainPerWorker = 1;
+}
+
+
 void AConquestPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AConquestPlayerState, Gold);
+	DOREPLIFETIME(AConquestPlayerState, Glint);
+	DOREPLIFETIME(AConquestPlayerState, GlintWorkers);
+	DOREPLIFETIME(AConquestPlayerState, GlintGainPerWorker);
 	DOREPLIFETIME_CONDITION(AConquestPlayerState, TeamName, COND_InitialOnly);
 	DOREPLIFETIME_CONDITION(AConquestPlayerState, TeamIndex, COND_InitialOnly);
 }

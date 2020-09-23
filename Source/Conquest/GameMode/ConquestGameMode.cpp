@@ -99,7 +99,8 @@ void AConquestGameMode::UpdateResources()
 {
 	for (AConquestPlayerState* conquestPlayerState : CurrentPlayers)
 	{
-		conquestPlayerState->Gold += conquestPlayerState->GoldGainMultiplayer * GoldGainBase;
+		conquestPlayerState->Gold += GoldGainBase;
+		conquestPlayerState->Glint += conquestPlayerState->GlintWorkers * conquestPlayerState->GlintGainPerWorker;
 	}
 }
 
