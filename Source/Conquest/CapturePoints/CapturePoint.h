@@ -14,12 +14,23 @@ class CONQUEST_API ACapturePoint : public AActor, public IConquestSelectableInte
 	GENERATED_BODY()
 
 public:
+
 	ACapturePoint();
 
+	/* Function called on capture. */
 	void Capture(int32 TeamIndex);
+
+	/* Function called to update model on capture. */
+	UFUNCTION(BlueprintImplementableEvent)
+	void DisplayCapture();
 
 	int8 GetLaneNumber() const;
 	int8 GetRowNumber() const;
+
+	/* Team index currently occupying point */
+	UPROPERTY(BlueprintReadOnly)
+	int32  OccupierTeamIndex;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,10 +43,7 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void OnTriggerOverlapWithUnit(int32 TeamIndex);
-
 	
-	/* Team index currently occupying point */
-	int32  OccupierTeamIndex;
 	/* Lane position (ex: 0 = lane 0) */
 	UPROPERTY(EditAnywhere)
 	int8 LaneNumber;

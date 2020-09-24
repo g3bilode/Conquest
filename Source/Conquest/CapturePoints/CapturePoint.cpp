@@ -14,38 +14,49 @@ bool ACapturePoint::OnSelectionGained_Implementation(AConquestPlayerController* 
 	return true;
 }
 
+
 bool ACapturePoint::OnSelectionChanged_Implementation(AConquestPlayerController* initiator, AActor* NewSelection)
 {
 	return true;
 }
 
+
 ACapturePoint::ACapturePoint()
 {
-
+	OccupierTeamIndex = -1;
 }
+
 
 void ACapturePoint::Capture(int32 TeamIndex)
 {
 	OccupierTeamIndex = TeamIndex;
+	DisplayCapture();
 }
+
 
 int8 ACapturePoint::GetLaneNumber() const
 {
 	return LaneNumber;
 }
 
+
 int8 ACapturePoint::GetRowNumber() const
 {
 	return RowNumber;
 }
+
 
 void ACapturePoint::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
+
 void ACapturePoint::OnTriggerOverlapWithUnit(int32 TeamIndex)
 {
-	Capture(TeamIndex);
+	if (TeamIndex != OccupierTeamIndex)
+	{
+		Capture(TeamIndex);
+	}
 }
 
