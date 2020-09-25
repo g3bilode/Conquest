@@ -49,6 +49,7 @@ private:
 	int32 GoldStartingAmount;
 	float UpdateResourceTimer;
 	FTimerHandle UpdateResourceTimerHandle;
+	TMap<int32, int32> CapturePointsPerTeam;
 
 	/* Notify start game after delay. */
 	FTimerHandle GameStartTimerHandle;
@@ -56,14 +57,22 @@ private:
 	static const float GameStartDelayTime;
 
 
+	/* Update resource amounts for each player. */
 	UFUNCTION()
 	void UpdateResources();
+
+	/* Return the amount of glint gain per drip for given player. */
+	int32 GetGlintIncome(class AConquestPlayerState* ConquestPlayerState);
 
 	/* Return the target number of players for a full match. */
 	int32 GetTargetPlayerCount();
 
 	/* On game start */
 	void GameStart();
+
+	/* Event on resource phase begin. */
+	UFUNCTION()
+	void RespondToResourcePhaseBegin();
 
 public:
 	
