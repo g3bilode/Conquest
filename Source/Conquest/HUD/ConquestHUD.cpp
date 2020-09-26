@@ -26,12 +26,9 @@ void AConquestHUD::OnSpawnerDeselected()
 }
 
 
-void AConquestHUD::BeginPlay()
+void AConquestHUD::ConstructHUD()
 {
-	Super::BeginPlay();
-
 	// Setup Game HUD
 	GameHUDWidget = CreateWidget<UGameplayWidget>(GetWorld(), GameHUDWidgetClass, "Game HUD");
 	GameHUDWidget->AddToViewport();
-
 }

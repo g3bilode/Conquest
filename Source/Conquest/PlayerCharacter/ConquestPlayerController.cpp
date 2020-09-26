@@ -8,7 +8,9 @@
 #include "../CapturePoints/CapturePoint.h"
 #include "../CheatManager/ConquestCheatManager.h"
 #include "../Components/HealthComponent.h"
+#include "../GameMode/ConquestGameMode.h"
 #include "../GameState/ConquestGameState.h"
+#include "../HUD/ConquestHUD.h"
 #include "../Units/ConquestUnit.h"
 #include "../Utils/ConquestUtils.h"
 #include "../Units/Spawners/UnitSpawner.h"
@@ -35,6 +37,12 @@ void AConquestPlayerController::BeginPlay()
 	if (HasAuthority())
 	{
 		OnRep_ConquestPlayerState();
+	}
+
+	if (HasAuthority())
+	{
+		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
+		conquestGameMode->GameStart_OnStart.AddDynamic(this, &AConquestPlayerController::RespondToGameStart);
 	}
 }
 
@@ -250,6 +258,17 @@ void AConquestPlayerController::OnRep_ConquestPlayerState()
 {
 	GatherCapitals();
 	BuildBarracksArray();
+}
+
+
+void AConquestPlayerController::RespondToGameStart_Implementation()
+{
+	// Construct HUD for local player
+	if (IsLocalPlayerController())
+	{
+		AConquestHUD* conquestHud = GetHUD<AConquestHUD>();
+		conquestHud->ConstructHUD();
+	}
 }
 
 

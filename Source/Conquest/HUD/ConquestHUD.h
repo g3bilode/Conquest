@@ -17,17 +17,22 @@ class CONQUEST_API AConquestHUD : public AHUD
 public:
 	AConquestHUD();
 
+	/* Event on spawner selected. */
 	void OnSpawnerSelected(class AUnitSpawner* SelectedSpawner);
 
+	/* Event on spawner deselected. */
 	void OnSpawnerDeselected();
 
-protected:
-	void BeginPlay() override;
+	/* Construct the HUD widget. */
+	void ConstructHUD();
+
 
 public:
+	/* HUD widget class. */
 	UPROPERTY()
 	TSubclassOf<UUserWidget> GameHUDWidgetClass;
 
+	/* HUD widget reference. */
 	UPROPERTY()
 	class UGameplayWidget* GameHUDWidget;
 
