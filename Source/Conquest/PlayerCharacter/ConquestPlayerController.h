@@ -110,9 +110,9 @@ private:
 	void OnRep_ConquestPlayerState();
 
 	/* Respond to game start. */
-	UFUNCTION(NetMulticast, Reliable)
-	void RespondToGameStart();
-	virtual void RespondToGameStart_Implementation();
+	UFUNCTION(Client, Reliable)
+	void RespondToGameStart_Client();
+	virtual void RespondToGameStart_Client_Implementation();
 
 	/* Gather CapturePoints and build lane array. */
 	void BuildLaneArray();

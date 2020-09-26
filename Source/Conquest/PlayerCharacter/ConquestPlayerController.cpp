@@ -42,7 +42,7 @@ void AConquestPlayerController::BeginPlay()
 	if (HasAuthority())
 	{
 		AConquestGameMode* conquestGameMode = (AConquestGameMode*)GetWorld()->GetAuthGameMode();
-		conquestGameMode->GameStart_OnStart.AddDynamic(this, &AConquestPlayerController::RespondToGameStart);
+		conquestGameMode->GameStart_OnStart.AddDynamic(this, &AConquestPlayerController::RespondToGameStart_Client);
 	}
 }
 
@@ -261,14 +261,10 @@ void AConquestPlayerController::OnRep_ConquestPlayerState()
 }
 
 
-void AConquestPlayerController::RespondToGameStart_Implementation()
+void AConquestPlayerController::RespondToGameStart_Client_Implementation()
 {
-	// Construct HUD for local player
-	if (IsLocalPlayerController())
-	{
-		AConquestHUD* conquestHud = GetHUD<AConquestHUD>();
-		conquestHud->ConstructHUD();
-	}
+	AConquestHUD* conquestHud = GetHUD<AConquestHUD>();
+	conquestHud->ConstructHUD();
 }
 
 
