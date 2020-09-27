@@ -293,6 +293,7 @@ void AConquestPlayerController::BuildLaneArray()
 		int8 LaneNumber = CapturePointItr->GetLaneNumber();
 		int8 RowNumber = CapturePointItr->GetRowNumber();
 		LaneArray[LaneNumber].LaneDestinations[RowNumber] = CapturePointItr->GetActorLocation();
+		CapturePoints.Add(*CapturePointItr);
 	}
 
 	// Get the final destination: the enemy base
@@ -387,6 +388,19 @@ void AConquestPlayerController::OnSelectActor(AActor* NewSelection)
 		}
 	}
 	UE_LOG(LogConquest, Log, TEXT("Selection: %s"), *GetNameSafe(NewSelection));
+}
+
+
+void AConquestPlayerController::DisplayResourceDrip_Implementation() const
+{
+	int32 glintIncome = ConquestPlayerState->GetGlintIncomePerNode();
+	for (ACapturePoint* CapturePoint : CapturePoints)
+	{
+		if (CapturePoint->OccupierTeamIndex == ConquestPlayerState->TeamIndex)
+		{
+			CapturePoint->DisplayGlintDrip(glintIncome);
+		}
+	}
 }
 
 

@@ -11,6 +11,12 @@ AConquestPlayerState::AConquestPlayerState()
 }
 
 
+int32 AConquestPlayerState::GetGlintIncomePerNode()
+{
+	return GlintWorkers * GlintGainPerWorker;
+}
+
+
 void AConquestPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

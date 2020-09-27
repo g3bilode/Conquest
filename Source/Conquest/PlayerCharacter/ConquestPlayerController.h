@@ -44,10 +44,16 @@ public:
 	virtual bool MakePurchase_Validate(int32 Cost);
 	virtual void MakePurchase_Implementation(int32 Cost);
 
+	/* Spawn given ConquestUnit. */
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SpawnUnit(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
 	virtual bool SpawnUnit_Validate(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
 	virtual void SpawnUnit_Implementation(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
+
+	/* Display the resource drip UI. */
+	UFUNCTION(Client, Unreliable)
+	void DisplayResourceDrip() const;
+	virtual void DisplayResourceDrip_Implementation() const;
 
 	AConquestPlayerState* GetConquestPlayerState();
 
@@ -97,6 +103,8 @@ private:
 	TArray<FLaneDestinations> LaneArray;
 	UPROPERTY()
 	TArray<class ABarracks*> BarracksArray;
+	UPROPERTY()
+	TArray<class ACapturePoint*> CapturePoints;
 
 	/* Friendly Capital */
 	UPROPERTY()

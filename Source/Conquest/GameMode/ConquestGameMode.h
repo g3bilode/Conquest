@@ -50,6 +50,9 @@ private:
 	float UpdateResourceTimer;
 	FTimerHandle UpdateResourceTimerHandle;
 	TMap<int32, int32> CapturePointsPerTeam;
+	/* List of CapturePoints, gathered at game start. */
+	UPROPERTY()
+	TArray<class ACapturePoint*> CapturePoints;
 
 	/* Notify start game after delay. */
 	FTimerHandle GameStartTimerHandle;
@@ -62,7 +65,7 @@ private:
 	void UpdateResources();
 
 	/* Return the amount of glint gain per drip for given player. */
-	int32 GetGlintIncome(class AConquestPlayerState* ConquestPlayerState);
+	int32 AccumulateGlintIncome(class AConquestPlayerState* ConquestPlayerState);
 
 	/* Return the target number of players for a full match. */
 	int32 GetTargetPlayerCount();

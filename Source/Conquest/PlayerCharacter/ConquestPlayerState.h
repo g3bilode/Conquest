@@ -41,4 +41,7 @@ public:
 	UPROPERTY(Replicated)
 	int32 TeamIndex;
 
+	/* Get glint income per node. */
+	int32 GetGlintIncomePerNode();
+
 };

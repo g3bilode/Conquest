@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void DisplayCapture();
 
+	/* Function called to display glint drip on screen. */
+	void DisplayGlintDrip(int32 GlintAmount);
+
 	int8 GetLaneNumber() const;
 	int8 GetRowNumber() const;
 
@@ -50,5 +53,9 @@ private:
 	/* Row position (ex: 0 = row 0) */
 	UPROPERTY(EditAnywhere)
 	int8 RowNumber;
+
+	/* Resource drip component. */
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	class UResourceDripComponent* ResourceDripComponent;
 	
 };

@@ -46,6 +46,12 @@ void AConquestGameMode::BeginPlay()
 	{
 		conquestGameState->ResourcePhase_OnStart.AddDynamic(this, &AConquestGameMode::RespondToResourcePhaseBegin);
 	}
+
+	// Gather CapturePoints
+	for (TActorIterator<ACapturePoint> CapturePointItr(GetWorld()); CapturePointItr; ++CapturePointItr)
+	{
+		CapturePoints.Add(*CapturePointItr);
+	}
 }
 
 
@@ -107,17 +113,31 @@ void AConquestGameMode::UpdateResources()
 	for (AConquestPlayerState* conquestPlayerState : CurrentPlayers)
 	{
 		conquestPlayerState->Gold += GoldGainBase;
-		conquestPlayerState->Glint += GetGlintIncome(conquestPlayerState);
+		conquestPlayerState->Glint += AccumulateGlintIncome(conquestPlayerState);
+		// Display +gain in world
+		const AActor* playerStateOwner = conquestPlayerState->GetNetOwner();
+		const AConquestPlayerController* conquestPlayerController = Cast<AConquestPlayerController>(playerStateOwner);
+		if (IsValid(conquestPlayerController))
+		{
+			conquestPlayerController->DisplayResourceDrip();
+		}
 	}
 }
 
 
-int32 AConquestGameMode::GetGlintIncome(AConquestPlayerState* ConquestPlayerState)
+int32 AConquestGameMode::AccumulateGlintIncome(AConquestPlayerState* ConquestPlayerState)
 {
-	int32& capturePointCount = CapturePointsPerTeam.FindOrAdd(ConquestPlayerState->TeamIndex);
-	int32 glintPerNode = ConquestPlayerState->GlintWorkers * ConquestPlayerState->GlintGainPerWorker;
-	int32 nodeCount = capturePointCount + 1;
-	return nodeCount * glintPerNode;
+	int32 glintPerNode = ConquestPlayerState->GetGlintIncomePerNode();
+	int32 totalIncome = 0;
+	for (ACapturePoint* CapturePoint : CapturePoints)
+	{
+		if (CapturePoint->OccupierTeamIndex == ConquestPlayerState->TeamIndex)
+		{
+			// Friendly
+			totalIncome += glintPerNode;
+		}
+	}
+	return totalIncome;
 }
 
 
