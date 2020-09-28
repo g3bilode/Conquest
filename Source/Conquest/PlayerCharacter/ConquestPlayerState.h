@@ -44,4 +44,9 @@ public:
 	/* Get glint income per node. */
 	int32 GetGlintIncomePerNode();
 
+	/* Function on glint gain, RPC to client. */
+	UFUNCTION(Client, Unreliable)
+	void OnGlintGain(int32 NewGlintValue);
+	virtual void OnGlintGain_Implementation(int32 NewGlintValue);
+
 };

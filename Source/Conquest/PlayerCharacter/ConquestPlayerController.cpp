@@ -391,7 +391,7 @@ void AConquestPlayerController::OnSelectActor(AActor* NewSelection)
 }
 
 
-void AConquestPlayerController::DisplayResourceDrip_Implementation() const
+void AConquestPlayerController::DisplayResourceDrip() const
 {
 	int32 glintIncome = ConquestPlayerState->GetGlintIncomePerNode();
 	for (ACapturePoint* CapturePoint : CapturePoints)

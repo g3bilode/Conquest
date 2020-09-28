@@ -51,9 +51,7 @@ public:
 	virtual void SpawnUnit_Implementation(TSubclassOf<class AConquestUnit> UnitToSpawn, FVector Location, int32 TeamIndex, int32 LaneIndex, const TArray<FVector>& LaneDestinations);
 
 	/* Display the resource drip UI. */
-	UFUNCTION(Client, Unreliable)
 	void DisplayResourceDrip() const;
-	virtual void DisplayResourceDrip_Implementation() const;
 
 	AConquestPlayerState* GetConquestPlayerState();
 

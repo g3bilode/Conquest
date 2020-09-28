@@ -114,13 +114,7 @@ void AConquestGameMode::UpdateResources()
 	{
 		conquestPlayerState->Gold += GoldGainBase;
 		conquestPlayerState->Glint += AccumulateGlintIncome(conquestPlayerState);
-		// Display +gain in world
-		const AActor* playerStateOwner = conquestPlayerState->GetNetOwner();
-		const AConquestPlayerController* conquestPlayerController = Cast<AConquestPlayerController>(playerStateOwner);
-		if (IsValid(conquestPlayerController))
-		{
-			conquestPlayerController->DisplayResourceDrip();
-		}
+		conquestPlayerState->OnGlintGain(conquestPlayerState->Glint);
 	}
 }
 
