@@ -45,6 +45,7 @@ void AConquestGameMode::BeginPlay()
 	if (IsValid(conquestGameState))
 	{
 		conquestGameState->ResourcePhase_OnStart.AddDynamic(this, &AConquestGameMode::RespondToResourcePhaseBegin);
+		conquestGameState->ResourcePhase_OnEnd.AddDynamic(this, &AConquestGameMode::RespondToResourcePhaseEnd);
 	}
 
 	// Gather CapturePoints
@@ -153,12 +154,11 @@ void AConquestGameMode::GameStart()
 
 void AConquestGameMode::RespondToResourcePhaseBegin()
 {
-	// Get glint bonus per team
-	CapturePointsPerTeam.Empty();
-	for (TActorIterator<ACapturePoint> CapturePointItr(GetWorld()); CapturePointItr; ++CapturePointItr)
-	{
-		int32 occupierIndex = CapturePointItr->OccupierTeamIndex;
-		int32& currentValue = CapturePointsPerTeam.FindOrAdd(occupierIndex);
-		CapturePointsPerTeam[occupierIndex] = currentValue + 1;		
-	}
+	GetWorld()->GetTimerManager().UnPauseTimer(UpdateResourceTimerHandle);
+}
+
+
+void AConquestGameMode::RespondToResourcePhaseEnd()
+{
+	GetWorld()->GetTimerManager().PauseTimer(UpdateResourceTimerHandle);
 }

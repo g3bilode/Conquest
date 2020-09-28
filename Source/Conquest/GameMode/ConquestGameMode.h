@@ -49,7 +49,6 @@ private:
 	int32 GoldStartingAmount;
 	float UpdateResourceTimer;
 	FTimerHandle UpdateResourceTimerHandle;
-	TMap<int32, int32> CapturePointsPerTeam;
 	/* List of CapturePoints, gathered at game start. */
 	UPROPERTY()
 	TArray<class ACapturePoint*> CapturePoints;
@@ -76,6 +75,9 @@ private:
 	/* Event on resource phase begin. */
 	UFUNCTION()
 	void RespondToResourcePhaseBegin();
+	/* Event on resource phase end. */
+	UFUNCTION()
+	void RespondToResourcePhaseEnd();
 
 public:
 	
