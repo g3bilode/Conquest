@@ -14,7 +14,7 @@
 #include "../CapturePoints/CapturePoint.h"
 
 
-const float AConquestGameMode::GameStartDelayTime = 0.5f;
+const float AConquestGameMode::GameStartDelayTime = 1.0f;
 
 
 AConquestGameMode::AConquestGameMode()
