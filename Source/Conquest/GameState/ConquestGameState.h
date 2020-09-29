@@ -80,6 +80,8 @@ public:
 
 	TArray<class AConquestPlayerState*> GetConquestPlayerArray();
 
+	/* Award unit bounty to killing player. */
+	void AwardBounty(int32 Bounty, int32 KillerTeamIndex);
 	/* Event on unit death. */
 	void OnUnitDeath();
 

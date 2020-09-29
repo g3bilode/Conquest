@@ -45,8 +45,11 @@ public:
 	int32 LaneIndex;
 
 	/* Purchase cost for this unit. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Cost")
 	int32 PurchaseCost;
+	/* Gold gain from opponent on kill by unit. */
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Cost")
+	int32 Bounty;
 
 	/* Icon for this unit. */
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "UI")

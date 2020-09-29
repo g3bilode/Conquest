@@ -11,6 +11,8 @@
 #include "Net/UnrealNetwork.h"
 
 
+DEFINE_LOG_CATEGORY_STATIC(LogConquestUnit, Log, All);
+
 // Sets default values
 AConquestUnit::AConquestUnit()
 {
@@ -35,6 +37,13 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 	HealthComponent->TakeDamage(ActualDamage);
 	if (HealthComponent->IsDead())
 	{
+		AConquestGameState* conquestGameState = Cast<AConquestGameState>(GetWorld()->GetGameState());
+		AConquestUnit* conquestUnit = Cast<AConquestUnit>(DamageCauser);
+		if (IsValid(conquestGameState) && IsValid(conquestUnit))
+		{
+			// Only Units can gain bounty on kill
+			conquestGameState->AwardBounty(Bounty, conquestUnit->TeamIndex);
+		}
 		DeathBegin();
 	}
 	return ActualDamage;

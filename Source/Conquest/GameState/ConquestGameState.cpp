@@ -58,6 +58,19 @@ TArray<class AConquestPlayerState*> AConquestGameState::GetConquestPlayerArray()
 }
 
 
+void AConquestGameState::AwardBounty(int32 Bounty, int32 KillerTeamIndex)
+{
+	for (AConquestPlayerState* conquestPlayerState : GetConquestPlayerArray())
+	{
+		if (conquestPlayerState->TeamIndex == KillerTeamIndex)
+		{
+			conquestPlayerState->Gold += Bounty;
+			return;
+		}
+	}
+}
+
+
 void AConquestGameState::OnResourcePhaseStart_Implementation()
 {
 	UE_LOG(LogConquest, Log, TEXT("Resource phase"));
