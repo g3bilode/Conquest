@@ -7,6 +7,8 @@
 #include "../Components/TargetingComponent.h"
 #include "../Components/UnitMovementComponent.h"
 #include "../GameState/ConquestGameState.h"
+#include "../HUD/ResourceDripComponent.h"
+#include "../PlayerCharacter/ConquestPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -27,6 +29,9 @@ AConquestUnit::AConquestUnit()
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 	// Setup HealthComponent
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
+	// Setup ResourceDripComponent
+	ResourceDripComponent = CreateDefaultSubobject<UResourceDripComponent>("ResourceDripComponent");
+	ResourceDripComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 
@@ -43,6 +48,8 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 		{
 			// Only Units can gain bounty on kill
 			conquestGameState->AwardBounty(Bounty, conquestUnit->TeamIndex);
+			// Display bounty
+			DisplayBountyForTeam(conquestUnit->TeamIndex);
 		}
 		DeathBegin();
 	}
@@ -90,6 +97,10 @@ void AConquestUnit::BeginPlay()
 		dynamicMaterial->SetVectorParameterValue("BodyColor", AlternateColour);
 	}
 	GetMesh()->SetMaterial(0, dynamicMaterial);
+
+	// Setup resource drip
+	ResourceDripComponent->SetupWidget(FLinearColor(0.863f, 0.573f, 0.043f));
+
 
 	// Bind combat phase start delegate
 	if (HasAuthority())
@@ -196,6 +207,34 @@ void AConquestUnit::PlayDeathAnim_Implementation()
 {
 	// Ready to die
 	PlayAnimMontage(DeathMontage);
+}
+
+
+void AConquestUnit::DisplayBountyForTeam(int32 KillerTeamIndex) const
+{
+	AConquestGameState* conquestGameState = Cast<AConquestGameState>(GetWorld()->GetGameState());
+	if (IsValid(conquestGameState))
+	{
+		for (AConquestPlayerState* conquestPlayerState : conquestGameState->GetConquestPlayerArray())
+		{
+			if (conquestPlayerState->TeamIndex == KillerTeamIndex)
+			{
+				// Display bounty for killing player
+				AConquestPlayerController* conquestPlayerController = (AConquestPlayerController*)conquestPlayerState->GetOwner();
+				if (IsValid(conquestPlayerController))
+				{
+					conquestPlayerController->DisplayBounty(this);
+				}
+				return;
+			}
+		}
+	}
+}
+
+
+void AConquestUnit::DisplayBounty() const
+{
+	ResourceDripComponent->ActivateDripWidget(Bounty);
 }
 
 

@@ -404,6 +404,12 @@ void AConquestPlayerController::DisplayResourceDrip() const
 }
 
 
+void AConquestPlayerController::DisplayBounty_Implementation(const class AConquestUnit* KilledUnit) const
+{
+	KilledUnit->DisplayBounty();
+}
+
+
 AConquestPlayerState* AConquestPlayerController::GetConquestPlayerState()
 {
 	return ConquestPlayerState;

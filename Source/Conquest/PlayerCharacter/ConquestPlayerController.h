@@ -52,6 +52,10 @@ public:
 
 	/* Display the resource drip UI. */
 	void DisplayResourceDrip() const;
+	/* Display the unit kill bounty. */
+	UFUNCTION(Client, Unreliable)
+	void DisplayBounty(const class AConquestUnit* KilledUnit) const;
+	virtual void DisplayBounty_Implementation(const class AConquestUnit* KilledUnit) const;
 
 	AConquestPlayerState* GetConquestPlayerState();
 

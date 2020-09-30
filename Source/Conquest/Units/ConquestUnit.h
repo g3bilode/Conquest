@@ -35,6 +35,8 @@ public:
 	void OnAttackAnimHit();
 	UFUNCTION(BlueprintCallable)
 	void DeathEnd();
+	/* Display bounty. */
+	void DisplayBounty() const;
 
 	/* Unit's team index. */
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Team")
@@ -87,6 +89,9 @@ private:
 	void PlayDeathAnim();
 	virtual void PlayDeathAnim_Implementation();
 
+	/* Display bounty for killing player. */
+	void DisplayBountyForTeam(int32 KillerTeamIndex) const;
+
 	/* Unit Movement Component*/
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	class UUnitMovementComponent* MovementComponent;
@@ -99,4 +104,7 @@ private:
 	/* Health Component*/
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 	class UHealthComponent* HealthComponent;
+	/* Resource drip component. */
+	UPROPERTY(VisibleAnywhere, Category = "Cost")
+	class UResourceDripComponent* ResourceDripComponent;
 };
