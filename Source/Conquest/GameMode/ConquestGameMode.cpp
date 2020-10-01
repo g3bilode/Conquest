@@ -11,7 +11,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
 #include "UMG/Public/Blueprint/UserWidget.h"
-#include "../CapturePoints/CapturePoint.h"
+#include "../Resources/ResourceManager.h"
 
 
 const float AConquestGameMode::GameStartDelayTime = 1.0f;
@@ -23,36 +23,20 @@ AConquestGameMode::AConquestGameMode()
 	TeamDefinitions.Add(FTeamDefinition("Aztec", 0));
 	TeamDefinitions.Add(FTeamDefinition("Inca", 1));
 
-	// Game constants
-	GoldGainBase = 5;
-	GoldStartingAmount = 500;
-	UpdateResourceTimer = 2.0f;
-
 	// Default Classes
 	DefaultPawnClass = AConquestCharacter::StaticClass();
 	PlayerControllerClass = AConquestPlayerController::StaticClass();
 	GameStateClass = AConquestGameState::StaticClass();
 	PlayerStateClass = AConquestPlayerState::StaticClass();
 	HUDClass = AConquestHUD::StaticClass();
+
+	ResourceMan = NewObject<UResourceManager>();
 }
 
 
 void AConquestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AConquestGameState* conquestGameState = GetGameState<AConquestGameState>();
-	if (IsValid(conquestGameState))
-	{
-		conquestGameState->ResourcePhase_OnStart.AddDynamic(this, &AConquestGameMode::RespondToResourcePhaseBegin);
-		conquestGameState->ResourcePhase_OnEnd.AddDynamic(this, &AConquestGameMode::RespondToResourcePhaseEnd);
-	}
-
-	// Gather CapturePoints
-	for (TActorIterator<ACapturePoint> CapturePointItr(GetWorld()); CapturePointItr; ++CapturePointItr)
-	{
-		CapturePoints.Add(*CapturePointItr);
-	}
 }
 
 
@@ -65,7 +49,6 @@ void AConquestGameMode::PostLogin(APlayerController* NewPlayer)
 		CurrentPlayers.Add(conquestPlayerState);
 		conquestPlayerState->TeamName = TeamDefinitions[ConnectedPlayersCount].TeamName;
 		conquestPlayerState->TeamIndex = TeamDefinitions[ConnectedPlayersCount].TeamIndex;
-		conquestPlayerState->Gold = GoldStartingAmount;
 		ConnectedPlayersCount++;
 	}
 	else
@@ -109,33 +92,6 @@ AActor* AConquestGameMode::ChoosePlayerStart_Implementation(AController* Player)
 }
 
 
-void AConquestGameMode::UpdateResources()
-{
-	for (AConquestPlayerState* conquestPlayerState : CurrentPlayers)
-	{
-		conquestPlayerState->Gold += GoldGainBase;
-		conquestPlayerState->Glint += AccumulateGlintIncome(conquestPlayerState);
-		conquestPlayerState->OnGlintGain(conquestPlayerState->Glint);
-	}
-}
-
-
-int32 AConquestGameMode::AccumulateGlintIncome(AConquestPlayerState* ConquestPlayerState)
-{
-	int32 glintPerNode = ConquestPlayerState->GetGlintIncomePerNode();
-	int32 totalIncome = 0;
-	for (ACapturePoint* CapturePoint : CapturePoints)
-	{
-		if (CapturePoint->OccupierTeamIndex == ConquestPlayerState->TeamIndex)
-		{
-			// Friendly
-			totalIncome += glintPerNode;
-		}
-	}
-	return totalIncome;
-}
-
-
 int32 AConquestGameMode::GetTargetPlayerCount()
 {
 	return TeamDefinitions.Num();
@@ -144,21 +100,9 @@ int32 AConquestGameMode::GetTargetPlayerCount()
 
 void AConquestGameMode::GameStart()
 {
-	// Update resource timer
-	GetWorld()->GetTimerManager().SetTimer(UpdateResourceTimerHandle, this, &AConquestGameMode::UpdateResources, UpdateResourceTimer, true);
+	// Setup resource manager
+	ResourceMan->Setup(CurrentPlayers, GetWorld());
 
 	// Notify everyone of game start
 	GameStart_OnStart.Broadcast();
-}
-
-
-void AConquestGameMode::RespondToResourcePhaseBegin()
-{
-	GetWorld()->GetTimerManager().UnPauseTimer(UpdateResourceTimerHandle);
-}
-
-
-void AConquestGameMode::RespondToResourcePhaseEnd()
-{
-	GetWorld()->GetTimerManager().PauseTimer(UpdateResourceTimerHandle);
 }

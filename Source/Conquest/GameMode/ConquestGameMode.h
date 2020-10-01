@@ -44,14 +44,9 @@ private:
 	UPROPERTY()
 	TArray<FTeamDefinition> TeamDefinitions;
 
-	// Resources
-	int32 GoldGainBase;
-	int32 GoldStartingAmount;
-	float UpdateResourceTimer;
-	FTimerHandle UpdateResourceTimerHandle;
-	/* List of CapturePoints, gathered at game start. */
+	/* Resource manager*/
 	UPROPERTY()
-	TArray<class ACapturePoint*> CapturePoints;
+	class UResourceManager* ResourceMan;
 
 	/* Notify start game after delay. */
 	FTimerHandle GameStartTimerHandle;
@@ -59,25 +54,11 @@ private:
 	static const float GameStartDelayTime;
 
 
-	/* Update resource amounts for each player. */
-	UFUNCTION()
-	void UpdateResources();
-
-	/* Return the amount of glint gain per drip for given player. */
-	int32 AccumulateGlintIncome(class AConquestPlayerState* ConquestPlayerState);
-
 	/* Return the target number of players for a full match. */
 	int32 GetTargetPlayerCount();
 
 	/* On game start */
 	void GameStart();
-
-	/* Event on resource phase begin. */
-	UFUNCTION()
-	void RespondToResourcePhaseBegin();
-	/* Event on resource phase end. */
-	UFUNCTION()
-	void RespondToResourcePhaseEnd();
 
 public:
 	
