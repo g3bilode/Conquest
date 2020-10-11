@@ -4,18 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "../Interfaces/TargeterInterface.h"
+#include "AbilitySystemInterface.h"
+//#include "GameplayEffectTypes.h"
 #include "GameFramework/Character.h"
 #include "ConquestUnit.generated.h"
 
 
 UCLASS()
-class CONQUEST_API AConquestUnit : public ACharacter, public ITargeterInterface
+class CONQUEST_API AConquestUnit : public ACharacter, public ITargeterInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AConquestUnit();
+	
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -68,14 +72,28 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "ConquestUnit")
 	FLinearColor AlternateColour;
 
+	/* Attribute Effect to initialize attribute defaults */
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Attributes")
+	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
+
+	/* Default Abilities */
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Attributes")
+	TArray<TSubclassOf<class UConquestGameplayAbility>> DefaultAbilities;
+
 	// ANIMS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
 	UAnimMontage* DeathMontage;
 
 private:
 
-	UFUNCTION()
+	/* Initialize attribute set. */
+	virtual void InitializeAttributes();
+
+	/* Assign default abilities. */
+	virtual void GiveAbilities_Auth();
+
 	/* Respond to combat phase begin delegate. */
+	UFUNCTION()
 	void RespondToCombatPhaseBegin();
 
 	/* Return true if given enemy is in our lane. */
@@ -107,4 +125,12 @@ private:
 	/* Resource drip component. */
 	UPROPERTY(VisibleAnywhere, Category = "Cost")
 	class UResourceDripComponent* ResourceDripComponent;
+	/* Ability System Component */
+	UPROPERTY(VisibleAnywhere, Category = "Abilities")
+	class UConquestAbilitySystemComponent* AbilitySystemComponent;
+
+	/* Attributes */
+	UPROPERTY()
+	class UConquestAttributeSet* Attributes;
+
 };

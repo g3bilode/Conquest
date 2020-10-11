@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ConquestUnit.h"
+#include "../Abilities/ConquestAbilitySystemComponent.h"
+#include "../Abilities/ConquestAttributeSet.h"
+#include "../Abilities/ConquestGameplayAbility.h"
 #include "../Capital/Capital.h"
 #include "../Components/AttackComponent.h"
 #include "../Components/HealthComponent.h"
@@ -9,7 +12,9 @@
 #include "../GameState/ConquestGameState.h"
 #include "../HUD/ResourceDripComponent.h"
 #include "../PlayerCharacter/ConquestPlayerController.h"
+#include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameplayAbilitySpec.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -32,6 +37,19 @@ AConquestUnit::AConquestUnit()
 	// Setup ResourceDripComponent
 	ResourceDripComponent = CreateDefaultSubobject<UResourceDripComponent>("ResourceDripComponent");
 	ResourceDripComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	
+	// Setup Ability System Component
+	AbilitySystemComponent = CreateDefaultSubobject<UConquestAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	// Setup Attributes
+	Attributes = CreateDefaultSubobject<UConquestAttributeSet>("Attributes");
+}
+
+
+UAbilitySystemComponent* AConquestUnit::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 
@@ -56,6 +74,7 @@ float AConquestUnit::TakeDamage(float Damage, struct FDamageEvent const& DamageE
 	return ActualDamage;
 }
 
+
 bool AConquestUnit::IsTargetEnemy_Implementation(AActor* OtherActor)
 {
 	// TODO: create team component
@@ -72,6 +91,7 @@ bool AConquestUnit::IsTargetEnemy_Implementation(AActor* OtherActor)
 	return false;
 }
 
+
 void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -79,6 +99,7 @@ void AConquestUnit::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 	DOREPLIFETIME_CONDITION(AConquestUnit, TeamIndex, COND_InitialOnly);
 	DOREPLIFETIME_CONDITION(AConquestUnit, LaneIndex, COND_InitialOnly);
 }
+
 
 // Called when the game starts or when spawned
 void AConquestUnit::BeginPlay()
@@ -119,9 +140,18 @@ void AConquestUnit::BeginPlay()
 	characterMovement->AvoidanceConsiderationRadius = 50.f;
 	characterMovement->SetAvoidanceEnabled(true);
 
+	// Initialize Ability System
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	InitializeAttributes();
+	if (HasAuthority())
+	{
+		GiveAbilities_Auth();
+	}
+
 	// Disable until combat phase
 	SetActorTickEnabled(false);
 }
+
 
 // Called every frame
 void AConquestUnit::Tick(float DeltaTime)
@@ -158,10 +188,12 @@ void AConquestUnit::Tick(float DeltaTime)
 	}
 }
 
+
 void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestinations)
 {
 	MovementComponent->SetLaneDestinations(InLaneDestinations);
 }
+
 
 void AConquestUnit::OnAttackAnimHit()
 {
@@ -170,6 +202,7 @@ void AConquestUnit::OnAttackAnimHit()
 		AttackComponent->DealDamage();
 	}
 }
+
 
 void AConquestUnit::DeathEnd()
 {
@@ -182,10 +215,39 @@ void AConquestUnit::DeathEnd()
 }
 
 
+void AConquestUnit::InitializeAttributes()
+{
+	if (IsValid(AbilitySystemComponent) && IsValid(DefaultAttributeEffect))
+	{
+		FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributeEffect, 1, EffectContext);
+		if (SpecHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle GEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}
+	}
+}
+
+
+void AConquestUnit::GiveAbilities_Auth()
+{
+	if (HasAuthority() && IsValid(AbilitySystemComponent))
+	{
+		for (TSubclassOf<UConquestGameplayAbility>& DefaultAbility : DefaultAbilities)
+		{
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(DefaultAbility, 1, INDEX_NONE, this));
+		}
+	}
+}
+
+
 void AConquestUnit::RespondToCombatPhaseBegin()
 {
 	SetActorTickEnabled(true);
 }
+
 
 void AConquestUnit::FaceTargetEnemy(float DeltaTime)
 {
@@ -196,6 +258,7 @@ void AConquestUnit::FaceTargetEnemy(float DeltaTime)
 	newRotation.Pitch = 0;
 	SetActorRotation(newRotation);
 }
+
 
 void AConquestUnit::DeathBegin()
 {
