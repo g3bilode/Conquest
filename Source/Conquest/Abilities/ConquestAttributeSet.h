@@ -36,9 +36,17 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Attributes", ReplicatedUsing=OnRep_Health)
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UConquestAttributeSet, Health);
+	/* Attack Damage. */
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes", ReplicatedUsing = OnRep_AttackDamage)
+	FGameplayAttributeData AttackDamage;
+	ATTRIBUTE_ACCESSORS(UConquestAttributeSet, AttackDamage);
 
 	/* OnRep Health callback. */
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
+	
+	/* OnRep AttackDamage callback. */
+	UFUNCTION()
+	virtual void OnRep_AttackDamage(const FGameplayAttributeData& OldAttackDamage);
 
 };
