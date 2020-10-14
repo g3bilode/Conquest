@@ -3,6 +3,8 @@
 
 #include "AttackComponent.h"
 #include "../Conquest.h"
+#include "../Abilities/ConquestAbilitySystemComponent.h"
+#include "../Abilities/ConquestGameplayAbility.h"
 #include "GameFramework/Character.h"
 #include "HealthComponent.h"
 
@@ -22,9 +24,20 @@ UAttackComponent::UAttackComponent()
 
 void UAttackComponent::DealDamage()
 {
-	if (IsValid(_TargetActor))
+	UConquestAbilitySystemComponent* ownerCASC = (UConquestAbilitySystemComponent*)GetOwningActor()->GetComponentByClass(UConquestAbilitySystemComponent::StaticClass());
+	if (IsValid(ownerCASC))
 	{
-		_TargetActor->TakeDamage(BaseDamage, FDamageEvent(), nullptr, GetOwningActor());
+		// Attack with Ability System
+		TSubclassOf<class UConquestGameplayAbility> defaultAbility = DefaultAbilities[0];
+		ownerCASC->TryActivateAbilityByClass(defaultAbility);
+	}
+	else
+	{
+		// Attack directly
+		if (IsValid(_TargetActor))
+		{
+			_TargetActor->TakeDamage(BaseDamage, FDamageEvent(), nullptr, GetOwningActor());
+		}
 	}
 	GetWorld()->GetTimerManager().SetTimer(AttackCooldownTimerHandle, this, &UAttackComponent::OnAttackCooldownExpired, AttackCooldown, false);
 }
@@ -43,6 +56,13 @@ bool UAttackComponent::IsTargetInRange(AActor* TargetActor)
 	return FVector::Dist(targetLocation, GetOwningActor()->GetActorLocation()) <= AttackRange + hitSphereDistance;
 }
 
+
+AActor* UAttackComponent::GetCurrentTarget() const
+{
+	return _TargetActor;
+}
+
+
 void UAttackComponent::AttemptAttack(AActor* InTargetActor)
 {
 	if (!bIsOnCooldown)
@@ -50,16 +70,7 @@ void UAttackComponent::AttemptAttack(AActor* InTargetActor)
 		bIsOnCooldown = true;
 		_TargetActor = InTargetActor;
 
-		if (IsValid(AttackMontage))
-		{
-			// Anim montage must call DealDamage
-			PlayAttackAnim();
-		}
-		else
-		{
-			// Deal damage directly
-			DealDamage();
-		}
+		DealDamage();
 	}
 }
 
@@ -78,6 +89,7 @@ void UAttackComponent::OnAttackCooldownExpired()
 {
 	bIsOnCooldown = false;
 }
+
 
 AActor* UAttackComponent::GetOwningActor()
 {

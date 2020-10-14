@@ -36,8 +36,6 @@ public:
 	void SetLaneDestinations(const TArray<FVector>& InLaneDestinations);
 
 	UFUNCTION(BlueprintCallable)
-	void OnAttackAnimHit();
-	UFUNCTION(BlueprintCallable)
 	void DeathEnd();
 	/* Display bounty. */
 	void DisplayBounty() const;
@@ -73,12 +71,8 @@ public:
 	FLinearColor AlternateColour;
 
 	/* Attribute Effect to initialize attribute defaults */
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Attributes")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "CASC")
 	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
-
-	/* Default Abilities */
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Attributes")
-	TArray<TSubclassOf<class UConquestGameplayAbility>> DefaultAbilities;
 
 	// ANIMS
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Anim")
@@ -126,7 +120,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Cost")
 	class UResourceDripComponent* ResourceDripComponent;
 	/* Ability System Component */
-	UPROPERTY(VisibleAnywhere, Category = "Abilities")
+	UPROPERTY(VisibleAnywhere, Category = "CASC")
 	class UConquestAbilitySystemComponent* AbilitySystemComponent;
 
 	/* Attributes */

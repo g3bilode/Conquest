@@ -168,16 +168,16 @@ void AConquestUnit::Tick(float DeltaTime)
 		if (TargetingComponent->AcquireTargetEnemy())
 		{
 			// Move towards enemy
-			AActor* TargetEnemy = TargetingComponent->GetTargetEnemy();
-			if (AttackComponent->IsTargetInRange(TargetEnemy))
+			AActor* targetEnemy = TargetingComponent->GetTargetEnemy();
+			if (AttackComponent->IsTargetInRange(targetEnemy))
 			{
 				// Attack
 				FaceTargetEnemy(DeltaTime);
-				AttackComponent->AttemptAttack(TargetEnemy);
+				AttackComponent->AttemptAttack(targetEnemy);
 			}
 			else
 			{
-				MovementComponent->MoveToEnemy(TargetEnemy->GetActorLocation());
+				MovementComponent->MoveToEnemy(targetEnemy->GetActorLocation());
 			}
 		}
 		else
@@ -192,15 +192,6 @@ void AConquestUnit::Tick(float DeltaTime)
 void AConquestUnit::SetLaneDestinations(const TArray<FVector>& InLaneDestinations)
 {
 	MovementComponent->SetLaneDestinations(InLaneDestinations);
-}
-
-
-void AConquestUnit::OnAttackAnimHit()
-{
-	if (HasAuthority())
-	{
-		AttackComponent->DealDamage();
-	}
 }
 
 
@@ -235,7 +226,7 @@ void AConquestUnit::GiveAbilities_Auth()
 {
 	if (HasAuthority() && IsValid(AbilitySystemComponent))
 	{
-		for (TSubclassOf<UConquestGameplayAbility>& DefaultAbility : DefaultAbilities)
+		for (TSubclassOf<UConquestGameplayAbility>& DefaultAbility : AttackComponent->DefaultAbilities)
 		{
 			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(DefaultAbility, 1, INDEX_NONE, this));
 		}

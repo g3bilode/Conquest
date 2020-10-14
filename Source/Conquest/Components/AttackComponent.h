@@ -28,6 +28,14 @@ public:
 	void DealDamage();
 	/* Return true if target in range of attack. */
 	bool IsTargetInRange(AActor* TargetActor);
+	/* Get Target Enemy. */
+	UFUNCTION(BlueprintCallable)
+	AActor* GetCurrentTarget() const;
+
+	/* Play the attack animation. */
+	UFUNCTION(BlueprintCallable, NetMulticast, Unreliable)
+	void PlayAttackAnim();
+	virtual void PlayAttackAnim_Implementation();
 
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
@@ -37,13 +45,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Attack")
 	float AttackRange;
 
+	/* Default Abilities */
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "CASC")
+	TArray<TSubclassOf<class UConquestGameplayAbility>> DefaultAbilities;
+
 
 private:
-
-	/* Play the attack animation. */
-	UFUNCTION(NetMulticast, Unreliable)
-	void PlayAttackAnim();
-	virtual void PlayAttackAnim_Implementation();
 
 	/* Callback when cooldown timer runs out. */
 	void OnAttackCooldownExpired();
