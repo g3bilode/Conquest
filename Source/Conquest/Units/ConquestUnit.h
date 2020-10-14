@@ -104,6 +104,9 @@ private:
 	/* Display bounty for killing player. */
 	void DisplayBountyForTeam(int32 KillerTeamIndex) const;
 
+	// Attribute change callbacks
+	virtual void OnHealthChanged(const struct FOnAttributeChangeData& Data);
+
 	/* Unit Movement Component*/
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	class UUnitMovementComponent* MovementComponent;

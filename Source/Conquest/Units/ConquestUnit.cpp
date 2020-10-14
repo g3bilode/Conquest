@@ -15,6 +15,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameplayAbilitySpec.h"
+#include "GameplayEffectTypes.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -147,6 +148,9 @@ void AConquestUnit::BeginPlay()
 	{
 		GiveAbilities_Auth();
 	}
+
+	// Bind attribute change events
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this, &AConquestUnit::OnHealthChanged);
 
 	// Disable until combat phase
 	SetActorTickEnabled(false);
@@ -283,6 +287,13 @@ void AConquestUnit::DisplayBountyForTeam(int32 KillerTeamIndex) const
 			}
 		}
 	}
+}
+
+
+void AConquestUnit::OnHealthChanged(const FOnAttributeChangeData& Data)
+{
+	float damage = Data.OldValue - Data.NewValue;
+	TakeDamage(damage, FDamageEvent(), nullptr, this); //TODO fix this
 }
 
 
