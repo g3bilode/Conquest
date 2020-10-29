@@ -2,14 +2,21 @@
 
 #include "Capital.h"
 #include "../Conquest.h"
+#include "../Abilities/ConquestAbilitySystemComponent.h"
+#include "../Abilities/ConquestAttributeSet.h"
+#include "../Abilities/ConquestGameplayAbility.h"
 #include "../Components/AttackComponent.h"
 #include "../Components/HealthComponent.h"
 #include "../Components/TargetingComponent.h"
 #include "../PlayerCharacter/ConquestPlayerController.h"
 #include "../PlayerCharacter/ConquestPlayerState.h"
 #include "../Units/ConquestUnit.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayAbilitySpec.h"
+#include "GameplayEffectTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+
 
 // Sets default values
 ACapital::ACapital()
@@ -28,6 +35,71 @@ ACapital::ACapital()
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 	// Setup HealthComponent
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
+
+	// Setup Ability System Component
+	AbilitySystemComponent = CreateDefaultSubobject<UConquestAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	// Setup Attributes
+	Attributes = CreateDefaultSubobject<UConquestAttributeSet>("Attributes");
+}
+
+
+UAbilitySystemComponent* ACapital::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+
+void ACapital::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	// Initialize Ability System
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	InitializeAttributes();
+	if (HasAuthority())
+	{
+		GiveAbilities_Auth();
+	}
+
+	// Bind attribute change events
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this, &ACapital::OnHealthChanged);
+}
+
+
+void ACapital::InitializeAttributes()
+{
+	if (IsValid(AbilitySystemComponent) && IsValid(DefaultAttributeEffect))
+	{
+		FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributeEffect, 1, EffectContext);
+		if (SpecHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle GEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}
+	}
+}
+
+
+void ACapital::GiveAbilities_Auth()
+{
+	if (HasAuthority() && IsValid(AbilitySystemComponent))
+	{
+		for (TSubclassOf<UConquestGameplayAbility>& DefaultAbility : AttackComponent->DefaultAbilities)
+		{
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(DefaultAbility, 1, INDEX_NONE, this));
+		}
+	}
+}
+
+
+void ACapital::OnHealthChanged(const struct FOnAttributeChangeData& Data)
+{
+	float damage = Data.OldValue - Data.NewValue;
+	TakeDamage(damage, FDamageEvent(), nullptr, this); //TODO fix this
 }
 
 
@@ -44,9 +116,6 @@ void ACapital::Tick(float DeltaTime)
 			{
 				// Attack
 				AttackComponent->AttemptAttack(TargetingComponent->GetTargetEnemy());
-				// TODO: remove this placeholder
-				const FVector& enemyLocation = TargetEnemy->GetActorLocation();
-				DrawDebugLine(GetWorld(), GetActorLocation(), enemyLocation, FColor::Magenta);
 			}
 		}
 	}
